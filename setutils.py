@@ -29,10 +29,10 @@ class Card:
         return self.__getattribute__(enum_type.__name__)
 
     def __str__(self):
-        str = '%s %s %s %s' % (self.number, self.color, self.shading, self.shape)
+        string = '%s %s %s %s' % (self.number, self.color, self.shading, self.shape)
         if self.number != 'one':
-            str += 's'
-        return str
+            string += 's'
+        return string
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
@@ -160,6 +160,7 @@ def is_set(cards):
 
     return retval
 
+
 def complete_set(cards):
     """
     Given two cards, determine the unique card that completes the set.
@@ -175,6 +176,7 @@ def complete_set(cards):
             newattrs.append((set(attr) - {c.__getattribute__(name) for c in cards}).pop())
     return Card(*newattrs)
 
+
 def find_all_sets(self, set_size=3):
     """
     Find all Sets in on the table.
@@ -183,6 +185,7 @@ def find_all_sets(self, set_size=3):
     :return: a set of valid Sets using the cards on the table
     """
     return {x for x in itertools.combinations(self.table, set_size) if is_set(x)}
+
 
 ###########################################################################
 # crazy geometric methods
