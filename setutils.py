@@ -59,6 +59,9 @@ class SetFactory:
         def __len__(self):
             return len(self.cards)
 
+        def __str__(self):
+            return str({str(card) for card in self.cards})
+
     @staticmethod
     def make_set_from_cards(cards):
         """
