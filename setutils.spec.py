@@ -95,6 +95,31 @@ class SetUtilsTest(unittest.TestCase):
         self.assertEqual(expected['Color'], actual.color)
         self.assertEqual(expected['Shading'], actual.shading)
         self.assertEqual(expected['Shape'], actual.shape)
+        
+    def test_find_all_sets(self):
+        table = [
+            Card(Number['one'], Color['red'], Shading['solid'], Shape['diamond']),
+            Card(Number['two'], Color['blue'], Shading['solid'], Shape['diamond']),
+            Card(Number['two'], Color['red'], Shading['solid'], Shape['diamond']),
+            Card(Number['one'], Color['red'], Shading['striped'], Shape['squiggle']),
+            Card(Number['three'], Color['red'], Shading['solid'], Shape['oval']),
+            Card(Number['three'], Color['blue'], Shading['striped'], Shape['squiggle']),
+            Card(Number['one'], Color['green'], Shading['solid'], Shape['diamond']),
+            Card(Number['three'], Color['green'], Shading['striped'], Shape['squiggle']),
+            Card(Number['two'], Color['green'], Shading['empty'], Shape['oval']),
+            Card(Number['two'], Color['green'], Shading['striped'], Shape['diamond']),
+            Card(Number['two'], Color['red'], Shading['empty'], Shape['diamond']),
+            Card(Number['three'], Color['blue'], Shading['empty'], Shape['diamond'])
+        ]
+        expected = {
+            SetFactory.make_set_from_cards({table[0], table[5], table[8]}),
+            SetFactory.make_set_from_cards({table[0], table[9], table[11]}),
+            SetFactory.make_set_from_cards({table[4], table[7], table[11]}),
+            SetFactory.make_set_from_cards({table[6], table[7], table[8]}),
+            SetFactory.make_set_from_cards({table[1], table[9], table[10]}),
+            SetFactory.make_set_from_cards({table[3], table[4], table[10]})
+        }
+        self.assertSetEqual(expected, find_all_sets(table))
 
     def test_are_parallel(self):
         cards_parallel = (
