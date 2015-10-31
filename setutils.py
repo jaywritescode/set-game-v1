@@ -84,7 +84,7 @@ class SetFactory:
         # ensure at least one attribute will be different among the three cards
         while True:
             attrs_fns = [random.choice(funcs) for _ in range(len(game_attrs))]
-            if all(f == SetFactory.make_same_iterable for f in attrs_fns):
+            if any(f == SetFactory.make_diff_iterable for f in attrs_fns):
                 break
         attrs = [attrs_fns[i](game_attrs[i]) for i in range(len(game_attrs))]
 
