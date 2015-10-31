@@ -184,14 +184,13 @@ def complete_set(cards):
     return Card(*newattrs)
 
 
-def find_all_sets(self, set_size=3):
+def find_all_sets(cards):
     """
-    Find all Sets in on the table.
-
-    :param set_size: the number of cards in a Set
-    :return: a set of valid Sets using the cards on the table
+    Find all Sets that can be made from the given cards
+    :param cards: a collection of cards
+    :return: a set of all Sets that can be made from *cards*
     """
-    return {x for x in itertools.combinations(self.table, set_size) if is_set(x)}
+    return {SetFactory.make_set_from_cards(combo) for combo in itertools.combinations(cards, 3) if is_set(combo)}
 
 
 ###########################################################################
