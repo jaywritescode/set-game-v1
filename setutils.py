@@ -70,8 +70,6 @@ class SetFactory:
         """
         if len(cards) == 3 and is_set(cards):
             return SetFactory.Set(cards)
-        else:
-            return None
 
     @staticmethod
     def make_random_set():
@@ -80,11 +78,17 @@ class SetFactory:
 
         :return: a random, valid Set
         """
-        attr_values = []
-        for an_attr in game_attrs:
-            method = SetFactory.make_same_iterable if random.random() < 0.5 else SetFactory.make_diff_iterable
-            attr_values.append(method(an_attr))
-        return SetFactory.make_set_from_cards({Card(*p) for p in zip(*attr_values)})
+        funcs = [SetFactory.make_same_iterable, SetFactory.make_diff_iterable]
+        attrs_fns = None
+
+        # ensure at least one attribute will be different among the three cards
+        while True:
+            attrs_fns = [random.choice(funcs) for _ in range(len(game_attrs))]
+            if all(f == SetFactory.make_same_iterable for f in attrs_fns):
+                break
+        attrs = [attrs_fns[i](game_attrs[i]) for i in range(len(game_attrs))]
+
+        return SetFactory.make_set_from_cards({Card(*p) for p in zip(*attrs)})
 
     @staticmethod
     def make_not_set():
