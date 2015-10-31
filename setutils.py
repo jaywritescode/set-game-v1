@@ -144,6 +144,19 @@ class SetFactory:
         return i
 
 
+def all_cards():
+    """
+    Get all 81 possible cards, in a list.
+
+    :return: a list of all possible cards
+    """
+    return [Card(number, color, shading, shape)
+            for number in Number
+            for color in Color
+            for shading in Shading
+            for shape in Shape]
+
+
 def is_set(cards):
     """
     Determines if the given cards make a set.
