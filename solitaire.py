@@ -10,7 +10,7 @@ class SolitaireSet:
         self.cards = set()
         self.sets = set()
 
-    def start(self):
+    def _start(self):
         while True:
             self.cards = SolitaireSet._random_cards(self.num_cards)
             self.sets = find_all_sets(self.cards)
@@ -85,7 +85,6 @@ class SolitaireSet:
 
             return
 
-
     @staticmethod
     def _random_cards(count):
         """
@@ -100,4 +99,4 @@ class SolitaireSet:
 
 
 if __name__ == '__main__':
-    SolitaireSet().start()
+    SolitaireSet()._start()
