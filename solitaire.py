@@ -35,7 +35,21 @@ class SolitaireSet:
             cards_to_complete_sets[completion_card].add(potential_set)
 
         if len(self.sets) > self.num_sets:
-            pass
+            extra_sets = len(self.sets) - self.num_sets
+
+            potential_removals = [card for card in cards_to_sets_map if len(cards_to_sets_map[card]) == extra_sets]
+            if not len(potential_removals):
+                raise Exception
+            card_to_remove = random.choice(potential_removals)
+
+            while True:
+                replacement_card = Card.random()
+                if replacement_card not in cards_to_sets_map and replacement_card not in cards_to_complete_sets:
+                    break
+
+            self.cards.remove(card_to_remove)
+            self.cards.add(replacement_card)
+            self.sets -= cards_to_sets_map[card_to_remove]
         else:
             sets_needed = self.num_sets - len(self.sets)
 
