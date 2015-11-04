@@ -42,6 +42,10 @@ class Card:
             self.hash = hash(self.number) ^ hash(self.color) ^ hash(self.shading) ^ hash(self.shape)
         return self.hash
 
+    @staticmethod
+    def random():
+        return Card(*(random.choice(list(enum_type)) for enum_type in game_attrs))
+
 
 class SetFactory:
     class Set:
