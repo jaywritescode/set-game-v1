@@ -29,8 +29,8 @@ class Card:
         return self.__getattribute__(enum_type.__name__)
 
     def __str__(self):
-        string = '%s %s %s %s' % (self.number, self.color, self.shading, self.shape)
-        if self.number != 'one':
+        string = '%s %s %s %s' % (self.number.name, self.color.name, self.shading.name, self.shape.name)
+        if self.number != Number['one']:
             string += 's'
         return string
 
@@ -113,7 +113,7 @@ class SetFactory:
         :param iterable_len: the length of iterable to return
         :return: the iterable, as described above
         """
-        return [random.choice(list(enum_type.__members__))] * iterable_len
+        return [random.choice(list(enum_type))] * iterable_len
 
     @staticmethod
     def make_diff_iterable(enum_type):
@@ -124,7 +124,7 @@ class SetFactory:
         :param enum_type: the enum type
         :return: the iterable, as described above
         """
-        p = list(enum_type.__members__)
+        p = list(enum_type)
         random.shuffle(p)
         return p
 
@@ -139,7 +139,7 @@ class SetFactory:
         :return: the iterable, as described above
         """
         i = SetFactory.make_same_iterable(enum_type)
-        k = list(set(enum_type.__members__) - {i[0]})
+        k = list(set(enum_type) - {i[0]})
         i[random.randrange(len(i))] = random.choice(k)
         return i
 
