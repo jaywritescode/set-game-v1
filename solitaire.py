@@ -9,6 +9,7 @@ class SolitaireSet:
         self.num_sets = num_sets
         self.cards = set()
         self.sets = set()
+        self.found = set()
 
         SolitaireSet._start(self)
 
@@ -79,6 +80,8 @@ class SolitaireSet:
                     for _card in _set.cards:
                         if _card in cards_not_in_sets:
                             cards_not_in_sets.remove(_card)
+                if not len(card_to_remove):
+                    continue
                 card_to_remove = random.choice(cards_not_in_sets)
 
                 self.cards.remove(card_to_remove)
@@ -86,6 +89,28 @@ class SolitaireSet:
                 self.sets |= cards_to_complete_sets[replacement_card]
 
             return
+
+    def receive_selection(self, selection):
+        """
+        Given a selection of cards, determine if those cards are a valid Set in
+        the context of the game.
+        :param selection: a collection of Cards
+        :return: True iff *selection* is a valid Set
+        """
+        if not len(selection) == 3:
+            raise ValueError("Expected exactly three elements in selection.")
+        if any(card not in self.cards for card in selection):
+            raise ValueError("Invalid card.")
+
+        if is_set(selection):
+            the_set = self.set_factory.make_set_from_cards(selection)
+            if the_set in self.found:
+                raise AlreadyFound
+            self.found.add(the_set)
+            return True
+        else:
+            return False
+
 
     @staticmethod
     def _random_cards(count):
@@ -98,6 +123,13 @@ class SolitaireSet:
         while len(cards) < count:
             cards.add(Card.random())
         return cards
+
+
+class AlreadyFound(Exception):
+    """
+    An exception called when the user submits a Set they've already found.
+    """
+    pass
 
 
 if __name__ == '__main__':
