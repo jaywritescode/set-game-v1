@@ -80,7 +80,7 @@ class SolitaireSet:
                     for _card in _set.cards:
                         if _card in cards_not_in_sets:
                             cards_not_in_sets.remove(_card)
-                if not len(card_to_remove):
+                if not len(cards_not_in_sets):
                     continue
                 card_to_remove = random.choice(cards_not_in_sets)
 
