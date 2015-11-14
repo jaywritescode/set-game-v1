@@ -1,6 +1,7 @@
 var Solitaire = React.createClass({
   componentWillMount: function() {
     var onSuccess = function(response) {
+      console.log(response);
       this.setState({
         test: 'success'
       });
@@ -13,15 +14,13 @@ var Solitaire = React.createClass({
     $.get(this.props.url).then(onSuccess, onError);
   },
 
-  getInitialState: function() {
-    return {
-      test: 'nothing'
-    }
+  getInitialState() {
+    return {}
   },
 
   render: function() {
     return (
-      <h3>{this.state.test}</h3>
+      <h3>{this.state.test ? this.state.test : void 0}</h3>
     );
   }
 });
