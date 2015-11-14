@@ -106,3 +106,10 @@ docs/_build/
 # PyBuilder
 target/
 
+### Yeoman template
+node_modules/
+bower_components/
+*.log
+
+build/
+dist/
