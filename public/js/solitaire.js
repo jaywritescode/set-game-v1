@@ -1,8 +1,22 @@
 var Solitaire = React.createClass({
+  componentWillMount: function() {
+    var onSuccess = function(response) {
+      this.setState({
+        test: 'success'
+      });
+    }.bind(this);
+    var onError = function(response) {
+      this.setState({
+        test: 'error'
+      });
+    }.bind(this);
+    $.get(this.props.url).then(onSuccess, onError);
+  },
+
   getInitialState: function() {
     return {
-      test: 'hello world'
-    };
+      test: 'nothing'
+    }
   },
 
   render: function() {
@@ -13,5 +27,5 @@ var Solitaire = React.createClass({
 });
 
 ReactDOM.render(
-  <Solitaire url="/index" />, document.getElementById('solitaire')
+  <Solitaire url="/game" />, document.getElementById('solitaire')
 );
