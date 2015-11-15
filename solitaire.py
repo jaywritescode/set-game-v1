@@ -1,6 +1,7 @@
 from setutils import *
 from collections import defaultdict
 
+
 class SolitaireSet:
     set_factory = SetFactory()
 
@@ -110,7 +111,6 @@ class SolitaireSet:
             return True
         else:
             return False
-
 
     @staticmethod
     def _random_cards(count):

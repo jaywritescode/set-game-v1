@@ -4,10 +4,12 @@ import cherrypy
 from solitaire import SolitaireSet
 from serializers import CardSerializer
 
+
 class SolitaireApp:
     @cherrypy.expose
     def index(self):
         return open('index.html')
+
 
 class SolitaireWebService:
     exposed = True
