@@ -1,26 +1,52 @@
 var Solitaire = React.createClass({
   componentWillMount: function() {
     var onSuccess = function(response) {
-      console.log(response);
       this.setState({
-        test: 'success'
+        cards: response.cards
       });
     }.bind(this);
     var onError = function(response) {
       this.setState({
-        test: 'error'
+        error: response
       });
     }.bind(this);
     $.get(this.props.url).then(onSuccess, onError);
   },
 
   getInitialState() {
-    return {}
+    return {
+      cards: []
+    };
   },
 
   render: function() {
     return (
-      <h3>{this.state.test ? this.state.test : void 0}</h3>
+      <ul>
+        {this.state.cards.map(function(card) {
+          return (
+            <li>
+              <SetCard number={card.number}
+                       color={card.color}
+                       shading={card.shading}
+                       shape={card.shape} />
+            </li>
+          );
+        })}
+      </ul>
+    );
+  }
+});
+
+var SetCard = React.createClass({
+  getInitialState() {
+    return {
+      selected: false
+    };
+  },
+
+  render: function() {
+    return (
+      <p>{[this.props.number, this.props.color, this.props.shading, this.props.shape].join(' ')}</p>
     );
   }
 });
