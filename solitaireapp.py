@@ -2,7 +2,6 @@ import os
 import cherrypy
 
 from solitaire import SolitaireSet
-from serializers import CardSerializer
 
 
 class SolitaireApp:
@@ -22,7 +21,7 @@ class SolitaireWebService:
         if not self.solitaire or reset:
             self.solitaire = SolitaireSet(num_cards=num_cards, num_sets=num_sets)
         return {
-            'cards': [CardSerializer.to_hash(card) for card in self.solitaire.cards]
+            'cards': [card.to_hash() for card in self.solitaire.cards]
         }
 
 

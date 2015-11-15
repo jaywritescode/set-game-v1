@@ -28,6 +28,21 @@ class Card:
         """
         return self.__getattribute__(enum_type.__name__)
 
+    def get_number(self):
+        return self.number.name
+
+    def get_color(self):
+        return self.color.name
+
+    def get_shading(self):
+        return self.shading.name
+
+    def get_shape(self):
+        return self.shape.name
+
+    def to_hash(self):
+        return {k: self.__dict__[k].name for k in ['number', 'color', 'shading', 'shape']}
+
     def __str__(self):
         string = '%s %s %s %s' % (self.number.name, self.color.name, self.shading.name, self.shape.name)
         if self.number != Number['one']:
@@ -41,6 +56,7 @@ class Card:
         if not hasattr(self, 'hash'):
             self.hash = hash(self.number) ^ hash(self.color) ^ hash(self.shading) ^ hash(self.shape)
         return self.hash
+
 
     @staticmethod
     def random():
