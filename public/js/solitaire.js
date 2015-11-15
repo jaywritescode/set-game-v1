@@ -46,7 +46,7 @@ var SetCard = React.createClass({
 
   render: function() {
     return (
-      <p>{[this.props.number, this.props.color, this.props.shading, this.props.shape].join(' ')}</p>
+      <div className="card">{[this.props.number, this.props.color, this.props.shading, this.props.shape].join(' ')}</div>
     );
   }
 });

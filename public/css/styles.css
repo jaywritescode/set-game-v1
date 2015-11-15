@@ -1,3 +1,11 @@
 body {
   color: blue;
 }
+
+div.card {
+  border: 1px solid #BBB;
+  border-radius: 5px;
+  margin: 15px 20px;
+  height: 150px;
+  width: 240px;
+}
