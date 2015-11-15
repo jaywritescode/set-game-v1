@@ -20,7 +20,7 @@ class SolitaireWebService:
         if not self.solitaire or reset:
             self.solitaire = SolitaireSet(num_cards=num_cards, num_sets=num_sets)
         return {
-            'cards': [CardSerializer.to_json(card) for card in self.solitaire.cards]
+            'cards': [CardSerializer.to_hash(card) for card in self.solitaire.cards]
         }
 
 
