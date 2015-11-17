@@ -1,0 +1,24 @@
+{
+  "name": "set-game",
+  "authors": [
+    "Jay Harris <jayharris@gmail.com>"
+  ],
+  "description": "That Set game that's a thing.",
+  "main": "solitaire.js",
+  "moduleType": [
+    "es6"
+  ],
+  "license": "MIT",
+  "homepage": "http://www.github.com/jharris119/set-game",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4",
+    "react": "~0.14.2"
+  }
+}

@@ -38,6 +38,10 @@ if __name__ == '__main__':
         '/static': {
             'tools.staticdir.on': True,
             'tools.staticdir.dir': 'public'
+        },
+        '/bower_components': {
+            'tools.staticdir.on': True,
+            'tools.staticdir.dir': 'bower_components'
         }
     }
     webapp = SolitaireApp()
