@@ -1,0 +1,18 @@
+{
+  "name": "set-game",
+  "version": "1.0.0",
+  "description": "That Set game that's a thing.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://www.github.com/jharris119/set-game"
+  },
+  "author": "Jay Harris <jayharris@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "bower": "^1.6.5"
+  }
+}

@@ -51,6 +51,7 @@ var SetCard = React.createClass({
   }
 });
 
+console.log('hello');
 ReactDOM.render(
   <Solitaire url="/game" />, document.getElementById('solitaire')
 );
