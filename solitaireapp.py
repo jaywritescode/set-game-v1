@@ -1,7 +1,9 @@
 import os
 import cherrypy
+import json
 
 from solitaire import SolitaireSet
+from setutils import Card, SetFactory
 
 
 class SolitaireApp:
@@ -23,6 +25,12 @@ class SolitaireWebService:
         return {
             'cards': [card.to_hash() for card in self.solitaire.cards]
         }
+
+    @cherrypy.tools.json_out()
+    def PUT(self, cards):
+        request_cards = SetFactory.make_set_from_cards([Card(**p) for p in json.loads(cards)])
+        print('la la la la', flush=True)
+        return {'response': 'ok'}
 
 
 if __name__ == '__main__':
