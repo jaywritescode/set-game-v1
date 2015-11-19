@@ -2,6 +2,15 @@ body {
   color: blue;
 }
 
+li {
+  float: left;
+  list-style-type: none;
+}
+
+ul:nth-child(3) li {
+  clear: both;
+}
+
 div.card {
   border: 1px solid #BBB;
   border-radius: 5px;
