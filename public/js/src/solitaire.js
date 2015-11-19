@@ -18,7 +18,8 @@ var Solitaire = React.createClass({
   getInitialState() {
     return {
       cards: [],
-      selected: new Set()
+      selected: new Set(),
+      found: new Set()
     };
   },
 
@@ -40,7 +41,24 @@ var Solitaire = React.createClass({
         method: 'PUT',
         contextType: 'application/json'
       }).then((response) => {
-        console.log(response);
+        switch(response['result']) {
+          case 'OK':
+            console.log('OK'); break;
+            this.state.found.add(new Set(this.state.selected));
+          case 'NOT_A_SET':
+            console.log('NOT_A_SET'); break;
+          case 'ALREADY_FOUND':
+            console.log('ALREADY_FOUND'); break;
+          default:
+            throw("This shouldn't happen.");
+        }
+        console.log(this.state.selected);
+        for (card of this.state.selected) {
+          card.setState({
+            selected: false
+          });
+        }
+        this.state.selected.clear();
       }, (response) => {
         console.error(response);
       });
@@ -79,8 +97,12 @@ var SetCard = React.createClass({
   },
 
   render: function() {
+    let classes = ["card"];
+    if (this.state.selected) {
+      classes.push("selected");
+    }
     return (
-      <div className="card" onClick={this.handleClick}>{[this.props.card.number, this.props.card.color, this.props.card.shading, this.props.card.shape].join(' ')}</div>
+      <div className={classes.join(" ")} onClick={this.handleClick}>{[this.props.card.number, this.props.card.color, this.props.card.shading, this.props.card.shape].join(' ')}</div>
     );
   }
 });

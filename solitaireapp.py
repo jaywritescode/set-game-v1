@@ -29,7 +29,7 @@ class SolitaireWebService:
     @cherrypy.tools.json_out()
     def PUT(self, cards):
         response = self.solitaire.receive_selection([Card(**p) for p in json.loads(cards)])
-        return {'response': response.name}
+        return {'result': response.name}
 
 
 if __name__ == '__main__':
