@@ -97,9 +97,9 @@ class SolitaireSet:
         the context of the game.
         :param selection: a collection of Cards
         :return: True iff *selection* is a valid Set
+        :throws: ValueError if we include a Card that's not in the game
+        :throws: AlreadyFound if we already found the set in selection
         """
-        if not len(selection) == 3:
-            raise ValueError("Expected exactly three elements in selection.")
         if any(card not in self.cards for card in selection):
             raise ValueError("Invalid card.")
 

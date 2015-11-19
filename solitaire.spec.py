@@ -27,10 +27,6 @@ class SolitaireSetTest(unittest.TestCase):
             Card(Number['one'], Color['blue'], Shading['solid'], Shape['squiggle'])
         ]
 
-        # fails if we don't pass in exactly three cards
-        with self.assertRaises(ValueError):
-            _solitaire.receive_selection([Card.random(), Card.random()])
-
         # fails if not all of the cards are in the game
         with self.assertRaises(ValueError):
             _solitaire.receive_selection([
@@ -38,6 +34,10 @@ class SolitaireSetTest(unittest.TestCase):
                 Card(Number['three'], Color['green'], Shading['empty'], Shape['diamond']),
                 Card(Number['three'], Color['red'], Shading['empty'], Shape['squiggle'])
             ])
+
+         # fails if we don't pass in exactly three cards
+        with self.assertRaises(ValueError):
+            _solitaire.receive_selection([_solitaire.cards[0], _solitaire.cards[1]])
 
         # fails if the cards aren't a valid set
         self.assertFalse(_solitaire.receive_selection([_solitaire.cards[0], _solitaire.cards[1], _solitaire.cards[2]]))
