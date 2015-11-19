@@ -27,6 +27,8 @@ class SolitaireSetTest(unittest.TestCase):
             Card(Number['one'], Color['blue'], Shading['solid'], Shape['squiggle'])
         ]
 
+        valid_set = [_solitaire.cards[5], _solitaire.cards[9], _solitaire.cards[10]]
+
         # fails if not all of the cards are in the game
         with self.assertRaises(ValueError):
             _solitaire.receive_selection([
@@ -35,16 +37,9 @@ class SolitaireSetTest(unittest.TestCase):
                 Card(Number['three'], Color['red'], Shading['empty'], Shape['squiggle'])
             ])
 
-         # fails if we don't pass in exactly three cards
-        with self.assertRaises(ValueError):
-            _solitaire.receive_selection([_solitaire.cards[0], _solitaire.cards[1]])
+        self.assertEquals('NOT_A_SET', _solitaire.receive_selection([_solitaire.cards[0], _solitaire.cards[1], _solitaire.cards[2]]).name)
+        self.assertEquals('OK', _solitaire.receive_selection(valid_set).name)
 
-        # fails if the cards aren't a valid set
-        self.assertFalse(_solitaire.receive_selection([_solitaire.cards[0], _solitaire.cards[1], _solitaire.cards[2]]))
 
-        # succeeds if the cards are a valid set
-        self.assertTrue(_solitaire.receive_selection([_solitaire.cards[5], _solitaire.cards[9], _solitaire.cards[10]]))
-
-        # fails if we already found this set
-        with self.assertRaises(AlreadyFound):
-            _solitaire.receive_selection([_solitaire.cards[5], _solitaire.cards[9], _solitaire.cards[10]])
+        _solitaire.found.add( _solitaire.set_factory.make_set_from_cards(valid_set))
+        self.assertEquals('ALREADY_FOUND', _solitaire.receive_selection(valid_set).name)

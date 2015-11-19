@@ -1,4 +1,5 @@
 from setutils import *
+from enum import Enum
 from collections import defaultdict
 
 
@@ -95,22 +96,21 @@ class SolitaireSet:
         """
         Given a selection of cards, determine if those cards are a valid Set in
         the context of the game.
+
         :param selection: a collection of Cards
-        :return: True iff *selection* is a valid Set
+        :return: 'NOT_A_SET' if *selection* is not a Set, 'ALREADY_FOUND' if we already found this Set, otherwise 'OK'
         :throws: ValueError if we include a Card that's not in the game
-        :throws: AlreadyFound if we already found the set in selection
         """
         if any(card not in self.cards for card in selection):
             raise ValueError("Invalid card.")
 
+        Response = Enum('response', ('OK', 'NOT_A_SET', 'ALREADY_FOUND'))
         if is_set(selection):
             the_set = self.set_factory.make_set_from_cards(selection)
-            if the_set in self.found:
-                raise AlreadyFound
-            self.found.add(the_set)
-            return True
+            return Response['ALREADY_FOUND'] if the_set in self.found else Response['OK']
         else:
-            return False
+            return Response['NOT_A_SET']
+
 
     @staticmethod
     def _random_cards(count):
