@@ -97,8 +97,12 @@ var SetCard = React.createClass({
   },
 
   render: function() {
+    let classes = ["card"];
+    if (this.state.selected) {
+      classes.push("selected");
+    }
     return (
-      <div className="card" onClick={this.handleClick}>{[this.props.card.number, this.props.card.color, this.props.card.shading, this.props.card.shape].join(' ')}</div>
+      <div className={classes.join(" ")} onClick={this.handleClick}>{[this.props.card.number, this.props.card.color, this.props.card.shading, this.props.card.shape].join(' ')}</div>
     );
   }
 });
