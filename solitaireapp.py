@@ -28,9 +28,8 @@ class SolitaireWebService:
 
     @cherrypy.tools.json_out()
     def PUT(self, cards):
-        request_cards = SetFactory.make_set_from_cards([Card(**p) for p in json.loads(cards)])
-        print('la la la la', flush=True)
-        return {'response': 'ok'}
+        response = self.solitaire.receive_selection([Card(**p) for p in json.loads(cards)])
+        return {'response': response.name}
 
 
 if __name__ == '__main__':
