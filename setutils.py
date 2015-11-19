@@ -90,9 +90,12 @@ class SetFactory:
         :param cards: a collection of cards
         :return: a Set containing *cards*, if *cards* makes a valid set,
         otherwise None.
+        :throws: ValueError if passed other than three cards
         """
-        if len(cards) == 3 and is_set(cards):
-            return SetFactory.Set(cards)
+        if len(cards) != 3:
+            raise ValueError("Expected exactly three cards, got %s" % len(cards))
+        return SetFactory.Set(cards) if is_set(cards) else None
+
 
     @staticmethod
     def make_random_set():

@@ -240,6 +240,38 @@ class SetUtilsTest(unittest.TestCase):
                 }))
         self.assertFalse(are_intersecting(many_intersect))
 
+    ###########################################################################
+    # SetFactory test
+    ###########################################################################
+    def test_make_set_from_cards(self):
+        with self.assertRaises(ValueError):
+            SetFactory.make_set_from_cards(
+                {
+                    Card(Number['three'], Color['green'], Shading['striped'], Shape['squiggle']),
+                    Card(Number['one'], Color['green'], Shading['empty'], Shape['squiggle'])
+                }
+            )
+
+        self.assertIsNone(
+            SetFactory.make_set_from_cards(
+                {
+                    Card(Number['two'], Color['red'], Shading['empty'], Shape['oval']),
+                    Card(Number['one'], Color['blue'], Shading['solid'], Shape['oval']),
+                    Card(Number['three'], Color['red'], Shading['striped'], Shape['oval'])
+                }
+            )
+        )
+
+        self.assertIsNotNone(
+            SetFactory.make_set_from_cards(
+                {
+                    Card(Number['two'], Color['green'], Shading['empty'], Shape['oval']),
+                    Card(Number['one'], Color['blue'], Shading['solid'], Shape['oval']),
+                    Card(Number['three'], Color['red'], Shading['striped'], Shape['oval'])
+                }
+            )
+        )
+
     @staticmethod
     def random_attribute(enum_type):
         """
