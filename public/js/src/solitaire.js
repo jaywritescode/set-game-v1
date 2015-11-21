@@ -52,6 +52,9 @@ var Solitaire = React.createClass({
           default:
             throw("This shouldn't happen.");
         }
+      }, (response) => {
+        console.error(response);
+      }).then(() => {
         console.log(this.state.selected);
         for (card of this.state.selected) {
           card.setState({
@@ -59,8 +62,7 @@ var Solitaire = React.createClass({
           });
         }
         this.state.selected.clear();
-      }, (response) => {
-        console.error(response);
+        console.log(this.state.selected);
       });
     }
   },
