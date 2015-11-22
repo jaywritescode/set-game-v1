@@ -125,13 +125,6 @@ class SolitaireSet:
         return cards
 
 
-class AlreadyFound(Exception):
-    """
-    An exception called when the user submits a Set they've already found.
-    """
-    pass
-
-
 if __name__ == '__main__':
     solitaire = SolitaireSet()
     c = SetSerializer.serialize(solitaire.cards)
