@@ -107,7 +107,11 @@ class SolitaireSet:
         Response = Enum('response', ('OK', 'NOT_A_SET', 'ALREADY_FOUND'))
         if is_set(selection):
             the_set = self.set_factory.make_set_from_cards(selection)
-            return Response['ALREADY_FOUND'] if the_set in self.found else Response['OK']
+            if the_set in self.found:
+                return Response['ALREADY_FOUND']
+            else:
+                self.found.add(the_set)
+                return Response['OK']
         else:
             return Response['NOT_A_SET']
 
