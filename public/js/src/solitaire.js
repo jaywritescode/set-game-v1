@@ -43,8 +43,11 @@ var Solitaire = React.createClass({
       }).then((response) => {
         switch(response['result']) {
           case 'OK':
-            console.log('OK'); break;
-            this.state.found.add(new Set(this.state.selected));
+            console.log('OK');
+            this.setState({
+              found: this.state.found.add(new Set(this.state.selected))
+            });
+            break;
           case 'NOT_A_SET':
             console.log('NOT_A_SET'); break;
           case 'ALREADY_FOUND':
@@ -67,16 +70,26 @@ var Solitaire = React.createClass({
     }
   },
 
-  // renderSet: function(the_set) {
-  //   return the_set.map(renderCard()).join(', ');
-  // },
+  renderSet: function(the_set) {
+    return [...the_set].map((card_component) => {
+      return `<${card_component.content()}>`;
+    }).join(' ');
+  },
 
   renderSetsFound: function() {
     return this.state.found.size ? (
-      <ul>
-        <li>found: {this.state.found.size}</li>
-      </ul>
-    ) : void 0;
+      <div id="status">
+        <ul>
+          {[...this.state.found].map((the_set) => {
+            return (
+              <li>{this.renderSet(the_set)}</li>
+            );
+          })}
+        </ul>
+      </div>
+    ) : (
+      <div id="status">No sets found so far.</div>
+    );
   },
 
   render: function() {
@@ -92,7 +105,6 @@ var Solitaire = React.createClass({
             );
           })}
         </ul>
-        <p>Sets found:</p>
         {this.renderSetsFound()}
       </div>
     );
@@ -114,13 +126,18 @@ var SetCard = React.createClass({
     this.props.parentHandleClick(this, newState);
   },
 
+  content: function() {
+    var card = this.props.card;
+    return [card.number, card.color, card.shading, card.shape].join(' ');
+  },
+
   render: function() {
     let classes = ["card"];
     if (this.state.selected) {
       classes.push("selected");
     }
     return (
-      <div className={classes.join(" ")} onClick={this.handleClick}>{[this.props.card.number, this.props.card.color, this.props.card.shading, this.props.card.shape].join(' ')}</div>
+      <div className={classes.join(" ")} onClick={this.handleClick}>{this.content()}</div>
     );
   }
 });

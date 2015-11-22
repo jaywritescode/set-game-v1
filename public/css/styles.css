@@ -15,7 +15,7 @@ ul:nth-child(3) li {
   float: left;
 }
 
-#cards > p {
+#cards > #status {
   clear: both;
 }
 
