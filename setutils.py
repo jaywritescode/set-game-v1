@@ -14,10 +14,10 @@ game_attrs = [Number, Color, Shading, Shape]
 
 class Card:
     def __init__(self, number, color, shading, shape):
-        self.number = self.enumify(number, Number)
-        self.color = self.enumify(color, Color)
-        self.shading = self.enumify(shading, Shading)
-        self.shape = self.enumify(shape, Shape)
+        self.number = number
+        self.color = color
+        self.shading = shading
+        self.shape = shape
 
     def attribute(self, enum_type):
         """
@@ -44,8 +44,18 @@ class Card:
         return {k: self.__dict__[k].name for k in ['number', 'color', 'shading', 'shape']}
 
     @staticmethod
-    def enumify(enum_value, enum_type=None):
-        return enum_value if isinstance(enum_value, Enum) else enum_type[enum_value]
+    def from_obj(obj):
+        """
+        Turn an object with "number", "color", "shading", and "shape" attributes into a Card.
+
+        :param obj: the collection of attributes
+        :return: the Card with those attributes
+        """
+        number = Number[obj['number']]
+        color = Color[obj['color']]
+        shading = Shading[obj['shading']]
+        shape = Shape[obj['shape']]
+        return Card(number, color, shading, shape)
 
     def __str__(self):
         string = '%s %s %s %s' % (self.number.name, self.color.name, self.shading.name, self.shape.name)
