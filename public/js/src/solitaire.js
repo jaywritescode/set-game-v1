@@ -67,18 +67,34 @@ var Solitaire = React.createClass({
     }
   },
 
+  // renderSet: function(the_set) {
+  //   return the_set.map(renderCard()).join(', ');
+  // },
+
+  renderSetsFound: function() {
+    return this.state.found.size ? (
+      <ul>
+        <li>found: {this.state.found.size}</li>
+      </ul>
+    ) : void 0;
+  },
+
   render: function() {
     return (
-      <ul>
-        {this.state.cards.map((card) => {
-          return (
-            <li>
-              <SetCard card={card}
-                       parentHandleClick={this.onClickSetCard} />
-            </li>
-          );
-        })}
-      </ul>
+      <div id="cards">
+        <ul>
+          {this.state.cards.map((card) => {
+            return (
+              <li>
+                <SetCard card={card}
+                         parentHandleClick={this.onClickSetCard} />
+              </li>
+            );
+          })}
+        </ul>
+        <p>Sets found:</p>
+        {this.renderSetsFound()}
+      </div>
     );
   }
 });
