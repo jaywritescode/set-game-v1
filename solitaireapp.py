@@ -22,6 +22,10 @@ class SolitaireWebService:
     def GET(self, reset=False, num_cards=12, num_sets=6):
         if not self.solitaire or reset:
             self.solitaire = SolitaireSet(num_cards=num_cards, num_sets=num_sets)
+
+        for a_set in self.solitaire.sets:
+            cherrypy.log(str(a_set))
+
         return {
             'cards': [card.to_hash() for card in self.solitaire.cards]
         }
