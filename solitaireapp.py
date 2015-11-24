@@ -19,8 +19,8 @@ class SolitaireWebService:
         self.solitaire = None
 
     @cherrypy.tools.json_out()
-    def GET(self, reset=False, num_cards=12, num_sets=6):
-        if not self.solitaire or reset:
+    def GET(self, num_cards=12, num_sets=6):
+        if not self.solitaire:
             self.solitaire = SolitaireSet(num_cards=num_cards, num_sets=num_sets)
 
         for a_set in self.solitaire.sets:
