@@ -219,20 +219,6 @@ def is_set(cards):
     return retval
 
 
-class SetSerializer:
-
-    @staticmethod
-    def serialize(cards):
-        """
-        Serialize a Set in a specific order, such that two equivalent Sets share
-        the same serialization.
-
-        :param cards: a collection of Cards
-        :return: the serialization of *cards*
-        """
-        return str(sorted(str(card) for card in cards))
-
-
 def complete_set(cards):
     """
     Given two cards, determine the unique card that completes the set.

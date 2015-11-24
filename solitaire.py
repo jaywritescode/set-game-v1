@@ -131,5 +131,5 @@ class SolitaireSet:
 
 if __name__ == '__main__':
     solitaire = SolitaireSet()
-    c = SetSerializer.serialize(solitaire.cards)
-    print(c)
+    for the_set in solitaire.sets:
+        print(str(the_set))
