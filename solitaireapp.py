@@ -32,8 +32,11 @@ class SolitaireWebService:
 
     @cherrypy.tools.json_out()
     def PUT(self, cards):
-        response = self.solitaire.receive_selection([Card.from_obj(json_obj) for json_obj in json.loads(cards)])
-        return {'result': response.name}
+        result = self.solitaire.receive_selection([Card(**p) for p in json.loads(cards)])
+        response = {'response': result.name}
+        if len(self.solitaire.found) == self.solitaire.num_sets:
+            response['win'] = True
+        return response
 
 
 if __name__ == '__main__':
