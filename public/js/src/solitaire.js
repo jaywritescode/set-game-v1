@@ -44,9 +44,13 @@ var Solitaire = React.createClass({
         switch(response['result']) {
           case 'OK':
             console.log('OK');
-            this.setState({
-              found: this.state.found.add(new Set(this.state.selected))
-            });
+            var new_state = {
+              found: this.state.found.add(new Set(this.state.selected));
+            }
+            if (response['solved']) {
+              Object.assign(new_state, {'solved': response['solved']})
+            }
+            this.setState(new_state);
             break;
           case 'NOT_A_SET':
             console.log('NOT_A_SET'); break;
@@ -95,6 +99,7 @@ var Solitaire = React.createClass({
   render: function() {
     return (
       <div id="cards">
+        {this.state.solved ? <h3>Solved!</h3> : void 0}
         <ul>
           {this.state.cards.map((card) => {
             return (

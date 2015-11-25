@@ -115,6 +115,14 @@ class SolitaireSet:
         else:
             return Response['NOT_A_SET']
 
+    def solved(self):
+        """
+        Determines if we've found all Sets.
+
+        :return: True iff we've found all Sets
+        """
+        return len(self.found) == self.num_sets
+
 
     @staticmethod
     def _random_cards(count):
