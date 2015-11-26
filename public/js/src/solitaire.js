@@ -130,7 +130,7 @@ var SetCard = React.createClass({
 
   content: function() {
     var card = this.props.card;
-    return [card.number, card.color, card.shading, card.shape].join(' ');
+    return [card.number, card.color, card.shading, card.shape + (card.number == 'one' ? '' : 's')].join(' ');
   },
 
   render: function() {
