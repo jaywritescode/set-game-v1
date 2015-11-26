@@ -13,6 +13,8 @@
   "author": "Jay Harris <jayharris@gmail.com>",
   "license": "ISC",
   "devDependencies": {
-    "bower": "^1.6.5"
+    "bower": "^1.6.5",
+    "gulp": "^3.9.0",
+    "gulp-babel": "^6.1.0"
   }
 }
