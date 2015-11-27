@@ -1,6 +1,15 @@
 'use strict';
 
-var Solitaire = React.createClass({
+class Solitaire extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      cards: [],
+      selected: new Set(),
+      found: new Set()
+    };
+  }
+
   componentWillMount() {
     let onSuccess = function(response) {
       this.setState({
@@ -13,15 +22,7 @@ var Solitaire = React.createClass({
       });
     }.bind(this);
     $.get(this.props.url).then(onSuccess, onError);
-  },
-
-  getInitialState() {
-    return {
-      cards: [],
-      selected: new Set(),
-      found: new Set()
-    };
-  },
+  }
 
   onClickSetCard(card, cardState) {
     if (cardState.selected) {
@@ -69,13 +70,13 @@ var Solitaire = React.createClass({
         console.log(this.state.selected);
       });
     }
-  },
+  }
 
   renderSet(the_set) {
     return [...the_set].map((card_component) => {
       return `<${card_component.content()}>`;
     }).join(' ');
-  },
+  }
 
   renderSetsFound() {
     return this.state.found.size ? (
@@ -91,7 +92,7 @@ var Solitaire = React.createClass({
     ) : (
       <div id="status">No sets found so far.</div>
     );
-  },
+  }
 
   render() {
     return (
@@ -102,7 +103,7 @@ var Solitaire = React.createClass({
             return (
               <li>
                 <SetCard card={card}
-                         parentHandleClick={this.onClickSetCard} />
+                         parentHandleClick={this.onClickSetCard.bind(this)} />
               </li>
             );
           })}
@@ -111,14 +112,15 @@ var Solitaire = React.createClass({
       </div>
     );
   }
-});
+}
 
-var SetCard = React.createClass({
-  getInitialState() {
-    return {
+class SetCard extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
       selected: false
     };
-  },
+  }
 
   handleClick(e) {
     let newState = {
@@ -126,12 +128,12 @@ var SetCard = React.createClass({
     };
     this.setState(newState);
     this.props.parentHandleClick(this, newState);
-  },
+  }
 
   content() {
     let card = this.props.card;
     return [card.number, card.color, card.shading, card.shape + (card.number == 'one' ? '' : 's')].join(' ');
-  },
+  }
 
   render() {
     let classes = ["card"];
@@ -139,10 +141,10 @@ var SetCard = React.createClass({
       classes.push("selected");
     }
     return (
-      <div className={classes.join(" ")} onClick={this.handleClick}>{this.content()}</div>
+      <div className={classes.join(" ")} onClick={this.handleClick.bind(this)}>{this.content()}</div>
     );
   }
-});
+}
 
 ReactDOM.render(
   <Solitaire url="/game" />, document.getElementById('solitaire')
