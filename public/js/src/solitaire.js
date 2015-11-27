@@ -1,13 +1,13 @@
 'use strict';
 
 var Solitaire = React.createClass({
-  componentWillMount: function() {
-    var onSuccess = function(response) {
+  componentWillMount() {
+    let onSuccess = function(response) {
       this.setState({
         cards: response.cards,
       });
     }.bind(this);
-    var onError = function(response) {
+    let onError = function(response) {
       this.setState({
         error: response
       });
@@ -23,7 +23,7 @@ var Solitaire = React.createClass({
     };
   },
 
-  onClickSetCard: function(card, cardState) {
+  onClickSetCard(card, cardState) {
     if (cardState.selected) {
       this.state.selected.add(card);
     }
@@ -71,13 +71,13 @@ var Solitaire = React.createClass({
     }
   },
 
-  renderSet: function(the_set) {
+  renderSet(the_set) {
     return [...the_set].map((card_component) => {
       return `<${card_component.content()}>`;
     }).join(' ');
   },
 
-  renderSetsFound: function() {
+  renderSetsFound() {
     return this.state.found.size ? (
       <div id="status">
         <ul>
@@ -93,7 +93,7 @@ var Solitaire = React.createClass({
     );
   },
 
-  render: function() {
+  render() {
     return (
       <div id="cards">
         {this.state.solved ? <h3>Solved!</h3> : void 0}
@@ -120,20 +120,20 @@ var SetCard = React.createClass({
     };
   },
 
-  handleClick: function(e) {
-    var newState = {
+  handleClick(e) {
+    let newState = {
       selected: !this.state.selected
     };
     this.setState(newState);
     this.props.parentHandleClick(this, newState);
   },
 
-  content: function() {
-    var card = this.props.card;
+  content() {
+    let card = this.props.card;
     return [card.number, card.color, card.shading, card.shape + (card.number == 'one' ? '' : 's')].join(' ');
   },
 
-  render: function() {
+  render() {
     let classes = ["card"];
     if (this.state.selected) {
       classes.push("selected");
