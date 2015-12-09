@@ -1,5 +1,7 @@
 'use strict';
 
+const IMG_PATH = '/static/img/';
+
 class Solitaire extends React.Component {
   constructor(props) {
     super(props);
@@ -132,7 +134,11 @@ class SetCard extends React.Component {
 
   content() {
     let card = this.props.card;
-    return [card.number, card.color, card.shading, card.shape + (card.number == 'one' ? '' : 's')].join(' ');
+    let filename = `${IMG_PATH}cards/${card.number}-${card.color}-${card.shading}-${card.shape}s.svg`;
+
+    return (
+      <img src={filename} />
+    );
   }
 
   render() {
