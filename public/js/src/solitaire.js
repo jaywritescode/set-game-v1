@@ -134,7 +134,7 @@ class SetCard extends React.Component {
 
   content() {
     let card = this.props.card;
-    let filename = `${IMG_PATH}cards/${card.number}-${card.color}-${card.shading}-${card.shape}s.svg`;
+    let filename = `${IMG_PATH}cards/${card.number}-${card.color}-${card.shading}-${card.shape}s.png`;
 
     return (
       <img src={filename} />
