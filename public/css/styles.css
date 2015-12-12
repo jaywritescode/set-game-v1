@@ -1,30 +1,55 @@
-body {
-  color: blue;
+@font-face {
+  font-family: calibri;
+  src: url(../fonts/Calibri.ttf);
 }
 
-li {
+body {
+  font-family: calibri;
+}
+
+#cards {
+  max-width: 1056px;
+  display: inline-block;
+  float: left;
+}
+
+#cards li:nth-child(4n + 1) {
+  clear: left;
+}
+
+#cards > * {
+  padding: 0;
+}
+
+#cards li {
   float: left;
   list-style-type: none;
 }
 
-ul:nth-child(3) li {
-  clear: both;
-}
-
-#cards {
-  float: left;
-}
-
-#cards > #status {
-  clear: both;
-}
-
 div.card {
-  border: 1px solid #BBB;
-  border-radius: 5px;
-  margin: 15px 20px;
+  margin: 15px 12px;
   height: 150px;
   width: 240px;
+}
+
+#found-so-far {
+  display: inline-block;
+}
+
+#found-so-far > h4 {
+  margin-left: 1em;
+}
+
+.this-set li {
+  float: left;
+  list-style-type: none;
+  display: inline-block;
+}
+
+.this-set li img {
+  height: 60px;
+  width: 96px;
+  margin: 0 3px;
 }
 
 .selected {

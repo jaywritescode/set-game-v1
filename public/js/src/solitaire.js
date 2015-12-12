@@ -75,41 +75,46 @@ class Solitaire extends React.Component {
   }
 
   renderSet(the_set) {
-    return [...the_set].map((card_component) => {
-      return `<${card_component.content()}>`;
-    }).join(' ');
+    return (
+      <ul className="this-set">
+        {[...the_set].map((card_component) => {
+          return (
+            <li>{card_component.content()}</li>
+          );
+        })}
+      </ul>
+    );
   }
 
   renderSetsFound() {
-    return this.state.found.size ? (
-      <div id="status">
-        <ul>
-          {[...this.state.found].map((the_set) => {
-            return (
-              <li>{this.renderSet(the_set)}</li>
-            );
-          })}
-        </ul>
+    return (
+      <div id="found-so-far">
+        <h4>Found so far:</h4>
+        {
+          [...this.state.found].map((the_set) => {
+            return this.renderSet(the_set);
+          })
+        }
       </div>
-    ) : (
-      <div id="status">No sets found so far.</div>
     );
   }
 
   render() {
     return (
-      <div id="cards">
-        {this.state.solved ? <h3>Solved!</h3> : void 0}
-        <ul>
-          {this.state.cards.map((card) => {
-            return (
-              <li>
-                <SetCard card={card}
-                         parentHandleClick={this.onClickSetCard.bind(this)} />
-              </li>
-            );
-          })}
-        </ul>
+      <div id="wrapper">
+        <div id="cards">
+          {this.state.solved ? <h3>Solved!</h3> : void 0}
+          <ul>
+            {this.state.cards.map((card) => {
+              return (
+                <li>
+                  <SetCard card={card}
+                           parentHandleClick={this.onClickSetCard.bind(this)} />
+                </li>
+              );
+            })}
+          </ul>
+        </div>
         {this.renderSetsFound()}
       </div>
     );
