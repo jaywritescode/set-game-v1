@@ -2,7 +2,7 @@ const gulp = require('gulp');
 const babel = require('gulp-babel');
 const sourcemaps = require('gulp-sourcemaps');
 
-gulp.task('default', ['watch']);
+gulp.task('default', ['babel', 'watch']);
 
 gulp.task('babel', () => {
   return gulp.src('public/js/src/*.js')
