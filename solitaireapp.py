@@ -38,6 +38,10 @@ class SolitaireWebService:
             response.update({'solved': True})
         return response
 
+    @cherrypy.tools.json_out()
+    def DELETE(self):
+        self.solitaire.found.clear()
+
 
 if __name__ == '__main__':
     conf = {
