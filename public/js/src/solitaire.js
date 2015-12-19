@@ -1,5 +1,9 @@
 'use strict';
 
+import $ from 'jquery';
+import React from 'react';
+import { render } from 'react-dom';
+
 const IMG_PATH = '/static/img/';
 
 class Solitaire extends React.Component {
@@ -157,6 +161,6 @@ class SetCard extends React.Component {
   }
 }
 
-ReactDOM.render(
+render(
   <Solitaire url="/game" />, document.getElementById('solitaire')
 );
