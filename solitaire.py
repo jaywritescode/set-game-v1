@@ -97,19 +97,18 @@ class SolitaireSet:
         Given a selection of cards, determines if those cards are a valid Set in
         the context of the game.
 
-        :param selection: a collection of card objects
+        :param selection: a collection of Cards
         :return: 'NOT_A_SET' if *selection* is not a Set, 'ALREADY_FOUND' if we already found this Set, otherwise 'OK'
         :throws: ValueError if we include a Card that's not in the game
         """
-        selected_cards = [Card.from_obj(c) for c in selection]
-        invalids = [card for card in selected_cards if card not in self.cards]
+        invalids = [card for card in selection if card not in self.cards]
         if any(invalids):
             raise ValueError("Invalid card%s: %s" %
-                             ('' if len(invalids) == 1 else 's', ', '.join(str(card) for card in invalids)))
+                                 ('' if len(invalids) == 1 else 's', ', '.join(str(card) for card in invalids)))
 
         Response = Enum('response', ('OK', 'NOT_A_SET', 'ALREADY_FOUND'))
-        if is_set(selected_cards):
-            the_set = self.set_factory.make_set_from_cards(selected_cards)
+        if is_set(selection):
+            the_set = self.set_factory.make_set_from_cards(selection)
             if the_set in self.found:
                 return Response['ALREADY_FOUND']
             else:

@@ -3,7 +3,7 @@ import cherrypy
 import json
 
 from solitaire import SolitaireSet
-from setutils import Card, SetFactory
+from setutils import Card
 
 
 class SolitaireApp:
@@ -32,7 +32,8 @@ class SolitaireWebService:
 
     @cherrypy.tools.json_out()
     def PUT(self, cards):
-        result = self.solitaire.receive_selection(json.loads(cards))
+        jsoncards = json.loads(cards)
+        result = self.solitaire.receive_selection(SolitaireWebService.json_to_cards(jsoncards))
         response = {'result': result.name}
         if result.name == 'OK' and self.solitaire.solved():
             response.update({'solved': True})
@@ -41,6 +42,11 @@ class SolitaireWebService:
     @cherrypy.tools.json_out()
     def DELETE(self):
         self.solitaire.found.clear()
+
+    @staticmethod
+    def json_to_cards(blob):
+        return [Card(*[getattr(Card, key)(obj[key])
+                       for key in ['number', 'color', 'shading', 'shape']]) for obj in blob]
 
 
 if __name__ == '__main__':

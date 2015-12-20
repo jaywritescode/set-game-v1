@@ -40,6 +40,22 @@ class Card:
     def get_shape(self):
         return self.shape.name
 
+    @staticmethod
+    def number(arg):
+        return Number[arg]
+
+    @staticmethod
+    def color(arg):
+        return Color[arg]
+
+    @staticmethod
+    def shading(arg):
+        return Shading[arg]
+
+    @staticmethod
+    def shape(arg):
+        return Shape[arg]
+
     def to_hash(self):
         return {k: self.__dict__[k].name for k in ['number', 'color', 'shading', 'shape']}
 
