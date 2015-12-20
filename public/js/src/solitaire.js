@@ -3,6 +3,7 @@
 import $ from 'jquery';
 import React from 'react';
 import { render } from 'react-dom';
+import { Modal, Button } from 'react-bootstrap';
 
 const IMG_PATH = '/static/img/';
 
@@ -78,6 +79,22 @@ class Solitaire extends React.Component {
     }
   }
 
+  onClickNewGame() {
+    $.ajax(this.props.url, {
+      data: { reset: true },
+      method: 'GET'
+    }).then((response) => {
+      this.setState({
+        cards: response.cards,
+        selected: new Set(),
+        found: new Set(),
+        solved: false
+      });
+    }, (response) => {
+      console.error(response);
+    });
+  }
+
   renderSet(the_set) {
     return (
       <ul className="this-set">
@@ -106,8 +123,15 @@ class Solitaire extends React.Component {
   render() {
     return (
       <div id="wrapper">
+        <Modal show={this.state.solved}>
+          <Modal.Body>
+            <h3 className="center">Solved!</h3>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button bsSize="large" bsStyle="success" onClick={this.onClickNewGame.bind(this)}>New Game...</Button>
+          </Modal.Footer>
+        </Modal>
         <div id="cards">
-          {this.state.solved ? <h3>Solved!</h3> : void 0}
           <ul>
             {this.state.cards.map((card) => {
               return (

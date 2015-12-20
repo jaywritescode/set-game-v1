@@ -54,6 +54,18 @@ div.card {
   margin: 0 3px;
 }
 
+.center {
+  text-align: center;
+}
+
 .selected {
   -webkit-box-shadow: 0px 0px 5px 10px rgba(97, 25, 97, 0.65);
+}
+
+.modal-container {
+  position: relative;
+}
+
+.modal-container .modal, .modal-container .modal-backdrop {
+  position: absolute;
 }
