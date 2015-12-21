@@ -4,6 +4,7 @@ import $ from 'jquery';
 import React from 'react';
 import { render } from 'react-dom';
 import { Modal, Button } from 'react-bootstrap';
+import moment from 'moment';
 
 const IMG_PATH = '/static/img/';
 
@@ -13,7 +14,7 @@ class Solitaire extends React.Component {
     this.state = {
       cards: [],
       selected: new Set(),
-      found: new Set()
+      found: new Set(),
     };
   }
 
@@ -32,6 +33,10 @@ class Solitaire extends React.Component {
   }
 
   onClickSetCard(card, cardState) {
+    if (!this.state.starttime) {
+      this.state.starttime = moment();
+    }
+
     if (cardState.selected) {
       this.state.selected.add(card);
     }
@@ -88,7 +93,8 @@ class Solitaire extends React.Component {
         cards: response.cards,
         selected: new Set(),
         found: new Set(),
-        solved: false
+        solved: false,
+        starttime: null
       });
     }, (response) => {
       console.error(response);
@@ -125,7 +131,7 @@ class Solitaire extends React.Component {
       <div id="wrapper">
         <Modal show={this.state.solved}>
           <Modal.Body>
-            <h3 className="center">Solved!</h3>
+            <h3 className="center">Solved! In { moment().diff(this.state.starttime, 'seconds') } seconds</h3>
           </Modal.Body>
           <Modal.Footer>
             <Button bsSize="large" bsStyle="success" onClick={this.onClickNewGame.bind(this)}>New Game...</Button>
