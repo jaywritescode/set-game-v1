@@ -70,4 +70,5 @@ if __name__ == '__main__':
     }
     webapp = SolitaireApp()
     webapp.game = SolitaireWebService()
+    cherrypy.config.update({'server.socket_port': int(os.environ.get('PORT') or 8080)})
     cherrypy.quickstart(webapp, '/', conf)
