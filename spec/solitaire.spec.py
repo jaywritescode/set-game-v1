@@ -4,8 +4,9 @@ import unittest
 
 
 class SolitaireSetTest(unittest.TestCase):
-    def test__init__(self):
-        _solitaire = SolitaireSet(num_cards=12, num_sets=6)
+    def test_start(self):
+        _solitaire = SolitaireSet()
+        _solitaire.start()
 
         self.assertEqual(_solitaire.num_cards, len(_solitaire.cards))
         self.assertEqual(_solitaire.num_sets, len(_solitaire.sets))
@@ -39,7 +40,6 @@ class SolitaireSetTest(unittest.TestCase):
 
         self.assertEquals('NOT_A_SET', _solitaire.receive_selection([_solitaire.cards[0], _solitaire.cards[1], _solitaire.cards[2]]).name)
         self.assertEquals('OK', _solitaire.receive_selection(valid_set).name)
-
 
         _solitaire.found.add( _solitaire.set_factory.make_set_from_cards(valid_set))
         self.assertEquals('ALREADY_FOUND', _solitaire.receive_selection(valid_set).name)

@@ -22,6 +22,7 @@ class SolitaireWebService:
     def GET(self, num_cards=12, num_sets=6, reset=False):
         if (not self.solitaire) or reset:
             self.solitaire = SolitaireSet(num_cards=num_cards, num_sets=num_sets)
+            self.solitaire.start()
 
         for a_set in self.solitaire.sets:
             cherrypy.log(str(a_set))
