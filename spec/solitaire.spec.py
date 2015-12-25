@@ -1,5 +1,5 @@
-from solitaire import *
-from setutils import *
+from app.setutils import *
+from app.solitaire import *
 import unittest
 
 

@@ -1,5 +1,6 @@
-from setutils import *
 import unittest
+
+from app.setutils import *
 
 
 class SetUtilsTest(unittest.TestCase):

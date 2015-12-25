@@ -1,9 +1,10 @@
-import os
-import cherrypy
 import json
+import os
 
-from solitaire import SolitaireSet
-from setutils import Card
+from app.setutils import Card
+
+import cherrypy
+from app.solitaire import SolitaireSet
 
 
 class SolitaireApp:

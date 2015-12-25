@@ -1,6 +1,7 @@
-from setutils import *
-from enum import Enum
 from collections import defaultdict
+from enum import Enum
+
+from app.setutils import *
 
 
 class SolitaireSet:
