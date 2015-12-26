@@ -15,6 +15,11 @@ class SolitaireSet:
         self.found = set()
 
     def start(self):
+        """
+        Sets up the game so there are *self.num_cards* cards and *self.num_sets* sets.
+
+        :return: None
+        """
         while True:
             self.cards = SolitaireSet._random_cards(self.num_cards)
             self.sets = find_all_sets(self.cards)
