@@ -122,6 +122,39 @@ class SetUtilsTest(unittest.TestCase):
         }
         self.assertSetEqual(expected, find_all_sets(table))
 
+    def test_find_any_sets(self):
+        table = [
+            Card(Number['one'], Color['red'], Shading['solid'], Shape['diamond']),
+            Card(Number['two'], Color['blue'], Shading['solid'], Shape['diamond']),
+            Card(Number['two'], Color['red'], Shading['solid'], Shape['diamond']),
+            Card(Number['one'], Color['red'], Shading['striped'], Shape['squiggle']),
+            Card(Number['three'], Color['red'], Shading['solid'], Shape['oval']),
+            Card(Number['three'], Color['blue'], Shading['striped'], Shape['squiggle']),
+            Card(Number['one'], Color['green'], Shading['solid'], Shape['diamond']),
+            Card(Number['three'], Color['green'], Shading['striped'], Shape['squiggle']),
+            Card(Number['two'], Color['green'], Shading['empty'], Shape['oval']),
+            Card(Number['two'], Color['green'], Shading['striped'], Shape['diamond']),
+            Card(Number['two'], Color['red'], Shading['empty'], Shape['diamond']),
+            Card(Number['three'], Color['blue'], Shading['empty'], Shape['diamond'])
+        ]
+        self.assertTrue(find_any_sets(table))
+
+        table = [
+            Card(Number['one'], Color['green'], Shading['solid'], Shape['oval']),
+            Card(Number['three'], Color['blue'], Shading['striped'], Shape['diamond']),
+            Card(Number['two'], Color['blue'], Shading['empty'], Shape['squiggle']),
+            Card(Number['one'], Color['red'], Shading['solid'], Shape['diamond']),
+            Card(Number['three'], Color['red'], Shading['solid'], Shape['oval']),
+            Card(Number['three'], Color['blue'], Shading['empty'], Shape['oval']),
+            Card(Number['one'], Color['green'], Shading['empty'], Shape['squiggle']),
+            Card(Number['three'], Color['red'], Shading['striped'], Shape['oval']),
+            Card(Number['three'], Color['red'], Shading['solid'], Shape['diamond']),
+            Card(Number['two'], Color['green'], Shading['striped'], Shape['oval']),
+            Card(Number['two'], Color['green'], Shading['empty'], Shape['oval']),
+            Card(Number['two'], Color['blue'], Shading['striped'], Shape['squiggle']),
+        ]
+        self.assertFalse(find_any_sets(table))
+
     def test_are_parallel(self):
         cards_parallel = (
             SetFactory.make_set_from_cards(

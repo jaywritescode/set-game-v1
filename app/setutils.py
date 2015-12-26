@@ -259,6 +259,14 @@ def find_all_sets(cards):
     """
     return {SetFactory.make_set_from_cards(combo) for combo in itertools.combinations(cards, 3) if is_set(combo)}
 
+def find_any_sets(cards):
+    """
+    Find any Set that can be made from the given cards
+    :param cards: a collection of cards
+    :return: True iff there exists a Set that can be made from *cards*
+    """
+    return any(is_set(combo) for combo in itertools.combinations(cards, 3))
+
 
 ###########################################################################
 # crazy geometric methods
