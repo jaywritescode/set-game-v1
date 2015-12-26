@@ -1,1 +1,1 @@
-web: python solitaireapp.py
+web: python setapp.py

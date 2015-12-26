@@ -10,7 +10,7 @@ from app.solitaire import SolitaireSet
 class SolitaireApp:
     @cherrypy.expose
     def index(self):
-        return open('index.html')
+        return open('solitaire.html')
 
 
 class SolitaireWebService:
