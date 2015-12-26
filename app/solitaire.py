@@ -129,7 +129,6 @@ class SolitaireSet:
         """
         return len(self.found) == self.num_sets
 
-
     @staticmethod
     def _random_cards(count):
         """
