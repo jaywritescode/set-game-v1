@@ -1,15 +1,13 @@
 # set-game
 That Set game that's a thing.
 
-So far I've only written the solitaire version of the game. In the process of figuring out how to deploy it to Heroku.
+I finally got the solitaire version up and running on Heroku! Until I get around to twiddling with my DNS settings, it's at https://guarded-fortress-9683.herokuapp.com/?t=solitaire.
 
-My Set game is served by CherryPy and compiled for Python 3, so to run it locally:
+### build
+transmuting amazing ES6 into lame ES5: `gulp babel`
+installing the server: `source env/bin/activate && pip install -r requirements.txt`
 
+### execute local
 ~~~sh
-pip install -r requirements.txt
-python3 solitaireapp.py
+python setapp.py
 ~~~
-
-...and then point your web browser to `http://localhost:8080/index`.
-
-The plan is to have a solitaire game that's maybe a desktop app or maybe a web app, and a multiplayer game that's probably a web app. We'll see.
