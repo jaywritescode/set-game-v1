@@ -5,12 +5,17 @@ from app.setutils import Card
 
 import cherrypy
 from app.solitaire import SolitaireSet
+from app.multiplayer import MultiplayerSet
 
-
-class SolitaireApp:
+class SetApp:
     @cherrypy.expose
-    def index(self):
-        return open('solitaire.html')
+    def index(self, t=None):
+        if t.lower() == 'solitaire':
+            self.game = SolitaireWebService()
+            return open('solitaire.html')
+        else:
+            self.game = MultiplayerWebService()
+            return open('multiplayer.html')
 
 
 class SolitaireWebService:
@@ -51,6 +56,12 @@ class SolitaireWebService:
                        for key in ['number', 'color', 'shading', 'shape']]) for obj in blob]
 
 
+class MultiplayerWebService:
+    exposed = True
+
+    def __init__(self):
+        self.multiplayer = MultiplayerSet()
+
 if __name__ == '__main__':
     conf = {
         '/': {
@@ -70,10 +81,10 @@ if __name__ == '__main__':
             'tools.staticdir.dir': 'bower_components'
         }
     }
-    webapp = SolitaireApp()
-    webapp.game = SolitaireWebService()
+
     cherrypy.config.update({
         'server.socket_host': '0.0.0.0',
         'server.socket_port': int(os.environ.get('PORT', 8080))
     })
-    cherrypy.quickstart(webapp, '/', conf)
+    cherrypy.quickstart(SetApp(), '/', conf)
+
