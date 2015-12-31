@@ -2,20 +2,16 @@ import json
 import os
 
 from app.setutils import Card
+from app.solitaire import SolitaireSet
+
 
 import cherrypy
-from app.solitaire import SolitaireSet
-from app.multiplayer import MultiplayerSet
+
 
 class SetApp:
     @cherrypy.expose
-    def index(self, t=None):
-        if t.lower() == 'solitaire':
-            self.game = SolitaireWebService()
-            return open('solitaire.html')
-        else:
-            self.game = MultiplayerWebService()
-            return open('multiplayer.html')
+    def index(self):
+        return open(self.homepage)
 
 
 class SolitaireWebService:
@@ -40,7 +36,7 @@ class SolitaireWebService:
     @cherrypy.tools.json_out()
     def PUT(self, cards):
         jsoncards = json.loads(cards)
-        result = self.solitaire.receive_selection(SolitaireWebService.json_to_cards(jsoncards))
+        result = self.solitaire.receive_selection(json_to_cards(jsoncards))
         response = {'result': result.name}
         if result.name == 'OK' and self.solitaire.solved():
             response.update({'solved': True})
@@ -50,22 +46,22 @@ class SolitaireWebService:
     def DELETE(self):
         self.solitaire.found.clear()
 
-    @staticmethod
-    def json_to_cards(blob):
-        return [Card(*[getattr(Card, key)(obj[key])
-                       for key in ['number', 'color', 'shading', 'shape']]) for obj in blob]
+
+class SolitaireApp(SetApp):
+    homepage = 'solitaire.html'
+    game = SolitaireWebService()
 
 
-class MultiplayerWebService:
-    exposed = True
+def json_to_cards(blob):
+    return [Card(*[getattr(Card, key)(obj[key])
+                   for key in ['number', 'color', 'shading', 'shape']]) for obj in blob]
 
-    def __init__(self):
-        self.multiplayer = MultiplayerSet()
 
 if __name__ == '__main__':
     conf = {
         '/': {
-            'tools.staticdir.root': os.path.abspath(os.getcwd())
+            'tools.staticdir.root': os.path.abspath(os.getcwd()),
+            'log.screen': True
         },
         '/game': {
             'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
@@ -81,10 +77,10 @@ if __name__ == '__main__':
             'tools.staticdir.dir': 'bower_components'
         }
     }
-
     cherrypy.config.update({
         'server.socket_host': '0.0.0.0',
-        'server.socket_port': int(os.environ.get('PORT', 8080))
+        'server.socket_port': int(os.environ.get('PORT', 8080)),
     })
-    cherrypy.quickstart(SetApp(), '/', conf)
-
+    cherrypy.tree.mount(SolitaireApp(), '/solitaire', conf)
+    cherrypy.engine.start()
+    cherrypy.engine.block()
