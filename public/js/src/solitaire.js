@@ -6,7 +6,7 @@ import { render } from 'react-dom';
 import { Modal, Button } from 'react-bootstrap';
 import moment from 'moment';
 
-const IMG_PATH = '/static/img/';
+const IMG_PATH = 'static/img/';
 
 class Solitaire extends React.Component {
   constructor(props) {
@@ -192,5 +192,5 @@ class SetCard extends React.Component {
 }
 
 render(
-  <Solitaire url="/game" />, document.getElementById('solitaire')
+  <Solitaire url="/solitaire/game" />, document.getElementById('solitaire')
 );
