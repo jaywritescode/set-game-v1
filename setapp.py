@@ -47,9 +47,19 @@ class SolitaireWebService:
         self.solitaire.found.clear()
 
 
+class MultiplayerWebService:
+    pass
+
+
 class SolitaireApp(SetApp):
     homepage = 'solitaire.html'
     game = SolitaireWebService()
+
+
+class MultiplayerApp(SetApp):
+    homepage = 'multiplayer.html'
+    game = MultiplayerWebService()
+    player = None
 
 
 def json_to_cards(blob):
@@ -82,5 +92,6 @@ if __name__ == '__main__':
         'server.socket_port': int(os.environ.get('PORT', 8080)),
     })
     cherrypy.tree.mount(SolitaireApp(), '/solitaire', conf)
+    cherrypy.tree.mount(MultiplayerApp(), '/multiplayer', conf)
     cherrypy.engine.start()
     cherrypy.engine.block()
