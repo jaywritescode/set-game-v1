@@ -12,6 +12,8 @@ import cherrypy
 class SetApp:
     @cherrypy.expose
     def index(self):
+        if not hasattr(self, 'homepage'):
+            raise cherrypy.HTTPRedirect('/solitaire', 302)
         return open(self.homepage)
 
 
@@ -85,7 +87,7 @@ if __name__ == '__main__':
         '/': {
             'tools.staticdir.root': os.path.abspath(os.getcwd()),
             'tools.sessions.on': True,
-            'log.screen': True
+            'tools.trailing_slash.on': False
         },
         '/game': {
             'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
@@ -107,5 +109,6 @@ if __name__ == '__main__':
     })
     cherrypy.tree.mount(SolitaireApp(), '/solitaire', conf)
     cherrypy.tree.mount(MultiplayerApp(), '/multiplayer', conf)
+    cherrypy.quickstart(SetApp(), '/', conf)            # needs to be mounted last
     cherrypy.engine.start()
     cherrypy.engine.block()
