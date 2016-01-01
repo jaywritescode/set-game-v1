@@ -1,9 +1,10 @@
 import json
 import os
+import random
 
 from app.setutils import Card
 from app.solitaire import SolitaireSet
-
+from app.multiplayer import MultiplayerSet
 
 import cherrypy
 
@@ -11,6 +12,8 @@ import cherrypy
 class SetApp:
     @cherrypy.expose
     def index(self):
+        if not hasattr(self, 'homepage'):
+            raise cherrypy.HTTPRedirect('/solitaire', 302)
         return open(self.homepage)
 
 
@@ -47,9 +50,31 @@ class SolitaireWebService:
         self.solitaire.found.clear()
 
 
+class MultiplayerWebService:
+    exposed = True
+
+    def __init__(self):
+        self.game = None
+
+
+    @cherrypy.tools.json_out()
+    def GET(self, initial_cards=12, reset=False):
+        if (not self.game) or reset:
+            self.game = MultiplayerSet(initial_cards=initial_cards)
+            self.game.start()
+        return {
+            'cards': [card.to_hash() for card in self.game.cards]
+        }
+
+
 class SolitaireApp(SetApp):
     homepage = 'solitaire.html'
     game = SolitaireWebService()
+
+
+class MultiplayerApp(SetApp):
+    homepage = 'multiplayer.html'
+    game = MultiplayerWebService()
 
 
 def json_to_cards(blob):
@@ -61,7 +86,8 @@ if __name__ == '__main__':
     conf = {
         '/': {
             'tools.staticdir.root': os.path.abspath(os.getcwd()),
-            'log.screen': True
+            'tools.sessions.on': True,
+            'tools.trailing_slash.on': False
         },
         '/game': {
             'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
@@ -82,5 +108,7 @@ if __name__ == '__main__':
         'server.socket_port': int(os.environ.get('PORT', 8080)),
     })
     cherrypy.tree.mount(SolitaireApp(), '/solitaire', conf)
+    cherrypy.tree.mount(MultiplayerApp(), '/multiplayer', conf)
+    cherrypy.quickstart(SetApp(), '/', conf)            # needs to be mounted last
     cherrypy.engine.start()
     cherrypy.engine.block()
