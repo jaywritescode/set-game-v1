@@ -1,9 +1,10 @@
 import json
 import os
+import random
 
 from app.setutils import Card
 from app.solitaire import SolitaireSet
-
+from app.multiplayer import MultiplayerSet
 
 import cherrypy
 
@@ -47,10 +48,6 @@ class SolitaireWebService:
         self.solitaire.found.clear()
 
 
-class MultiplayerWebService:
-    pass
-
-
 class SolitaireApp(SetApp):
     homepage = 'solitaire.html'
     game = SolitaireWebService()
@@ -58,8 +55,7 @@ class SolitaireApp(SetApp):
 
 class MultiplayerApp(SetApp):
     homepage = 'multiplayer.html'
-    game = MultiplayerWebService()
-    player = None
+    game = None
 
 
 def json_to_cards(blob):
