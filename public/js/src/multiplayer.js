@@ -60,7 +60,7 @@ class Multiplayer extends React.Component {
         {
           [...this.state.players].forEach((player, key) => {
             return (<p>goop</p>);
-          })
+          });
         }
       </div>
     );

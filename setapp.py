@@ -84,6 +84,7 @@ if __name__ == '__main__':
     conf = {
         '/': {
             'tools.staticdir.root': os.path.abspath(os.getcwd()),
+            'tools.sessions.on': True,
             'log.screen': True
         },
         '/game': {
