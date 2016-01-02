@@ -34,6 +34,14 @@ class Multiplayer extends React.Component {
     $.get(this.props.url).then(onSuccess, onError);
   }
 
+  onClickJoinGame() {
+    $.ajax(this.props.join_url, {
+      method: 'POST'
+    }).then((response) => {
+      console.log(response);
+    });
+  }
+
   renderCards() {
     if (this.state.players.size < 2) {
       return (<p>Waiting for players...</p>);
@@ -66,6 +74,14 @@ class Multiplayer extends React.Component {
     );
   }
 
+  renderJoinGame() {
+    return (
+      <div id="join-game">
+        <button onClick={this.onClickJoinGame.bind(this)}>Join Game</button>
+      </div>
+    );
+  }
+
   render() {
     return (
       <div id="wrapper">
@@ -73,11 +89,12 @@ class Multiplayer extends React.Component {
           {this.renderCards()}
         </div>
         {this.renderPlayers()}
+        {this.renderJoinGame()}
       </div>
     );
   }
 }
 
 render(
-  <Multiplayer url="/multiplayer/game" />, document.getElementById('multiplayer')
+  <Multiplayer url="/multiplayer/game" join_url="/multiplayer/join"/>, document.getElementById('multiplayer')
 );
