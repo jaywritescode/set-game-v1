@@ -65,11 +65,17 @@ class MultiplayerJoinWebService:
 
     @cherrypy.tools.json_out()
     def POST(self):
+        if cherrypy.session.get('player'):
+            raise cherrypy.HTTPError(412, "Precondition Failed: player already exists.")
+
         cherrypy.session['player'] = self.game.add_player()
         return {
             'player_id': cherrypy.session.get('player').id
         }
 
+    @cherrypy.tools.json_out()
+    def DELETE(self):
+        cherrypy.session.cache.clear()
 
 class SolitaireApp(SetApp):
     homepage = 'solitaire.html'
