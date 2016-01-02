@@ -53,17 +53,8 @@ class SolitaireWebService:
 class MultiplayerWebService:
     exposed = True
 
-    def __init__(self):
-        self.game = None
-
-    @cherrypy.tools.json_out()
-    def GET(self, initial_cards=12, reset=False):
-        if (not self.game) or reset:
-            self.game = MultiplayerSet(initial_cards=initial_cards)
-            self.game.start()
-        return {
-            'cards': [card.to_hash() for card in self.game.cards]
-        }
+    def __init__(self, initial_cards=12):
+        self.game = MultiplayerSet(initial_cards)
 
 
 class MultiplayerJoinWebService:
@@ -74,7 +65,10 @@ class MultiplayerJoinWebService:
 
     @cherrypy.tools.json_out()
     def POST(self):
-        pass
+        cherrypy.session['player'] = self.game.add_player()
+        return {
+            'player_id': cherrypy.session.get('player').id
+        }
 
 
 class SolitaireApp(SetApp):

@@ -4,7 +4,7 @@ import unittest
 
 
 class MultiplayerSetTest(unittest.TestCase):
-    def test_start(self):
+    def test_initial_deal(self):
         initial_cards = 12
 
         # inject a deck with a set in the first twelve cards
@@ -16,7 +16,7 @@ class MultiplayerSetTest(unittest.TestCase):
             if len(find_all_sets(deck_with_set[:initial_cards])):
                 break
         _multiplayer.deck = deck_with_set
-        _multiplayer.start()
+        _multiplayer.initial_deal()
 
         self.assertEqual(initial_cards, len(_multiplayer.cards))
         self.assertGreater(len(find_all_sets(_multiplayer.cards)), 0)
@@ -30,7 +30,7 @@ class MultiplayerSetTest(unittest.TestCase):
             if len(find_all_sets(deck_without_set[:initial_cards])) == 0:
                 break
         _multiplayer.deck = deck_without_set
-        _multiplayer.start()
+        _multiplayer.initial_deal()
 
         self.assertGreater(len(_multiplayer.cards), initial_cards)
         self.assertGreater(len(find_all_sets(_multiplayer.cards)), 0)

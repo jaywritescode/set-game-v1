@@ -1,5 +1,3 @@
-import random
-
 from app.setutils import *
 
 class MultiplayerSet:
@@ -10,9 +8,13 @@ class MultiplayerSet:
         self.cards = set()
         self.players = set()
         self.deck = all_cards()
+        self.started = False
         random.shuffle(self.deck)
 
     def start(self):
+        self.started = True
+
+    def initial_deal(self):
         self.cards = set(self.deck[:self.initial_cards])
         self.deck = self.deck[self.initial_cards:]
 
