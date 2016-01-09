@@ -3,56 +3,24 @@ import os
 import cherrypy
 from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
 
-from app.multiplayer import MultiplayerSet
 from app.setutils import Card
 import webservices.solitairegame
 
 
 class SetApp:
+    homepage = ''
+
     @cherrypy.expose
     def index(self):
-        if not hasattr(self, 'homepage'):
+        try:
+            return open(self.homepage)
+        except FileNotFoundError:
             raise cherrypy.HTTPRedirect('/solitaire', 302)
-        return open(self.homepage)
 
-
-class MultiplayerWebService:
-    exposed = True
-
-    def __init__(self, initial_cards=12):
-        self.game = MultiplayerSet(initial_cards)
-
-
-class MultiplayerJoinWebService:
-    exposed = True
-
-    def __init__(self, game):
-        self.game = game
-
-    @cherrypy.tools.json_out()
-    def POST(self):
-        if cherrypy.session.get('player'):
-            raise cherrypy.HTTPError(412, "Precondition Failed: player already exists.")
-
-        cherrypy.session['player'] = self.game.add_player()
-        return {
-            'player_id': cherrypy.session.get('player').id
-        }
-
-    @cherrypy.tools.json_out()
-    def DELETE(self):
-        cherrypy.session.cache.clear()
-
-
-class MultiplayerApp(SetApp):
-    homepage = 'multiplayer.html'
-    game = MultiplayerWebService()
-    join = MultiplayerJoinWebService(game.game)
-
-
-def json_to_cards(blob):
-    return [Card(*[getattr(Card, key)(obj[key])
-                   for key in ['number', 'color', 'shading', 'shape']]) for obj in blob]
+    @staticmethod
+    def json_to_cards(blob):
+        return [Card(*[getattr(Card, key)(obj[key])
+                       for key in ['number', 'color', 'shading', 'shape']]) for obj in blob]
 
 
 if __name__ == '__main__':
