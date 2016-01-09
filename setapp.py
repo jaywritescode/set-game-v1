@@ -5,6 +5,7 @@ from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
 
 from app.setutils import Card
 import webservices.solitairegame
+import webservices.multiplayergame
 
 
 class SetApp:
@@ -60,7 +61,7 @@ if __name__ == '__main__':
     cherrypy.tools.websocket = WebSocketTool()
 
     cherrypy.tree.mount(webservices.solitairegame.SolitaireApp(), '/solitaire', base_conf)
-    cherrypy.tree.mount(MultiplayerApp(), '/multiplayer', mp_conf)
+    cherrypy.tree.mount(webservices.multiplayergame.MultiplayerApp(), '/multiplayer', mp_conf)
     cherrypy.quickstart(SetApp(), '/', base_conf)            # needs to be mounted last
     cherrypy.engine.start()
     cherrypy.engine.block()
