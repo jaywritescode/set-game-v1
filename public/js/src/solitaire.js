@@ -10,7 +10,7 @@ import SetCard from 'setcard';
 
 const IMG_PATH = 'static/img/';
 
-class Solitaire extends React.Component {
+export default class Solitaire extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -156,7 +156,3 @@ class Solitaire extends React.Component {
     );
   }
 }
-
-render(
-  <Solitaire url="/solitaire/game" />, document.getElementById('solitaire')
-);

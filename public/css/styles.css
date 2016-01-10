@@ -9,6 +9,17 @@ body {
   font-family: calibri;
 }
 
+#index-wrapper {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#index-wrapper button {
+  margin: 10px;
+}
+
 #cards {
   max-width: 1056px;
   display: inline-block;
