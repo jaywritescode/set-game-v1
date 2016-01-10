@@ -8,13 +8,14 @@ import setapp
 class SolitaireWebService:
     exposed = True
 
-    def __init__(self):
-        self.solitaire = None
+    def __init__(self, num_cards=12, num_sets=6):
+        if cherrypy.session.get('game') is None:
+            self.reset(num_cards, num_sets)
 
     @cherrypy.tools.json_out()
-    def GET(self, num_cards=12, num_sets=6, reset=False):
-        if (not self.solitaire) or reset:
-            self.solitaire = SolitaireSet(num_cards=num_cards, num_sets=num_sets)
+    def GET(self, reset=False):
+        if reset:
+            self.reset(self.solitaire.num_cards, self.solitaire.num_sets)
             self.solitaire.start()
 
         for a_set in self.solitaire.sets:
@@ -37,7 +38,11 @@ class SolitaireWebService:
     def DELETE(self):
         self.solitaire.found.clear()
 
+    def reset(self, num_cards=12, num_sets=6):
+        self.solitaire = cherrypy.session['game'] = SolitaireSet(num_cards=num_cards, num_sets=num_sets)
+        self.solitaire.start()
+
 
 class SolitaireApp(setapp.SetApp):
     homepage = 'solitaire.html'
-    game = SolitaireWebService()
+    game_type = SolitaireWebService

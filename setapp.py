@@ -59,8 +59,6 @@ if __name__ == '__main__':
     WebSocketPlugin(cherrypy.engine).subscribe()
     cherrypy.tools.websocket = WebSocketTool()
 
-    cherrypy.tree.mount(webservices.SolitaireApp(), '/solitaire', base_conf)
-    cherrypy.tree.mount(webservices.MultiplayerApp(), '/multiplayer', mp_conf)
-    cherrypy.quickstart(SetApp(), '/', base_conf)            # needs to be mounted last
-    cherrypy.engine.start()
-    cherrypy.engine.block()
+    cherrypy.quickstart(webservices.SolitaireApp(), '/solitaire', base_conf)
+    cherrypy.quickstart(webservices.MultiplayerApp(), '/multiplayer', mp_conf)
+    cherrypy.quickstart(SetApp(), '/', base_conf)
