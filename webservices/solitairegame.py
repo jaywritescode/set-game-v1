@@ -1,6 +1,6 @@
 import json
-
 import cherrypy
+
 from app.solitaire import SolitaireSet
 import setapp
 
