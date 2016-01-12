@@ -9,40 +9,36 @@ class SolitaireWebService:
     exposed = True
 
     def __init__(self, num_cards=12, num_sets=6):
-        if cherrypy.session.get('game') is None:
-            self.reset(num_cards, num_sets)
+        self.session_reset(num_cards, num_sets)
 
     @cherrypy.tools.json_out()
     def GET(self, reset=False):
+        game = cherrypy.session.get('game')
         if reset:
-            self.reset(self.solitaire.num_cards, self.solitaire.num_sets)
-            self.solitaire.start()
+            self.session_reset(game.num_cards, game.num_sets)
 
-        for a_set in self.solitaire.sets:
+        for a_set in game.sets:
             cherrypy.log(str(a_set))
 
         return {
-            'cards': [card.to_hash() for card in self.solitaire.cards]
+            'cards': [card.to_hash() for card in game.cards]
         }
 
     @cherrypy.tools.json_out()
     def PUT(self, cards):
+        game = cherrypy.session.get('game')
+
         jsoncards = json.loads(cards)
-        result = self.solitaire.receive_selection(setapp.SetApp.json_to_cards(jsoncards))
+        result = game.receive_selection(json_to_cards(jsoncards))
         response = {'result': result.name}
-        if result.name == 'OK' and self.solitaire.solved():
+        if result.name == 'OK' and game.solved():
             response.update({'solved': True})
         return response
 
     @cherrypy.tools.json_out()
     def DELETE(self):
-        self.solitaire.found.clear()
+        cherrypy.session.get('game').clear()
 
-    def reset(self, num_cards=12, num_sets=6):
-        self.solitaire = cherrypy.session['game'] = SolitaireSet(num_cards=num_cards, num_sets=num_sets)
-        self.solitaire.start()
-
-
-class SolitaireApp(setapp.SetApp):
-    homepage = 'solitaire.html'
-    game_type = SolitaireWebService
+    def session_reset(self, num_cards, num_sets):
+        cherrypy.session['game'] = SolitaireSet(num_cards, num_sets)
+        cherrypy.session['game'].start()
