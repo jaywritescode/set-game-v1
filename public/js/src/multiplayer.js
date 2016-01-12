@@ -8,7 +8,7 @@ import SetCard from 'setcard';
 
 const IMG_PATH = 'static/img/';
 
-class Multiplayer extends React.Component {
+export default class Multiplayer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -98,7 +98,3 @@ class Multiplayer extends React.Component {
     );
   }
 }
-
-render(
-  <Multiplayer url="/multiplayer/game" join_url="/multiplayer/join"/>, document.getElementById('multiplayer')
-);

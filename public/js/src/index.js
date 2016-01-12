@@ -6,12 +6,21 @@ import { render } from 'react-dom';
 import { Button } from 'react-bootstrap';
 
 import Solitaire from 'solitaire';
+import Multiplayer from 'multiplayer';
 
 class SetApp extends React.Component {
   startSolitaire() {
     $.get('/solitaire').then((response) => {
       render(
         <Solitaire url="/game" />, document.getElementById('content')
+      );
+    });
+  }
+
+  startMultiplayer() {
+    $.get('/multiplayer').then((response) => {
+      render(
+        <Multiplayer url="/game" />, document.getElementById('content')
       );
     });
   }
