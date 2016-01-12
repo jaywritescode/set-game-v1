@@ -3,25 +3,17 @@ import os
 import cherrypy
 from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
 
-from app.setutils import Card
 import webservices
 
 
 class SetApp:
-    homepage = ''
-
     @cherrypy.expose
     def index(self):
-        try:
-            return open(self.homepage)
-        except FileNotFoundError:
-            raise cherrypy.HTTPRedirect('/solitaire', 302)
+        return open('index.html')
 
-    @staticmethod
-    def json_to_cards(blob):
-        return [Card(*[getattr(Card, key)(obj[key])
-                       for key in ['number', 'color', 'shading', 'shape']]) for obj in blob]
-
+    @cherrypy.expose
+    def solitaire(self):
+        self.game = webservices.SolitaireWebService()
 
 if __name__ == '__main__':
     base_conf = {
@@ -58,7 +50,4 @@ if __name__ == '__main__':
     })
     WebSocketPlugin(cherrypy.engine).subscribe()
     cherrypy.tools.websocket = WebSocketTool()
-
-    cherrypy.quickstart(webservices.SolitaireApp(), '/solitaire', base_conf)
-    cherrypy.quickstart(webservices.MultiplayerApp(), '/multiplayer', mp_conf)
     cherrypy.quickstart(SetApp(), '/', base_conf)
