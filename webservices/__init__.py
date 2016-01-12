@@ -1,2 +1,2 @@
 from .solitairegame import SolitaireWebService
-from .multiplayergame import MultiplayerApp
+from .multiplayergame import MultiplayerWebService
