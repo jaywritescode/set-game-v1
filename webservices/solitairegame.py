@@ -2,7 +2,7 @@ import json
 import cherrypy
 
 from app.solitaire import SolitaireSet
-import setapp
+from .mixins import *
 
 
 class SolitaireWebService:
