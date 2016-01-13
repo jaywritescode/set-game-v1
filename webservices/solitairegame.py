@@ -9,13 +9,15 @@ class SolitaireWebService:
     exposed = True
 
     def __init__(self, num_cards=12, num_sets=6):
-        self.session_reset(num_cards, num_sets)
+        self.num_cards = num_cards
+        self.num_sets = num_sets
 
     @cherrypy.tools.json_out()
     def GET(self, reset=False):
         game = cherrypy.session.get('game')
-        if reset:
-            self.session_reset(game.num_cards, game.num_sets)
+        if reset or not game:
+            game = cherrypy.session['game'] = SolitaireSet(self.num_cards, self.num_sets)
+            game.start()
 
         for a_set in game.sets:
             cherrypy.log(str(a_set))
@@ -38,7 +40,3 @@ class SolitaireWebService:
     @cherrypy.tools.json_out()
     def DELETE(self):
         cherrypy.session.get('game').clear()
-
-    def session_reset(self, num_cards, num_sets):
-        cherrypy.session['game'] = SolitaireSet(num_cards, num_sets)
-        cherrypy.session['game'].start()

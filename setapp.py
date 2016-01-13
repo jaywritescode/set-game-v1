@@ -17,10 +17,6 @@ class SetApp:
         return open('index.html')
 
     @cherrypy.expose
-    def solitaire(self):
-        self.game = self.solitaire_service
-
-    @cherrypy.expose
     def multiplayer(self):
         self.game = self.multiplayer_service
 
@@ -33,11 +29,6 @@ if __name__ == '__main__':
         },
         '/game/create': {
             'request.dispatch': cherrypy.dispatch.Dispatcher(),
-            'tools.response_headers.on': True,
-            'tools.response_headers.headers': [('Content-Type', 'application/json')]
-        },
-        '/game': {
-            'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
             'tools.response_headers.on': True,
             'tools.response_headers.headers': [('Content-Type', 'application/json')]
         },
@@ -56,4 +47,21 @@ if __name__ == '__main__':
     })
     WebSocketPlugin(cherrypy.engine).subscribe()
     cherrypy.tools.websocket = WebSocketTool()
+    cherrypy.tree.mount(webservices.SolitaireWebService(), '/solitaire', {
+        '/' : {
+            'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+            'tools.sessions.on': True,
+            'tools.response_headers.on': True,
+            'tools.response_headers.headers': [('Content-Type', 'application/json')]
+        },
+        '/game': {
+            'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+            'tools.sessions.on': True,
+            'tools.response_headers.on': True,
+            'tools.response_headers.headers': [('Content-Type', 'application/json')]
+        }
+    })
     cherrypy.quickstart(SetApp(), '/', base_conf)
+
+    cherrypy.engine.start()
+    cherrypy.engine.block()

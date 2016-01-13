@@ -12,7 +12,7 @@ class SetApp extends React.Component {
   startSolitaire() {
     $.get('/solitaire').then((response) => {
       render(
-        <Solitaire url="/game" />, document.getElementById('content')
+        <Solitaire url="/solitaire" />, document.getElementById('content')
       );
     });
   }
