@@ -7,18 +7,22 @@ import webservices
 
 
 class SetApp:
+    def __init__(self):
+        self.solitaire_service = webservices.SolitaireWebService()
+        self.multiplayer_service = webservices.MultiplayerWebService()
+        self.game = None
+
     @cherrypy.expose
     def index(self):
         return open('index.html')
 
     @cherrypy.expose
     def solitaire(self):
-        self.game = webservices.SolitaireWebService()
+        self.game = self.solitaire_service
 
     @cherrypy.expose
     def multiplayer(self):
-        # TODO: we can only use one of the web services at a time, fix that
-        self.game = webservices.MultiplayerWebService()
+        self.game = self.multiplayer_service
 
 if __name__ == '__main__':
     base_conf = {
