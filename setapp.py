@@ -27,6 +27,11 @@ if __name__ == '__main__':
             'tools.sessions.on': True,
             'tools.trailing_slash.on': False
         },
+        '/game/create': {
+            'request.dispatch': cherrypy.dispatch.Dispatcher(),
+            'tools.response_headers.on': True,
+            'tools.response_headers.headers': [('Content-Type', 'application/json')]
+        },
         '/game': {
             'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
             'tools.response_headers.on': True,
@@ -41,14 +46,6 @@ if __name__ == '__main__':
             'tools.staticdir.dir': 'bower_components'
         }
     }
-    mp_conf = base_conf.copy()
-    mp_conf.update({
-        '/join': {
-            'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
-            'tools.response_headers.on': True,
-            'tools.response_headers.headers': [('Content-Type', 'application/json')]
-        }
-    })
     cherrypy.config.update({
         'server.socket_host': '0.0.0.0',
         'server.socket_port': int(os.environ.get('PORT', 8080)),

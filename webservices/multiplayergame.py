@@ -12,11 +12,11 @@ class MultiplayerWebService:
 
     @cherrypy.tools.json_out()
     def GET(self):
-        if not len(self.games):
-            name = self.create_game()
         return {name: len(game.players) for name, game in self.games.items()}
 
-    def create_game(self):
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def create(self):
         name = haikunate()
         self.games[name] = MultiplayerSet()
-        return name
+        return {'name': name}
