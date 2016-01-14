@@ -16,21 +16,12 @@ class SetApp:
     def index(self):
         return open('index.html')
 
-    @cherrypy.expose
-    def multiplayer(self):
-        self.game = self.multiplayer_service
-
 if __name__ == '__main__':
     base_conf = {
         '/': {
             'tools.staticdir.root': os.path.abspath(os.getcwd()),
             'tools.sessions.on': True,
             'tools.trailing_slash.on': False
-        },
-        '/game/create': {
-            'request.dispatch': cherrypy.dispatch.Dispatcher(),
-            'tools.response_headers.on': True,
-            'tools.response_headers.headers': [('Content-Type', 'application/json')]
         },
         '/static': {
             'tools.staticdir.on': True,
@@ -48,6 +39,20 @@ if __name__ == '__main__':
     WebSocketPlugin(cherrypy.engine).subscribe()
     cherrypy.tools.websocket = WebSocketTool()
     cherrypy.tree.mount(webservices.SolitaireWebService(), '/solitaire', {
+        '/' : {
+            'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+            'tools.sessions.on': True,
+            'tools.response_headers.on': True,
+            'tools.response_headers.headers': [('Content-Type', 'application/json')]
+        },
+        '/game': {
+            'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+            'tools.sessions.on': True,
+            'tools.response_headers.on': True,
+            'tools.response_headers.headers': [('Content-Type', 'application/json')]
+        }
+    })
+    cherrypy.tree.mount(webservices.MultiplayerWebService(), '/multiplayer', {
         '/' : {
             'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
             'tools.sessions.on': True,
