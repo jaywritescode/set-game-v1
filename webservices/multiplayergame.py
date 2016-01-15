@@ -9,10 +9,17 @@ class MultiplayerWebService:
 
     def __init__(self):
         self.games = dict()
+        for _ in range(5):
+            self.games[self.make_name()] = self.create_game()
 
     @cherrypy.tools.json_out()
     def GET(self):
         return {name: len(game.players) for name, game in self.games.items()}
+
+    @cherrypy.tools.json_out()
+    def PUT(self):
+        for _ in range(5):
+            self.create()
 
     @cherrypy.expose
     @cherrypy.tools.json_out()

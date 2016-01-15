@@ -16,10 +16,10 @@ export default class Multiplayer extends React.Component {
       selected: new Set(),
       players: new Map()
     };
-    this.ws = new WebSocket(`ws://localhost:8080/${this.props.url}`);
-    this.ws.onopen = (event) => {
-      console.log('websocket is open');
-    }
+//    this.ws = new WebSocket(`ws://localhost:8080/${this.props.url}`);
+//    this.ws.onopen = (event) => {
+//      console.log('websocket is open');
+//    }
   }
 
   // FIXME: this shouldn't happen until we have at least two players and
