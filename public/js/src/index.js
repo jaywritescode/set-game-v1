@@ -27,7 +27,7 @@ class SetApp extends React.Component {
         'error': response
       });
     }.bind(this);
-    $.get('/multiplayer').then(onSuccess, onError);
+    $.get('/multiplayer/status').then(onSuccess, onError);
   }
 
   startSolitaire() {

@@ -64,6 +64,11 @@ if __name__ == '__main__':
             'tools.sessions.on': True,
             'tools.response_headers.on': True,
             'tools.response_headers.headers': [('Content-Type', 'application/json')]
+        },
+        '/status': {
+            'request.dispatch': cherrypy.dispatch.Dispatcher(),
+            'tools.response_headers.on': True,
+            'tools.response_headers.headers': [('Content-Type', 'application/json')]
         }
     })
     cherrypy.quickstart(SetApp(), '/', base_conf)

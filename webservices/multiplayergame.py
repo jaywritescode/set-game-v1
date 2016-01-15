@@ -14,7 +14,7 @@ class MultiplayerWebService:
 
     @cherrypy.tools.json_out()
     def GET(self):
-        return {name: len(game.players) for name, game in self.games.items()}
+        pass
 
     @cherrypy.tools.json_out()
     def PUT(self):
@@ -54,6 +54,10 @@ class MultiplayerWebService:
                 'error': 'some error'
             }
 
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def status(self):
+        return {name: len(game.players) for name, game in self.games.items()}
 
     def create_game(self):
         """
