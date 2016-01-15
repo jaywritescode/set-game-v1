@@ -59,13 +59,7 @@ if __name__ == '__main__':
             'tools.response_headers.on': True,
             'tools.response_headers.headers': [('Content-Type', 'application/json')]
         },
-        '/create': {
-            'request.dispatch': cherrypy.dispatch.Dispatcher(),
-            'tools.sessions.on': True,
-            'tools.response_headers.on': True,
-            'tools.response_headers.headers': [('Content-Type', 'application/json')]
-        },
-        '/join': {
+        '/go': {
             'request.dispatch': cherrypy.dispatch.Dispatcher(),
             'tools.sessions.on': True,
             'tools.response_headers.on': True,

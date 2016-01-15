@@ -38,24 +38,16 @@ class SetApp extends React.Component {
     });
   }
 
-  startMultiplayer() {
-    $.get('/multiplayer/create').then((response) => {
-      render(
-        <Multiplayer url="multiplayer" />, document.getElementById('content')
-      );
-    });
-  }
-
-  joinMultiplayer(gameName) {
+  startMultiplayer(gameName) {
     return (evt) => {
-      $.get('/multiplayer/join', {
+      $.get('/multiplayer/go', {
         name: gameName
       }).then((response) => {
         render(
-          <Multiplayer url="multiplayer" />, document.getElementById('content')
+          <Multiplayer url="multiplayer" name={response.name}/>, document.getElementById('content')
         );
       });
-    }
+    };
   }
 
   render() {
@@ -71,12 +63,12 @@ class SetApp extends React.Component {
                      key="multiplayer"
                      title="Multiplayer Set"
                      id="multiplayer_split_button"
-                     onClick={this.startMultiplayer}>
+                     onClick={this.startMultiplayer()}>
           {$.map(this.state.games, (value, key) => {
             return (
               <MenuItem eventKey={key}
                         key={key}
-                        onSelect={this.joinMultiplayer(key)}>
+                        onSelect={this.startMultiplayer(key)}>
                 {`${key} => ${value} player${value == 1 ? '' : 's'}`}
               </MenuItem>
             );

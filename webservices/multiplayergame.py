@@ -22,48 +22,28 @@ class MultiplayerWebService:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def create(self):
+    def go(self, name=None):
         """
-        Endpoint to create a new MultiplayerSet game.
+        Endpoint to create and/or join a MultiplayerSet game.
 
-        :return: the name of the newly created game, and this user's player
+        :param name: the name of the game to join, or None to start a new game
+        :return: the name of the game and this user's player id
         """
         if cherrypy.session.get('game'):
-            raise cherrypy.HTTPError(400, 'Already in a game')
-        if cherrypy.session.get('player'):
-            raise cherrypy.HTTPError(400, 'Already has a player')
+            # todo: move this user from the old game to the new game
+            raise cherrypy.HTTPError(422, 'Already in a game.')
 
-        name = self.make_name()
-        game = self.games[name] = cherrypy.session['game'] = self.create_game()
-        cherrypy.session['player'] = game.add_player()
-        return {
-            'name': name,
-            'player': cherrypy.session['player'].id
-        }
-
-    # todo: combine create and join into a single endpoint
-    @cherrypy.expose
-    @cherrypy.tools.json_out()
-    def join(self, name):
-        """
-        Endpoint to join an existing MultiplayerSet game.
-
-        :return: the name of the game, and this user's player, or an error message
-        """
-        if name not in self.games:
-            raise cherrypy.HTTPError(422, 'This game does not exist')
-        game = self.games[name]
-
-        my_game, my_player = [cherrypy.session.get(k) for k in ['game', 'player']]
-
-        if my_game and my_game is not game:
-            raise cherrypy.HTTPError(400, 'Already in a different game')
-        if my_player:
-            raise cherrypy.HTTPError(422, 'Already connected to this game')
+        if name:
+            try:
+                game = self.games[name]
+            except KeyError:
+                raise cherrypy.HTTPError(422, 'This game does not exist.')
+        else:
+            name = self.make_name()
+            game = self.games[name] = cherrypy.session['game'] = self.create_game()
 
         player = game.add_player()
         if player:
-            cherrypy.session['game'] = game
             cherrypy.session['player'] = player
             return {
                 'name': name,
@@ -73,6 +53,7 @@ class MultiplayerWebService:
             return {
                 'error': 'some error'
             }
+
 
     def create_game(self):
         """
