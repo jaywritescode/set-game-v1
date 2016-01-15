@@ -9,6 +9,8 @@ class MultiplayerWebService:
 
     def __init__(self):
         self.games = dict()
+        for _ in range(5):
+            self.games[self.make_name()] = self.create_game()
 
     @cherrypy.tools.json_out()
     def GET(self):

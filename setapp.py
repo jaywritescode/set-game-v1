@@ -59,8 +59,8 @@ if __name__ == '__main__':
             'tools.response_headers.on': True,
             'tools.response_headers.headers': [('Content-Type', 'application/json')]
         },
-        '/game': {
-            'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+        '/create': {
+            'request.dispatch': cherrypy.dispatch.Dispatcher(),
             'tools.sessions.on': True,
             'tools.response_headers.on': True,
             'tools.response_headers.headers': [('Content-Type', 'application/json')]

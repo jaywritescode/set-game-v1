@@ -39,7 +39,7 @@ class SetApp extends React.Component {
   }
 
   startMultiplayer() {
-    $.get('/multiplayer').then((response) => {
+    $.get('/multiplayer/create').then((response) => {
       render(
         <Multiplayer url="/game" />, document.getElementById('content')
       );
