@@ -41,9 +41,21 @@ class SetApp extends React.Component {
   startMultiplayer() {
     $.get('/multiplayer/create').then((response) => {
       render(
-        <Multiplayer url="/game" />, document.getElementById('content')
+        <Multiplayer url="multiplayer" />, document.getElementById('content')
       );
     });
+  }
+
+  joinMultiplayer(gameName) {
+    return (evt) => {
+      $.get('/multiplayer/join', {
+        name: gameName
+      }).then((response) => {
+        render(
+          <Multiplayer url="multiplayer" />, document.getElementById('content')
+        );
+      });
+    }
   }
 
   render() {
@@ -62,7 +74,11 @@ class SetApp extends React.Component {
                      onClick={this.startMultiplayer}>
           {$.map(this.state.games, (value, key) => {
             return (
-              <MenuItem eventKey={key} key={key}>{`${key} => ${value} player${value == 1 ? '' : 's'}`}</MenuItem>
+              <MenuItem eventKey={key}
+                        key={key}
+                        onSelect={this.joinMultiplayer(key)}>
+                {`${key} => ${value} player${value == 1 ? '' : 's'}`}
+              </MenuItem>
             );
           })}
         </SplitButton>
