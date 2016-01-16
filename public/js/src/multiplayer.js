@@ -78,22 +78,14 @@ export default class Multiplayer extends React.Component {
     );
   }
 
-  renderJoinGame() {
-    return (
-      <div id="join-game">
-        <button onClick={this.onClickJoinGame.bind(this)}>Join Game</button>
-      </div>
-    );
-  }
-
   render() {
     return (
       <div id="wrapper">
+        <h3>{this.props.name}</h3>
         <div id="cards">
           {this.renderCards()}
         </div>
         {this.renderPlayers()}
-        {this.renderJoinGame()}
       </div>
     );
   }
