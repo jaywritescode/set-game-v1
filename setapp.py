@@ -2,6 +2,7 @@ import os
 
 import cherrypy
 from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
+from ws4py.websocket import EchoWebSocket
 
 import webservices
 
@@ -57,18 +58,22 @@ if __name__ == '__main__':
             'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
             'tools.sessions.on': True,
             'tools.response_headers.on': True,
-            'tools.response_headers.headers': [('Content-Type', 'application/json')]
+            'tools.response_headers.headers': [('Content-Type', 'application/json')],
+            'tools.websocket.on': True,
+            'tools.websocket.handler_cls': EchoWebSocket
         },
         '/go': {
             'request.dispatch': cherrypy.dispatch.Dispatcher(),
             'tools.sessions.on': True,
             'tools.response_headers.on': True,
-            'tools.response_headers.headers': [('Content-Type', 'application/json')]
+            'tools.response_headers.headers': [('Content-Type', 'application/json')],
+            'tools.websocket.on': False
         },
         '/status': {
             'request.dispatch': cherrypy.dispatch.Dispatcher(),
             'tools.response_headers.on': True,
-            'tools.response_headers.headers': [('Content-Type', 'application/json')]
+            'tools.response_headers.headers': [('Content-Type', 'application/json')],
+            'tools.websocket.on': False
         }
     })
     cherrypy.quickstart(SetApp(), '/', base_conf)
