@@ -16,35 +16,32 @@ export default class Multiplayer extends React.Component {
       selected: new Set(),
       players: new Map()
     };
-//    this.ws = new WebSocket(`ws://localhost:8080/${this.props.url}`);
-//    this.ws.onopen = (event) => {
-//      console.log('websocket is open');
-//    }
+    this.ws = new WebSocket(`ws://localhost:8080/${this.props.url}`);
+    this.ws.onopen = (event) => {
+      console.log('websocket is open');
+      this.ws.send('some message');
+    }
+    this.ws.onmessage = (event) => {
+      console.log('received a message: %O', event);
+      console.log(event.data);
+    }
   }
 
   // FIXME: this shouldn't happen until we have at least two players and
   // then we should also wait and synchronize
-  componentWillMount() {
-    let onSuccess = function(response) {
-      this.setState({
-        cards: response.cards,
-      });
-    }.bind(this);
-    let onError = function(response) {
-      this.setState({
-        error: response
-      });
-    }.bind(this);
-    $.get(this.props.url).then(onSuccess, onError);
-  }
-
-  onClickJoinGame() {
-    $.ajax(this.props.join_url, {
-      method: 'POST'
-    }).then((response) => {
-      console.log(response);
-    });
-  }
+//  componentWillMount() {
+//    let onSuccess = function(response) {
+//      this.setState({
+//        cards: response.cards,
+//      });
+//    }.bind(this);
+//    let onError = function(response) {
+//      this.setState({
+//        error: response
+//      });
+//    }.bind(this);
+//    $.get(this.props.url).then(onSuccess, onError);
+//  }
 
   renderCards() {
     if (this.state.players.size < 2) {
@@ -79,6 +76,7 @@ export default class Multiplayer extends React.Component {
   }
 
   render() {
+    console.log('Multiplayer.render');
     return (
       <div id="wrapper">
         <h3>{this.props.name}</h3>

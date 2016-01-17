@@ -1,5 +1,8 @@
 import cherrypy
 from haikunator import haikunate
+import json
+
+from ws4py.messaging import TextMessage
 
 from app.multiplayer import MultiplayerSet
 
@@ -12,9 +15,16 @@ class MultiplayerWebService:
         for _ in range(5):
             self.games[self.make_name()] = self.create_game()
 
-    @cherrypy.tools.json_out()
+    @cherrypy.expose
+    def ws(self):
+        cherrypy.engine.publish('websocket-broadcast', TextMessage('hello'))
+
     def GET(self):
-        pass
+        game = cherrypy.session.get('game')
+        if game is None:
+            raise cherrypy.HTTPError(422, 'Need to join a game.')
+        cherrypy.log("Handler created: %s" % repr(cherrypy.request.ws_handler))
+        cherrypy.engine.publish('websocket-broadcast', TextMessage(json.loads({'hello': 'goodbye'})))
 
     @cherrypy.tools.json_out()
     def PUT(self):

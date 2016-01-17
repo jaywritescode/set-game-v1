@@ -1,8 +1,15 @@
 import os
+from datetime import datetime
+import json
+
+import logging, sys
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+
 
 import cherrypy
 from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
-from ws4py.websocket import EchoWebSocket
+from ws4py.websocket import WebSocket
+from ws4py.messaging import TextMessage
 
 import webservices
 
@@ -16,6 +23,20 @@ class SetApp:
     @cherrypy.expose
     def index(self):
         return open('index.html')
+
+
+class SetAppWebSocketHandler(WebSocket):
+    def received_message(self, m):
+        cherrypy.log('Received message: %s' % m)
+        p = {
+            'date': datetime.now().strftime("%c"),
+            'msg': str(m.data.upper())
+        }
+        self.send(TextMessage(json.dumps(p)))
+
+    def closed(self, code, reason="A client left the room without a proper explanation."):
+        cherrypy.log('Closed')
+
 
 if __name__ == '__main__':
     base_conf = {
@@ -60,20 +81,25 @@ if __name__ == '__main__':
             'tools.response_headers.on': True,
             'tools.response_headers.headers': [('Content-Type', 'application/json')],
             'tools.websocket.on': True,
-            'tools.websocket.handler_cls': EchoWebSocket
+            'tools.websocket.handler_cls': SetAppWebSocketHandler
         },
         '/go': {
             'request.dispatch': cherrypy.dispatch.Dispatcher(),
             'tools.sessions.on': True,
             'tools.response_headers.on': True,
             'tools.response_headers.headers': [('Content-Type', 'application/json')],
-            'tools.websocket.on': False
+            'tools.websocket.on': False,
         },
         '/status': {
             'request.dispatch': cherrypy.dispatch.Dispatcher(),
             'tools.response_headers.on': True,
             'tools.response_headers.headers': [('Content-Type', 'application/json')],
             'tools.websocket.on': False
+        },
+        '/ws': {
+            'request.dispatch': cherrypy.dispatch.Dispatcher(),
+            'tools.websocket.on': True,
+            'tools.websocket.handler_cls': SetAppWebSocketHandler
         }
     })
     cherrypy.quickstart(SetApp(), '/', base_conf)
