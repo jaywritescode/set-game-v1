@@ -14,77 +14,39 @@ export default class Multiplayer extends React.Component {
     this.state = {
       cards: [],
       selected: new Set(),
-      players: new Map()
+      players: {}
     };
+  }
+
+  componentWillMount() {
     this.ws = new WebSocket(`ws://localhost:8080/${this.props.url}/ws`);
     this.ws.onopen = (event) => {
-      $.get(this.props.url).then((response) => {
-        console.log(response);
-      });
-    }
+      $.get(this.props.url);
+    };
     this.ws.onmessage = (event) => {
-      console.log('received a message: %O', event);
-      console.log(event.data);
-    }
-  }
-
-  // FIXME: this shouldn't happen until we have at least two players and
-  // then we should also wait and synchronize
-//  componentWillMount() {
-//    let onSuccess = function(response) {
-//      this.setState({
-//        cards: response.cards,
-//      });
-//    }.bind(this);
-//    let onError = function(response) {
-//      this.setState({
-//        error: response
-//      });
-//    }.bind(this);
-//    $.get(this.props.url).then(onSuccess, onError);
-//  }
-
-  renderCards() {
-    if (this.state.players.size < 2) {
-      return (<p>Waiting for players...</p>);
-    }
-    else {
-      return (
-        <ul>
-          {this.state.cards.map((card) => {
-            return (
-              <li>
-                <SetCard card={card} />
-              </li>
-            );
-          })}
-        </ul>
-      );
-    }
-  }
-
-  renderPlayers() {
-    return (
-      <div id="players">
-        <h4>Players</h4>
-        {
-          [...this.state.players].forEach((player, key) => {
-            return (<p>goop</p>);
-          })
-        }
-      </div>
-    );
+      let data = JSON.parse(event.data);
+      this.setState({
+        players: data.players,
+        cards: data.cards || {}
+      });
+    };
   }
 
   render() {
-    console.log('Multiplayer.render');
     return (
       <div id="wrapper">
         <h3>{this.props.name}</h3>
-        <div id="cards">
-          {this.renderCards()}
+        <div id="players">
+          <h4>Players</h4>
+          {
+            [...this.state.players].forEach((player, key) => {
+              return (<p>goop</p>);
+            })
+          }
         </div>
-        {this.renderPlayers()}
+        <div id="cards">
+          test
+        </div>
       </div>
     );
   }

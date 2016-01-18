@@ -73,15 +73,22 @@ class MultiplayerWebService:
         """
         Creates a game.
 
-        :return: the game's name and the newly created game
+        :return: the newly created game
         """
         return MultiplayerSet()
 
     def serialize_game(self):
+        """
+        Serializes the game state.
+
+        :return: a dict with "players" and optional "cards" keys. players maps
+        to a dict of player id's mapped to the number of sets that player has
+        found so far. cards is currently unimplemented.
+        """
         d = dict(players=self.get_players())
         if len(d['players']) > 1:
             d['cards'] = self.get_cards()
-        return json.dumps(d)
+        return json.dumps(d, ensure_ascii=False).encode('utf8')
 
     def get_players(self):
         game = cherrypy.session.get('game')
