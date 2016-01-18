@@ -63,7 +63,7 @@ class PlayerFactory:
         def __init__(self, game, id):
             self.game = game
             self.id = id
-            self.found = set()
+            self.found = list()
 
     @staticmethod
     def make_player(game):

@@ -2,7 +2,7 @@ import cherrypy
 from haikunator import haikunate
 import json
 
-from ws4py.messaging import TextMessage
+from ws4py.messaging import TextMessage, PingControlMessage
 
 from app.multiplayer import MultiplayerSet
 
@@ -11,20 +11,20 @@ class MultiplayerWebService:
     exposed = True
 
     def __init__(self):
+        self.ws_handler = None
         self.games = dict()
         for _ in range(5):
             self.games[self.make_name()] = self.create_game()
 
     @cherrypy.expose
     def ws(self):
-        cherrypy.engine.publish('websocket-broadcast', TextMessage('hello'))
+        self.ws_handler = cherrypy.request.ws_handler
 
     def GET(self):
         game = cherrypy.session.get('game')
         if game is None:
             raise cherrypy.HTTPError(422, 'Need to join a game.')
-        cherrypy.log("Handler created: %s" % repr(cherrypy.request.ws_handler))
-        cherrypy.engine.publish('websocket-broadcast', TextMessage(json.loads({'hello': 'goodbye'})))
+        self.ws_handler.send(TextMessage(self.serialize_game()))
 
     @cherrypy.tools.json_out()
     def PUT(self):
@@ -76,6 +76,20 @@ class MultiplayerWebService:
         :return: the game's name and the newly created game
         """
         return MultiplayerSet()
+
+    def serialize_game(self):
+        d = dict(players=self.get_players())
+        if len(d['players']) > 1:
+            d['cards'] = self.get_cards()
+        return json.dumps(d)
+
+    def get_players(self):
+        game = cherrypy.session.get('game')
+        return {player.id: player.found for player in game.players} if game else None
+
+    def get_cards(self):
+        game = cherrypy.session.get('game')
+        return [card.to_hash() for card in game.cards] if game else None
 
     def make_name(self):
         while True:

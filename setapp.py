@@ -2,10 +2,6 @@ import os
 from datetime import datetime
 import json
 
-import logging, sys
-logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-
-
 import cherrypy
 from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
 from ws4py.websocket import WebSocket
@@ -80,8 +76,6 @@ if __name__ == '__main__':
             'tools.sessions.on': True,
             'tools.response_headers.on': True,
             'tools.response_headers.headers': [('Content-Type', 'application/json')],
-            'tools.websocket.on': True,
-            'tools.websocket.handler_cls': SetAppWebSocketHandler
         },
         '/go': {
             'request.dispatch': cherrypy.dispatch.Dispatcher(),
