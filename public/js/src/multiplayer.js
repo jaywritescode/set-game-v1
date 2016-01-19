@@ -32,18 +32,32 @@ export default class Multiplayer extends React.Component {
     };
   }
 
+  renderPlayers() {
+    $.map(this.state.players, function(value, key) { console.log(value); });
+    return (
+      <ul id="players">
+        <h4>Players</h4>
+        {
+          $.map(this.state.players, (value, key) => {
+            return (
+              <li key={key}>
+                <span>Player&nbsp;</span>
+                <strong>{key}</strong>
+                <span>:&nbsp;</span>
+                <span>{`${value.length} sets found so far`}</span>
+              </li>
+            );
+          })
+        }
+      </ul>
+    );
+  }
+
   render() {
     return (
       <div id="wrapper">
         <h3>{this.props.name}</h3>
-        <div id="players">
-          <h4>Players</h4>
-          {
-            [...this.state.players].forEach((player, key) => {
-              return (<p>goop</p>);
-            })
-          }
-        </div>
+        {this.renderPlayers()}
         <div id="cards">
           test
         </div>
