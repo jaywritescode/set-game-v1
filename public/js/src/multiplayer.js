@@ -44,7 +44,7 @@ export default class Multiplayer extends React.Component {
                 <span>Player&nbsp;</span>
                 <strong>{key}</strong>
                 <span>:&nbsp;</span>
-                <span>{`${value.length} sets found so far`}</span>
+                <span>{`${value.length} set${value.length == 1 ? '' : 's'} found so far`}</span>
               </li>
             );
           })
