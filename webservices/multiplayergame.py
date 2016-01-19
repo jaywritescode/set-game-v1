@@ -50,7 +50,9 @@ class MultiplayerWebService:
                 raise cherrypy.HTTPError(422, 'This game does not exist.')
         else:
             name = self.make_name()
-            game = self.games[name] = cherrypy.session['game'] = self.create_game()
+            game = self.games[name] = self.create_game()
+
+        cherrypy.session['game'] = game
 
         player = game.add_player()
         if player:
