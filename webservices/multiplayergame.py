@@ -28,7 +28,9 @@ class MultiplayerWebService:
         game = cherrypy.session.get('game')
         if game is None:
             raise cherrypy.HTTPError(422, 'Need to join a game.')
-        cherrypy.engine.publish('websocket-broadcast', TextMessage(self.serialize_game()))
+        if len(game.players) > 1:
+            game.start()
+        self.broadcast_game()
 
     @cherrypy.tools.json_out()
     def PUT(self):
@@ -82,6 +84,14 @@ class MultiplayerWebService:
         :return: the newly created game
         """
         return MultiplayerSet()
+
+    def broadcast_game(self):
+        """
+        Publishes the game across the existing websockets.
+
+        :return: None
+        """
+        cherrypy.engine.publish('websocket-broadcast', TextMessage(self.serialize_game()))
 
     def serialize_game(self):
         """

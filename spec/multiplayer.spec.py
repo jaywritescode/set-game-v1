@@ -4,7 +4,7 @@ import unittest
 
 
 class MultiplayerSetTest(unittest.TestCase):
-    def test_initial_deal(self):
+    def test_start(self):
         initial_cards = 12
 
         # inject a deck with a set in the first twelve cards

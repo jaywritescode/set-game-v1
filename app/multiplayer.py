@@ -12,16 +12,15 @@ class MultiplayerSet:
         random.shuffle(self.deck)
 
     def start(self):
-        self.started = True
-
-    def initial_deal(self):
         self.cards = set(self.deck[:self.initial_cards])
         self.deck = self.deck[self.initial_cards:]
 
         while True:
-            if len(find_all_sets(self.cards)): break
+            if len(find_all_sets(self.cards)):
+                break
             for _ in range(3):
                 self.cards.add(self.deck.pop())
+        self.started = True
 
     def add_player(self):
         new_player = PlayerFactory.make_player(self)

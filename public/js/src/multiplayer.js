@@ -53,14 +53,26 @@ export default class Multiplayer extends React.Component {
     );
   }
 
+  renderCards() {
+    return (
+      <div id="cards">
+        {this.state.cards.map((card) => {
+          return (
+            <li>
+              <SetCard card={card} parentHandleClick={this.onClickSetCard.bind(this)} />
+            </li>
+          );
+        })}
+      </div>
+    );
+  }
+
   render() {
     return (
       <div id="wrapper">
         <h3>{this.props.name}</h3>
         {this.renderPlayers()}
-        <div id="cards">
-          test
-        </div>
+        {this.renderCards()}
       </div>
     );
   }
