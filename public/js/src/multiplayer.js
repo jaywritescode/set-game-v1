@@ -2,20 +2,15 @@
 
 import $ from 'jquery';
 import React from 'react';
-import { render } from 'react-dom';
 
-import SetCard from 'setcard';
+import SetGame from 'setgame';
 
-const IMG_PATH = 'static/img/';
-
-export default class Multiplayer extends React.Component {
+export default class Multiplayer extends SetGame {
   constructor(props) {
     super(props);
-    this.state = {
-      cards: [],
-      selected: new Set(),
+    $.extend(this.state, {
       players: {}
-    };
+    });
   }
 
   componentWillMount() {
@@ -32,7 +27,9 @@ export default class Multiplayer extends React.Component {
     };
   }
 
-  onClickSetCard() { }
+  onClickSetCard() {
+    
+  }
 
   renderPlayers() {
     return (
@@ -51,21 +48,6 @@ export default class Multiplayer extends React.Component {
           })
         }
       </ul>
-    );
-  }
-
-  renderCards() {
-    console.log(this.state.cards);
-    return (
-      <div id="cards">
-        {this.state.cards.map((card) => {
-          return (
-            <li>
-              <SetCard card={card} parentHandleClick={this.onClickSetCard.bind(this)} />
-            </li>
-          );
-        })}
-      </div>
     );
   }
 

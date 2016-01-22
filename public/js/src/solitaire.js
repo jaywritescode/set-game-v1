@@ -2,22 +2,19 @@
 
 import $ from 'jquery';
 import React from 'react';
-import { render } from 'react-dom';
-import { Modal, Button } from 'react-bootstrap';
 import moment from 'moment';
+import { Modal, Button } from 'react-bootstrap';
 
-import SetCard from 'setcard';
+import SetGame from 'setgame';
 
 const IMG_PATH = 'static/img/';
 
-export default class Solitaire extends React.Component {
+export default class Solitaire extends SetGame {
   constructor(props) {
     super(props);
-    this.state = {
-      cards: [],
-      selected: new Set(),
-      found: new Set(),
-    };
+    $.extend(this.state, {
+      found: new Set()
+    });
   }
 
   componentWillMount() {
@@ -74,14 +71,12 @@ export default class Solitaire extends React.Component {
       }, (response) => {
         console.error(response);
       }).then(() => {
-        console.log(this.state.selected);
         for (card of this.state.selected) {
           card.setState({
             selected: false
           });
         }
         this.state.selected.clear();
-        console.log(this.state.selected);
       });
     }
   }
@@ -139,18 +134,7 @@ export default class Solitaire extends React.Component {
             <Button bsSize="large" bsStyle="success" onClick={this.onClickNewGame.bind(this)}>New Game...</Button>
           </Modal.Footer>
         </Modal>
-        <div id="cards">
-          <ul>
-            {this.state.cards.map((card) => {
-              return (
-                <li>
-                  <SetCard card={card}
-                           parentHandleClick={this.onClickSetCard.bind(this)} />
-                </li>
-              );
-            })}
-          </ul>
-        </div>
+        {this.renderCards()}
         {this.renderSetsFound()}
       </div>
     );
