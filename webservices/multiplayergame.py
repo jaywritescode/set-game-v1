@@ -14,8 +14,6 @@ class MultiplayerWebService:
     def __init__(self):
         self.ws_manager = None
         self.games = dict()
-        for _ in range(5):
-            self.games[self.make_name()] = self.create_game()
 
     @cherrypy.expose
     def ws(self):

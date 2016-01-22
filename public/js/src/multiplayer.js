@@ -33,7 +33,6 @@ export default class Multiplayer extends React.Component {
   }
 
   renderPlayers() {
-    $.map(this.state.players, function(value, key) { console.log(value); });
     return (
       <ul id="players">
         <h4>Players</h4>
@@ -54,6 +53,7 @@ export default class Multiplayer extends React.Component {
   }
 
   renderCards() {
+    console.log(this.state.cards);
     return (
       <div id="cards">
         {this.state.cards.map((card) => {
