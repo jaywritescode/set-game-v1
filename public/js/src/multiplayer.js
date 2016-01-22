@@ -32,6 +32,8 @@ export default class Multiplayer extends React.Component {
     };
   }
 
+  onClickSetCard() { }
+
   renderPlayers() {
     return (
       <ul id="players">

@@ -26,7 +26,7 @@ class MultiplayerWebService:
         game = cherrypy.session.get('game')
         if game is None:
             raise cherrypy.HTTPError(422, 'Need to join a game.')
-        if len(game.players) > 1:
+        if not game.started and len(game.players) > 1:
             game.start()
         self.broadcast_game()
 
@@ -99,9 +99,7 @@ class MultiplayerWebService:
         to a dict of player id's mapped to the number of sets that player has
         found so far. cards is currently unimplemented.
         """
-        d = dict(players=self.get_players())
-        if len(d['players']) > 1:
-            d['cards'] = self.get_cards()
+        d = dict(players=self.get_players(), cards=self.get_cards())
         return json.dumps(d, ensure_ascii=False).encode('utf8')
 
     def get_players(self):
