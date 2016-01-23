@@ -27,8 +27,34 @@ export default class Multiplayer extends SetGame {
     };
   }
 
-  onClickSetCard() {
-    
+  onClickSetCard(card, cardState) {
+    if (cardState.selected) {
+      this.state.selected.add(card);
+    }
+    else {
+      this.state.selected.delete(card);
+    }
+
+    if (this.state.selected.size == 3) {
+      $.ajax(this.props.url, {
+        data: {
+          cards: JSON.stringify([...this.state.selected].map(function(component) {
+            return component.props.card;
+          }))
+        },
+        method: 'PUT',
+        contextType: 'application/json'
+      }).then(() => {
+        for (card of this.state.selected) {
+          card.setState({
+            selected: false
+          });
+        }
+        this.state.selected.clear();
+      }, (response) => {
+        console.error(response)
+      });
+    }
   }
 
   renderPlayers() {
