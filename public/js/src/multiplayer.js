@@ -13,6 +13,13 @@ export default class Multiplayer extends SetGame {
     });
   }
 
+  static get propTypes() {
+    return {
+      name: React.PropTypes.string.isRequired,
+      player_id: React.PropTypes.string
+    };
+  }
+
   componentWillMount() {
     this.ws = new WebSocket(`ws://localhost:8080/${this.props.url}/ws`);
     this.ws.onopen = (event) => {
