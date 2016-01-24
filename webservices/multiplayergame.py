@@ -2,6 +2,7 @@ import cherrypy
 from haikunator import haikunate
 import json
 
+from ws4py.websocket import WebSocket
 from ws4py.messaging import TextMessage
 from ws4py.manager import WebSocketManager
 
@@ -115,3 +116,16 @@ class MultiplayerWebService:
             name = haikunate()
             if name not in self.games:
                 return name
+
+
+    class MultiplayerWebSocket(WebSocket):
+        def received_message(self, m):
+            cherrypy.log('Received message: %s' % m)
+            p = {
+                'date': datetime.now().strftime("%c"),
+                'msg': str(m.data.upper())
+            }
+            self.send(TextMessage(json.dumps(p)))
+
+        def closed(self, code, reason="A client left the room without a proper explanation."):
+            cherrypy.log('Closed')
