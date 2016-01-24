@@ -7,11 +7,6 @@ import webservices
 
 
 class SetApp:
-    def __init__(self):
-        self.solitaire_service = webservices.SolitaireWebService()
-        self.multiplayer_service = webservices.MultiplayerWebService()
-        self.game = None
-
     @cherrypy.expose
     def index(self):
         return open('index.html')
@@ -76,7 +71,7 @@ if __name__ == '__main__':
         '/ws': {
             'request.dispatch': cherrypy.dispatch.Dispatcher(),
             'tools.websocket.on': True,
-            'tools.websocket.handler_cls': webservices.MultiplayerWebService.MultiplayerWebSocket
+            'tools.websocket.handler_cls': webservices.MultiplayerWebSocket
         }
     })
     cherrypy.quickstart(SetApp(), '/', base_conf)

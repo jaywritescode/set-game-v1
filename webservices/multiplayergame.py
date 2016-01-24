@@ -5,6 +5,7 @@ import json
 from ws4py.websocket import WebSocket
 from ws4py.messaging import TextMessage
 from ws4py.manager import WebSocketManager
+from ws4py.exc import ProtocolException
 
 from app.multiplayer import MultiplayerSet
 
@@ -16,24 +17,40 @@ class MultiplayerWebService:
         self.ws_manager = None
         self.games = dict()
 
+        cherrypy.engine.subscribe('player-add', self.on_player_add)
+
     @cherrypy.expose
     def ws(self):
+        """
+        Endpoint called when a websocket is opened.
+
+        It adds the current websocket to the websocket manager.
+
+        :return: None
+        """
         if not self.ws_manager:
             self.ws_manager = WebSocketManager()
             self.ws_manager.start()
         self.ws_manager.add(cherrypy.request.ws_handler)
 
-    def GET(self):
-        game = cherrypy.session.get('game')
-        if game is None:
-            raise cherrypy.HTTPError(422, 'Need to join a game.')
-        if not game.started and len(game.players) > 1:
-            game.start()
-        self.broadcast_game()
+    def on_player_add(self, game):
+        """
+        Called when a player is added to a game.
 
-    @cherrypy.tools.json_out()
-    def PUT(self):
-        pass
+        If we have at least two players, then start the game.
+
+        Always broadcast the fact that we added a player to the game.
+
+        :param game: the name of the game to start
+        :return: None
+        """
+        if game is None or game not in self.games:
+            raise cherrypy.HTTPError(422, 'Need to join a game.')
+
+        the_game = self.games[game]
+        if not the_game.started and len(the_game.players) > 1:
+            the_game.start()
+        self.broadcast(the_game)
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -84,32 +101,29 @@ class MultiplayerWebService:
         """
         return MultiplayerSet()
 
-    def broadcast_game(self):
+    def broadcast(self, game):
         """
         Publishes the game across the existing websockets.
 
+        :param game: a Set game
         :return: None
         """
-        cherrypy.engine.publish('websocket-broadcast', TextMessage(self.serialize_game()))
+        cherrypy.engine.publish('websocket-broadcast', TextMessage(self.serialize(game)))
 
-    def serialize_game(self):
+    def serialize(self, game):
         """
         Serializes the game state.
 
+        :param game: a Set game
         :return: a dict with "players" and optional "cards" keys. players maps
         to a dict of player id's mapped to the number of sets that player has
         found so far. cards is currently unimplemented.
         """
-        d = dict(players=self.get_players(), cards=self.get_cards())
-        return json.dumps(d, ensure_ascii=False).encode('utf8')
-
-    def get_players(self):
-        game = cherrypy.session.get('game')
-        return {player.id: player.found for player in game.players} if game else None
-
-    def get_cards(self):
-        game = cherrypy.session.get('game')
-        return [card.to_hash() for card in game.cards] if game else None
+        if not game:
+            return None
+        cards = [card.to_hash() for card in game.cards]
+        players = {player.id: player.found for player in game.players}
+        return json.dumps(dict(players=players, cards=cards), ensure_ascii=False).encode('utf-8')
 
     def make_name(self):
         while True:
@@ -118,14 +132,16 @@ class MultiplayerWebService:
                 return name
 
 
-    class MultiplayerWebSocket(WebSocket):
-        def received_message(self, m):
-            cherrypy.log('Received message: %s' % m)
-            p = {
-                'date': datetime.now().strftime("%c"),
-                'msg': str(m.data.upper())
-            }
-            self.send(TextMessage(json.dumps(p)))
+class MultiplayerWebSocket(WebSocket):
+    def received_message(self, m):
+        data = json.loads(str(m))
+        action = data.get('action')
 
-        def closed(self, code, reason="A client left the room without a proper explanation."):
-            cherrypy.log('Closed')
+        if action == 'player-add':
+            if 'game' in data:
+                cherrypy.engine.publish(action, data['game'])
+        else:
+            raise ProtocolException
+
+    def closed(self, code, reason="A client left the room without a proper explanation."):
+        cherrypy.log('Closed')

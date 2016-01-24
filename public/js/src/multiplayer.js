@@ -23,7 +23,16 @@ export default class Multiplayer extends SetGame {
   componentWillMount() {
     this.ws = new WebSocket(`ws://localhost:8080/${this.props.url}/ws`);
     this.ws.onopen = (event) => {
-      $.get(this.props.url);
+      console.log('websocket opened: %O', event);
+      let msg = {
+        action: 'player-add',
+        game: this.props.name
+      };
+      this.ws.send(JSON.stringify(msg));
+    };
+    this.ws.onrequest = (event, request) => {
+      console.log(event);
+      console.log(request);
     };
     this.ws.onmessage = (event) => {
       let data = JSON.parse(event.data);
@@ -40,27 +49,6 @@ export default class Multiplayer extends SetGame {
     }
     else {
       this.state.selected.delete(card);
-    }
-
-    if (this.state.selected.size == 3) {
-      $.ajax(this.props.url, {
-        data: {
-          cards: JSON.stringify([...this.state.selected].map(function(component) {
-            return component.props.card;
-          }))
-        },
-        method: 'PUT',
-        contextType: 'application/json'
-      }).then(() => {
-        for (card of this.state.selected) {
-          card.setState({
-            selected: false
-          });
-        }
-        this.state.selected.clear();
-      }, (response) => {
-        console.error(response)
-      });
     }
   }
 

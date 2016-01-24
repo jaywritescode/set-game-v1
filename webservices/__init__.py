@@ -1,2 +1,2 @@
 from .solitairegame import SolitaireWebService
-from .multiplayergame import MultiplayerWebService
+from .multiplayergame import MultiplayerWebService, MultiplayerWebSocket
