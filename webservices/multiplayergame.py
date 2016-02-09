@@ -3,7 +3,7 @@ from haikunator import haikunate
 import json
 
 from ws4py.websocket import WebSocket
-from ws4py.messaging import TextMessage
+from ws4py.messaging import TextMessage, PongControlMessage
 from ws4py.manager import WebSocketManager
 from ws4py.exc import ProtocolException
 
@@ -18,6 +18,7 @@ class MultiplayerWebService:
         self.games = dict()
 
         cherrypy.engine.subscribe('player-add', self.on_player_add)
+        cherrypy.engine.subscribe('submit-set', self.on_submit_set)
 
     @cherrypy.expose
     def ws(self):
@@ -45,12 +46,24 @@ class MultiplayerWebService:
         :return: None
         """
         if game is None or game not in self.games:
+            # TODO: invalid error for websockets
             raise cherrypy.HTTPError(422, 'Need to join a game.')
 
         the_game = self.games[game]
         if not the_game.started and len(the_game.players) > 1:
             the_game.start()
         self.broadcast(the_game)
+
+    def on_submit_set(self, game, player, cards):
+        """
+        Called when a player submits a Set.
+
+        :param game: the name of the game
+        :param player: the id of the player
+        :param cards: the cards submitted
+        :return: None
+        """
+        print(game, player, cards)
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -109,6 +122,7 @@ class MultiplayerWebService:
         :return: None
         """
         cherrypy.engine.publish('websocket-broadcast', TextMessage(self.serialize(game)))
+        cherrypy.engine.publish('websocket-broadcast', TextMessage('another message'))
 
     def serialize(self, game):
         """
@@ -133,15 +147,9 @@ class MultiplayerWebService:
 
 
 class MultiplayerWebSocket(WebSocket):
-    def received_message(self, m):
-        data = json.loads(str(m))
-        action = data.get('action')
-
-        if action == 'player-add':
-            if 'game' in data:
-                cherrypy.engine.publish(action, data['game'])
-        else:
-            raise ProtocolException
+    def received_message(self, message):
+        cherrypy.log('received %s' % message)
+        self.send(message.data, message.is_binary)
 
     def closed(self, code, reason="A client left the room without a proper explanation."):
-        cherrypy.log('Closed')
+        cherrypy.log('Closed. code %s. reason: %s' % (code, reason))

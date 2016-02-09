@@ -60,13 +60,11 @@ if __name__ == '__main__':
             'tools.sessions.on': True,
             'tools.response_headers.on': True,
             'tools.response_headers.headers': [('Content-Type', 'application/json')],
-            'tools.websocket.on': False,
         },
         '/status': {
             'request.dispatch': cherrypy.dispatch.Dispatcher(),
             'tools.response_headers.on': True,
             'tools.response_headers.headers': [('Content-Type', 'application/json')],
-            'tools.websocket.on': False
         },
         '/ws': {
             'request.dispatch': cherrypy.dispatch.Dispatcher(),
