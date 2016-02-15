@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 
 import cherrypy
@@ -13,6 +14,10 @@ class SetApp:
 
 
 if __name__ == '__main__':
+    import logging
+    from ws4py import configure_logger
+    configure_logger(level=logging.DEBUG)
+
     base_conf = {
         '/': {
             'tools.staticdir.root': os.path.abspath(os.getcwd()),

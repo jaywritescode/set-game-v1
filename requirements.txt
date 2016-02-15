@@ -1,4 +1,4 @@
-CherryPy==3.8.0
+CherryPy==5.0.1
 haikunator==1.0.1
 svgwrite==1.1.6
 ws4py==0.3.4

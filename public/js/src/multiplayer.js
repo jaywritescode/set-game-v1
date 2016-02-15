@@ -5,7 +5,7 @@ import React from 'react';
 
 import SetGame from 'setgame';
 
-const HEARTBEAT = '--heartbeat--';
+const HEARTBEAT = '--heartbeat--'
 var heartbeat_interval = null;
 var missed_heartbeats = 0;
 
@@ -27,60 +27,12 @@ export default class Multiplayer extends SetGame {
   componentWillMount() {
     this.ws = new WebSocket(`ws://localhost:8080/${this.props.url}/ws`);
     this.ws.onopen = (event) => {
-      if (this.ws.bufferedAmount === 0) {
-        this.ws.send('opening');
-      }
-
-
-      // let msg = {
-      //   action: 'player-add',
-      //   game: this.props.name
-      // };
-      // this.ws.send(JSON.stringify(msg));
-
-      if (heartbeat_interval === null) {
-        missed_heartbeats = 0;
-        heartbeat_interval = setInterval(() => {
-          try {
-            missed_heartbeats++;
-            if (missed_heartbeats >= 3) {
-              throw new Error("Too many missed heartbeats.");
-            }
-            this.ws.send(HEARTBEAT);
-          }
-          catch(e) {
-            clearInterval(heartbeat_interval);
-            heartbeat_interval == null;
-            console.warn("Closing connection. Reason: %s", e.message);
-            // this.ws.close();
-          }
-        }, 5000);
-      }
-
-
-    };
-    this.ws.onmessage = (event) => {
-      console.log(event);
-
-      if (event.data === HEARTBEAT) {
-        console.log('heartbeat received');
-        missed_heartbeats = 0;
-        return;
-      }
-    };
-    // this.ws.onmessage = (event) => {
-    //   let data = JSON.parse(event.data);
-    //   this.setState({
-    //     players: data.players,
-    //     cards: data.cards || {}
-    //   });
-    // };
-    this.ws.onclose = (event) => {
-      console.log('websocket closed: %O', event);
-    };
+      console.log('opened: %O', event);
+    }
     this.ws.onerror = (event) => {
       console.error('error: %O', event);
-    }
+    };
+    window.ws = this.ws;
   }
 
   onClickSetCard(card, cardState) {
