@@ -29,6 +29,7 @@ export default class Multiplayer extends SetGame {
     // query for the players in this game
     $.getJSON(`${this.props.url}/players`, {name: this.props.name}).then(
       (response) => {
+        // response => [{name: 'P1', found: [...]}, {name: 'P2', found: [...]}]
         this.setState({
           players: JSON.parse(response)
         });
@@ -39,10 +40,26 @@ export default class Multiplayer extends SetGame {
     this.ws.onopen = (event) => {
       console.log('opened: %O', event);
     };
+    this.ws.onmessage = (event) => {
+      console.log('message: %O', event);
+      let data = JSON.parse(event.data);
+      if (data.action == 'add-player') {
+        this.onWSPlayerAdded(data.name);
+      }
+      else {
+        console.warn('action not found');
+      }
+    };
     this.ws.onerror = (event) => {
       console.error('error: %O', event);
     };
     window.ws = this.ws;
+  }
+
+  onWSPlayerAdded(name) {
+    this.setState({
+      players: this.state.players.concat({name: name, found: []})
+    });
   }
 
   onClickSetCard(card, cardState) {

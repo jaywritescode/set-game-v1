@@ -45,6 +45,7 @@ class MultiplayerWebService:
         player = game.add_player()
         if player:
             cherrypy.session['player'] = player
+            cherrypy.engine.publish('websocket-broadcast', json.dumps(dict(action="add-player", name=player.id)))
             return { 'name': name, 'player': player.id }
         else:
             return { 'error': 'some error' }
