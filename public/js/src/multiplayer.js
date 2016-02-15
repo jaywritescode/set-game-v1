@@ -13,7 +13,8 @@ export default class Multiplayer extends SetGame {
   constructor(props) {
     super(props);
     $.extend(this.state, {
-      players: {}
+      players: {},
+      selected: new Set()
     });
   }
 
@@ -25,10 +26,19 @@ export default class Multiplayer extends SetGame {
   }
 
   componentWillMount() {
+    // query for the players in this game
+    $.getJSON(`${this.props.url}/players`, {name: this.props.name}).then(
+      (response) => {
+        this.setState({
+          players: JSON.parse(response)
+        });
+      }, (response) => console.error(response)
+    );
+
     this.ws = new WebSocket(`ws://localhost:8080/${this.props.url}/ws`);
     this.ws.onopen = (event) => {
       console.log('opened: %O', event);
-    }
+    };
     this.ws.onerror = (event) => {
       console.error('error: %O', event);
     };
@@ -66,13 +76,13 @@ export default class Multiplayer extends SetGame {
       <ul id="players">
         <h4>Players</h4>
         {
-          $.map(this.state.players, (value, key) => {
+          $.map(this.state.players, (value) => {
             return (
-              <li key={key}>
+              <li key={value.name}>
                 <span>Player&nbsp;</span>
-                <strong>{key}</strong>
+                <strong>{value.name}</strong>
                 <span>:&nbsp;</span>
-                <span>{`${value.length} set${value.length == 1 ? '' : 's'} found so far`}</span>
+                <span>{`${value.found.length} set${value.found.length == 1 ? '' : 's'} found so far`}</span>
               </li>
             );
           })

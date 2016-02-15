@@ -3,7 +3,7 @@ from haikunator import haikunate
 import json
 
 from ws4py.websocket import WebSocket
-from ws4py.messaging import TextMessage, PongControlMessage
+from ws4py.messaging import TextMessage
 from ws4py.manager import WebSocketManager
 from ws4py.exc import ProtocolException
 
@@ -45,14 +45,24 @@ class MultiplayerWebService:
         player = game.add_player()
         if player:
             cherrypy.session['player'] = player
-            return {
-                'name': name,
-                'player': player.id
-            }
+            return { 'name': name, 'player': player.id }
         else:
-            return {
-                'error': 'some error'
-            }
+            return { 'error': 'some error' }
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def players(self, name):
+        """
+        Endpoint to get the players in a game.
+
+        :param name: the name of the game
+        :return: a JSON blob of dicts with keys 'name' and 'found'
+        """
+        try:
+            game = self.games[name]
+        except KeyError:
+            raise cherrypy.HTTPError(422, 'This game does not exist.')
+        return json.dumps(list(dict(name=player.id, found=player.found) for player in game.players))
 
     @cherrypy.expose
     @cherrypy.tools.json_out()

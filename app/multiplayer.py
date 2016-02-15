@@ -68,4 +68,4 @@ class PlayerFactory:
     def make_player(game):
         # TODO: make thread-safe
         PlayerFactory.next_id += 1
-        return PlayerFactory.Player(game, PlayerFactory.next_id)
+        return PlayerFactory.Player(game, "P%s" % PlayerFactory.next_id)

@@ -75,6 +75,12 @@ if __name__ == '__main__':
             'request.dispatch': cherrypy.dispatch.Dispatcher(),
             'tools.websocket.on': True,
             'tools.websocket.handler_cls': webservices.MultiplayerWebSocket
+        },
+        '/players': {
+            'request.dispatch': cherrypy.dispatch.Dispatcher(),
+            'tools.sessions.on': True,
+            'tools.response_headers.on': True,
+            'tools.response_headers.headers': [('Content-Type', 'application/json')],
         }
     })
     cherrypy.quickstart(SetApp(), '/', base_conf)

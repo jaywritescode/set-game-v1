@@ -44,7 +44,7 @@ class SetApp extends React.Component {
         name: gameName
       }).then((response) => {
         render(
-          <Multiplayer url="multiplayer" name={response.name}/>, document.getElementById('content')
+          <Multiplayer url="multiplayer" {...response} />, document.getElementById('content')
         );
       });
     };
