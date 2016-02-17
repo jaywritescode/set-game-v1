@@ -14,19 +14,19 @@ class MultiplayerWebService:
     def __init__(self):
         self.games = dict()
 
-    @cherrypy.expose
-    def ws(self, game=None):
-        cherrypy.request.ws_handler.game = game
-        cherrypy.log("Handler created: %s" % repr(cherrypy.request.ws_handler))
-
+    ###########################################################################
+    # HTTP endpoints
+    ###########################################################################
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def go(self, name=None):
         """
         Endpoint to create and/or join a MultiplayerSet game.
 
+        Assign this user/session to a specific game.
+
         :param name: the name of the game to join, or None to start a new game
-        :return: the name of the game and this user's player id
+        :return: a dict with property `game` mapping to the name of the game
         """
         if cherrypy.session.get('game'):
             # todo: move this user from the old game to the new game
@@ -43,37 +43,16 @@ class MultiplayerWebService:
 
         cherrypy.session['game'] = game
 
-        player = game.add_player()
-        if player:
-            cherrypy.session['player'] = player
-
-            # inform the other players in this game that a new player was added
-            all_games = cherrypy.engine.publish('get-clients').pop()
-            for ws in all_games.get(name, list()):
-                ws.send(json.dumps(dict(action='add-player', name=player.id)))
-
-            return { 'name': name, 'player': player.id }
-        else:
-            return { 'error': 'some error' }
-
-    @cherrypy.expose
-    @cherrypy.tools.json_out()
-    def players(self, name):
-        """
-        Endpoint to get the players in a game.
-
-        :param name: the name of the game
-        :return: a JSON blob of dicts with keys 'name' and 'found'
-        """
-        try:
-            game = self.games[name]
-        except KeyError:
-            raise cherrypy.HTTPError(422, 'This game does not exist.')
-        return json.dumps(list(dict(name=player.id, found=player.found) for player in game.players))
+        return {'game': name}
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def status(self):
+        """
+        Endpoint to get the games currently under management by the app.
+
+        :return: a dict of game names mapped to player count in each game
+        """
         return {name: len(game.players) for name, game in self.games.items()}
 
     def create_game(self):
@@ -85,21 +64,57 @@ class MultiplayerWebService:
         return MultiplayerSet()
 
     def make_name(self):
+        """
+        Makes a Heroku-style name.
+
+        :return: a Heroku-style haiku name
+        """
         while True:
             name = haikunate()
             if name not in self.games:
                 return name
 
+    ###########################################################################
+    # Websocket methods
+    ###########################################################################
+    @cherrypy.expose
+    def ws(self, game=None):
+        # these properties are now available on the MultiplayerWebSocket instance
+        cherrypy.request.ws_handler.game_name = game
+        cherrypy.request.ws_handler.game = self.games[game]
+        cherrypy.log("Handler created: %s" % repr(cherrypy.request.ws_handler))
+
 
 class MultiplayerWebSocket(WebSocket):
     def opened(self):
-        cherrypy.engine.publish('add-client', self.game, self)
+        cherrypy.engine.publish('add-client', self.game_name, self)
 
     def received_message(self, message):
-        cherrypy.engine.publish('websocket-broadcast', message)
+        message = json.loads(str(message))
+        req = message['request']
+
+        response = {'action': req}
+        if req == 'add-player':
+            player = self.game.add_player()
+            response.update({
+                'players': {p.id: p.found for p in self.game.players} if player else {}
+            })
+        elif req == 'start-game':
+            pass
+
+        for ws in self.websockets():
+            ws.send(json.dumps(response))
 
     def closed(self, code, reason="A client left the room without a proper explanation."):
         cherrypy.engine.publish('websocket-broadcast', TextMessage(reason))
+
+    def websockets(self):
+        """
+        Gets all of the websockets attached to the same game as this socket.
+
+        :return: a list of WebSockets
+        """
+        return cherrypy.engine.publish('get-client').pop().get(self.game_name, list())
 
 
 class MultiplayerWebSocketPlugin(WebSocketPlugin):
@@ -110,20 +125,19 @@ class MultiplayerWebSocketPlugin(WebSocketPlugin):
     def start(self):
         WebSocketPlugin.start(self)
         self.bus.subscribe('add-client', self.add_client)
-        self.bus.subscribe('get-clients', self.get_clients)
+        self.bus.subscribe('get-client', self.get_client)
         self.bus.subscribe('del-client', self.del_client)
 
     def stop(self):
         WebSocketPlugin.stop(self)
         self.bus.unsubscribe('add-client', self.add_client)
-        self.bus.unsubscribe('get-clients', self.get_clients)
+        self.bus.unsubscribe('get-client', self.get_client)
         self.bus.unsubscribe('del-client', self.del_client)
 
     def add_client(self, game, websocket):
         self.clients[game].add(websocket)
-        print(self.clients)
 
-    def get_clients(self):
+    def get_client(self):
         return self.clients
 
     def del_client(self, name):

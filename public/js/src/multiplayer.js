@@ -5,10 +5,6 @@ import React from 'react';
 
 import SetGame from 'setgame';
 
-const HEARTBEAT = '--heartbeat--'
-var heartbeat_interval = null;
-var missed_heartbeats = 0;
-
 export default class Multiplayer extends SetGame {
   constructor(props) {
     super(props);
@@ -20,72 +16,42 @@ export default class Multiplayer extends SetGame {
 
   static get propTypes() {
     return {
-      name: React.PropTypes.string.isRequired,
+      game: React.PropTypes.string.isRequired,
       player_id: React.PropTypes.string
     };
   }
 
   componentWillMount() {
-    // query for the players in this game
-    $.getJSON(`${this.props.url}/players`, {name: this.props.name}).then(
-      (response) => {
-        // response => [{name: 'P1', found: [...]}, {name: 'P2', found: [...]}]
-        this.setState({
-          players: JSON.parse(response)
-        });
-      }, (response) => console.error(response)
-    );
-
-    this.ws = new WebSocket(`ws://localhost:8080/${this.props.url}/ws?game=${this.props.name}`);
+    // create the websocket
+    this.ws = new WebSocket(`ws://localhost:8080/${this.props.url}/ws?game=${this.props.game}`);
     this.ws.onopen = (event) => {
-      console.log('opened: %O', event);
+      console.log('Websocket opened: %O', event);
+
+      // add this (unnamed) player to the game
+      this.ws.send(JSON.stringify({request: 'add-player'}));
     };
     this.ws.onmessage = (event) => {
-      console.log('message: %O', event);
+      console.log('Message received: %O', event);
+
       let data = JSON.parse(event.data);
-      if (data.action == 'add-player') {
-        this.onWSPlayerAdded(data.name);
-      }
-      else {
-        console.warn('action not found');
+      switch(data.action) {
+        case 'add-player':
+          this.onWSPlayerAdded(data.players);
+          break;
+        default:
+          console.warn('Action %s not found.', data.action);
       }
     };
     this.ws.onerror = (event) => {
-      console.error('error: %O', event);
+      console.error(event);
     };
     window.ws = this.ws;
   }
 
-  onWSPlayerAdded(name) {
+  onWSPlayerAdded(players) {
     this.setState({
-      players: this.state.players.concat({name: name, found: []})
+      players: players
     });
-  }
-
-  onClickSetCard(card, cardState) {
-    if (cardState.selected) {
-      this.state.selected.add(card);
-    }
-    else {
-      this.state.selected.delete(card);
-    }
-
-    if (this.state.selected.size == 3) {
-      let msg = $.extend(this.props, {
-        cards: [...this.state.selected].map((component) => {
-          return component.props.card;
-        }),
-        action: 'submit-set'
-      });
-
-      this.ws.send(JSON.stringify(msg));
-      for (card of this.state.selected) {
-        card.setState({
-          selected: false
-        });
-      }
-      this.state.selected.clear();
-    }
   }
 
   renderPlayers() {
@@ -93,13 +59,14 @@ export default class Multiplayer extends SetGame {
       <ul id="players">
         <h4>Players</h4>
         {
-          $.map(this.state.players, (value) => {
+          $.map(Object.keys(this.state.players), (key) => {
+            let player_name = key, player_found = this.state.players[key];
             return (
-              <li key={value.name}>
+              <li key={player_name}>
                 <span>Player&nbsp;</span>
-                <strong>{value.name}</strong>
+                <strong>{player_name}</strong>
                 <span>:&nbsp;</span>
-                <span>{`${value.found.length} set${value.found.length == 1 ? '' : 's'} found so far`}</span>
+                <span>{`${player_found.length} set${player_found.length == 1 ? '' : 's'} found so far`}</span>
               </li>
             );
           })
