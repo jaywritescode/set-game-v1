@@ -1,6 +1,7 @@
 'use strict';
 
 import $ from 'jquery';
+import _ from 'lodash';
 import React from 'react';
 
 import SetGame from 'setgame';
@@ -8,7 +9,7 @@ import SetGame from 'setgame';
 export default class Multiplayer extends SetGame {
   constructor(props) {
     super(props);
-    $.extend(this.state, {
+    _.extend(this.state, {
       players: {},
       selected: new Set()
     });
@@ -36,7 +37,7 @@ export default class Multiplayer extends SetGame {
       let data = JSON.parse(event.data);
       switch(data.action) {
         case 'add-player':
-          this.onWSPlayerAdded(data.players);
+          this.setState(_.pick(data, 'players', 'cards'))
           break;
         default:
           console.warn('Action %s not found.', data.action);
@@ -59,8 +60,8 @@ export default class Multiplayer extends SetGame {
       <ul id="players">
         <h4>Players</h4>
         {
-          $.map(Object.keys(this.state.players), (key) => {
-            let player_name = key, player_found = this.state.players[key];
+          _.map(this.state.players, (value, key) => {
+            let player_name = key, player_found = value;
             return (
               <li key={player_name}>
                 <span>Player&nbsp;</span>
