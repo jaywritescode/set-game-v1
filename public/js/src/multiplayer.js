@@ -46,13 +46,10 @@ export default class Multiplayer extends SetGame {
     this.ws.onerror = (event) => {
       console.error(event);
     };
-    window.ws = this.ws;
   }
 
-  onWSPlayerAdded(players) {
-    this.setState({
-      players: players
-    });
+  onClickSetCard(card, cardState) {
+    
   }
 
   renderPlayers() {
