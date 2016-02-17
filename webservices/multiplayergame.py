@@ -99,8 +99,12 @@ class MultiplayerWebSocket(WebSocket):
             response.update({
                 'players': {p.id: p.found for p in self.game.players} if player else {}
             })
-        elif req == 'start-game':
-            pass
+
+            if not self.game.started and len(self.game.players) > 1:
+                self.game.start()
+                response.update({
+                    'cards': [card.to_hash() for card in self.game.cards]
+                })
 
         for ws in self.websockets():
             ws.send(json.dumps(response))
