@@ -36,7 +36,7 @@ export default class Multiplayer extends SetGame {
       }, (response) => console.error(response)
     );
 
-    this.ws = new WebSocket(`ws://localhost:8080/${this.props.url}/ws`);
+    this.ws = new WebSocket(`ws://localhost:8080/${this.props.url}/ws?game=${this.props.name}`);
     this.ws.onopen = (event) => {
       console.log('opened: %O', event);
     };

@@ -1,11 +1,11 @@
 import cherrypy
 from haikunator import haikunate
+from collections import defaultdict
 import json
 
 from ws4py.websocket import WebSocket
 from ws4py.messaging import TextMessage
-from ws4py.manager import WebSocketManager
-from ws4py.exc import ProtocolException
+from ws4py.server.cherrypyserver import WebSocketPlugin
 
 from app.multiplayer import MultiplayerSet
 
@@ -15,7 +15,8 @@ class MultiplayerWebService:
         self.games = dict()
 
     @cherrypy.expose
-    def ws(self):
+    def ws(self, game=None):
+        cherrypy.request.ws_handler.game = game
         cherrypy.log("Handler created: %s" % repr(cherrypy.request.ws_handler))
 
     @cherrypy.expose
@@ -45,7 +46,12 @@ class MultiplayerWebService:
         player = game.add_player()
         if player:
             cherrypy.session['player'] = player
-            cherrypy.engine.publish('websocket-broadcast', json.dumps(dict(action="add-player", name=player.id)))
+
+            # inform the other players in this game that a new player was added
+            all_games = cherrypy.engine.publish('get-clients').pop()
+            for ws in all_games.get(name, list()):
+                ws.send(json.dumps(dict(action='add-player', name=player.id)))
+
             return { 'name': name, 'player': player.id }
         else:
             return { 'error': 'some error' }
@@ -86,8 +92,39 @@ class MultiplayerWebService:
 
 
 class MultiplayerWebSocket(WebSocket):
+    def opened(self):
+        cherrypy.engine.publish('add-client', self.game, self)
+
     def received_message(self, message):
         cherrypy.engine.publish('websocket-broadcast', message)
 
     def closed(self, code, reason="A client left the room without a proper explanation."):
         cherrypy.engine.publish('websocket-broadcast', TextMessage(reason))
+
+
+class MultiplayerWebSocketPlugin(WebSocketPlugin):
+    def __init__(self, bus):
+        WebSocketPlugin.__init__(self, bus)
+        self.clients = defaultdict(set)
+
+    def start(self):
+        WebSocketPlugin.start(self)
+        self.bus.subscribe('add-client', self.add_client)
+        self.bus.subscribe('get-clients', self.get_clients)
+        self.bus.subscribe('del-client', self.del_client)
+
+    def stop(self):
+        WebSocketPlugin.stop(self)
+        self.bus.unsubscribe('add-client', self.add_client)
+        self.bus.unsubscribe('get-clients', self.get_clients)
+        self.bus.unsubscribe('del-client', self.del_client)
+
+    def add_client(self, game, websocket):
+        self.clients[game].add(websocket)
+        print(self.clients)
+
+    def get_clients(self):
+        return self.clients
+
+    def del_client(self, name):
+        del self.clients[name]

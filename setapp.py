@@ -2,7 +2,7 @@
 import os
 
 import cherrypy
-from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
+from ws4py.server.cherrypyserver import WebSocketTool
 
 import webservices
 
@@ -37,7 +37,7 @@ if __name__ == '__main__':
         'server.socket_host': '0.0.0.0',
         'server.socket_port': int(os.environ.get('PORT', 8080)),
     })
-    WebSocketPlugin(cherrypy.engine).subscribe()
+    webservices.MultiplayerWebSocketPlugin(cherrypy.engine).subscribe()
     cherrypy.tools.websocket = WebSocketTool()
     cherrypy.tree.mount(webservices.SolitaireWebService(), '/solitaire', {
         '/' : {
