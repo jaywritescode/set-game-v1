@@ -101,7 +101,7 @@ class MultiplayerWebSocket(WebSocket):
             if player:
                 self.player = player
                 response.update({
-                    'players': {p.id: p.found for p in self.game.players} if player else {}
+                    'players': {p.id: len(p.found) for p in self.game.players} if player else {}
                 })
 
             if not self.game.started and len(self.game.players) > 1:

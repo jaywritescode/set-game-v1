@@ -45,10 +45,14 @@ export default class Multiplayer extends SetGame {
           data.cards_to_remove.forEach((c) => {
             kards[_.findIndex(kards, _.matches(c))] = data.cards_to_add.pop();
           });
-          this.setState({
-            cards: kards
+          this.setState((previousState, currentProps) => {
+            let f = this.state.players;
+            f[data.player] = data.found;
+            return {
+              cards: kards,
+              players: f
+            }
           });
-
           break;
         default:
           console.warn('Action %s not found.', data.action);
@@ -97,7 +101,7 @@ export default class Multiplayer extends SetGame {
                 <span>Player&nbsp;</span>
                 <strong>{player_name}</strong>
                 <span>:&nbsp;</span>
-                <span>{`${player_found.length} set${player_found.length == 1 ? '' : 's'} found so far`}</span>
+                <span>{`${player_found} set${player_found == 1 ? '' : 's'} found so far`}</span>
               </li>
             );
           })
