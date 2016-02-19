@@ -1,3 +1,5 @@
+from collections import namedtuple
+
 from app.setutils import *
 
 class MultiplayerSet:
@@ -27,31 +29,43 @@ class MultiplayerSet:
         self.players.add(new_player)
         return new_player
 
-    def receive_selection(self, selection, player):
-        # TODO: make thread-safe
-        Response = Enum('response', ('OK', 'NOT_A_SET', 'INVALID'))
+    def receive_selection(self, selected, player):
+        """
+        Handler called when a player submits a potential set for verification.
 
-        invalids = [card for card in selection if card not in self.cards]
-        if any(invalids):
-            return Response['INVALID']
-        elif is_set(selection):
-            player.found.add(self.set_factory.make_set_from_cards(selection))
-            self.cards = {card for card in self.cards if card not in selection}
+        :param selected: the Cards in the potential set
+        :param player: the player
+        :return: ???
+        """
+        Result = namedtuple('Result', ('valid', 'old_cards', 'new_cards'))
 
+        if any(card for card in selected if card not in self.cards):
+            raise ValueError("Invalid cards")
+
+        if is_set(selected):
+            the_set = self.set_factory.make_set_from_cards(selected)
+            player.found.append(the_set)
+            self.cards -= the_set.cards
+
+            new_cards = set()
             while len(self.cards) < self.initial_cards and len(self.deck):
-                self.cards.add(self.deck.pop())
+                next_card = self.deck.pop()
+                new_cards.add(next_card)
+                self.cards.add(next_card)
 
             while len(find_all_sets(self.cards)) == 0:
                 if len(self.deck) >= 3:
                     for _ in range(3):
-                        self.cards.add(self.deck.pop())
+                        next_card = self.deck.pop()
+                        new_cards.add(next_card)
+                        self.cards.add(next_card)
                 else:
-                    # TODO: figure out an exception to raise here
+                    # TODO: figure out which exception to raise here
                     raise Exception
 
-            return Response['OK']
+            return Result(SetValidation['OK'], selected, new_cards)
         else:
-            return Response['NOT_A_SET']
+            return Result(SetValidation['NOT_A_SET'], selected, new_cards=None)
 
 
 class PlayerFactory:

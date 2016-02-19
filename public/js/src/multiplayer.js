@@ -39,6 +39,9 @@ export default class Multiplayer extends SetGame {
         case 'add-player':
           this.setState(_.pick(data, 'players', 'cards'))
           break;
+        case 'verify-set':
+          console.log(data);
+          break;
         default:
           console.warn('Action %s not found.', data.action);
       }
@@ -49,7 +52,29 @@ export default class Multiplayer extends SetGame {
   }
 
   onClickSetCard(card, cardState) {
-    
+    console.log('onClickSetCard card: %O, cardState: %O', card, cardState);
+
+    if (cardState.selected) {
+      this.state.selected.add(card);
+    }
+    else {
+      this.state.selected.delete(card);
+    }
+
+    if (this.state.selected.size == 3) {
+      this.ws.send(JSON.stringify({
+        request: 'verify-set',
+        cards: [...this.state.selected].map((component) => {
+          return component.props.card;
+        }),
+      }));
+      for (card of this.state.selected) {
+        card.setState({
+          selected: false
+        });
+      }
+      this.state.selected.clear();
+    }
   }
 
   renderPlayers() {

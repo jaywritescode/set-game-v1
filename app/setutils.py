@@ -87,7 +87,6 @@ class Card:
             self.hash = hash(self.number) ^ hash(self.color) ^ hash(self.shading) ^ hash(self.shape)
         return self.hash
 
-
     @staticmethod
     def random():
         return Card(*(random.choice(list(enum_type)) for enum_type in game_attrs))
@@ -197,6 +196,32 @@ class SetFactory:
         i[random.randrange(len(i))] = random.choice(k)
         return i
 
+
+class CardSerializer:
+    @staticmethod
+    def to_dict(card):
+        """
+        Converts a Card to its associative array representation.
+
+        :param card: the Card
+        :return: a dict witih properties `number`, `color`, `shading` and `shape`
+        """
+        return dict(number=card.attribute(Number).name,
+                    color=card.attribute(Color).name,
+                    shading=card.attribute(Shading).name,
+                    shape=card.attribute(Shape).name)
+
+    @staticmethod
+    def from_dict(d):
+        """
+        Converts an associative array representation of a card to a Card instance.
+
+        :param d: a dict with properties `number`, `color`, `shading`, and `shape`
+        :return: a Card
+        """
+        return Card(Number[d['number']], Color[d['color']], Shading[d['shading']], Shape[d['shape']])
+
+SetValidation = Enum('SetValidation', ('OK', 'NOT_A_SET', 'ALREADY_FOUND'))
 
 def all_cards():
     """

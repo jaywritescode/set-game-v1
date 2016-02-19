@@ -8,6 +8,7 @@ from ws4py.messaging import TextMessage
 from ws4py.server.cherrypyserver import WebSocketPlugin
 
 from app.multiplayer import MultiplayerSet
+from app.setutils import CardSerializer, SetValidation
 
 
 class MultiplayerWebService:
@@ -82,6 +83,7 @@ class MultiplayerWebService:
         # these properties are now available on the MultiplayerWebSocket instance
         cherrypy.request.ws_handler.game_name = game
         cherrypy.request.ws_handler.game = self.games[game]
+        cherrypy.request.ws_handler.player = None
         cherrypy.log("Handler created: %s" % repr(cherrypy.request.ws_handler))
 
 
@@ -96,16 +98,31 @@ class MultiplayerWebSocket(WebSocket):
         response = {'action': req}
         if req == 'add-player':
             player = self.game.add_player()
-            response.update({
-                'players': {p.id: p.found for p in self.game.players} if player else {}
-            })
+            if player:
+                self.player = player
+                response.update({
+                    'players': {p.id: p.found for p in self.game.players} if player else {}
+                })
 
             if not self.game.started and len(self.game.players) > 1:
                 self.game.start()
                 response.update({
                     'cards': [card.to_hash() for card in self.game.cards]
                 })
+        elif req == 'verify-set':
+            cards = [CardSerializer.from_dict(card_json_obj) for card_json_obj in message['cards']]
+            result = self.game.receive_selection(cards, self.player)
 
+            response.update({
+                'valid': result.valid == SetValidation['OK'],
+                'player': self.player.id,
+                'found': len(self.player.found)
+            })
+            if result.valid == SetValidation['OK']:
+                response.update({
+                    'cards_to_remove': [CardSerializer.to_dict(card) for card in result.old_cards],
+                    'cards_to_add': [CardSerializer.to_dict(card) for card in result.new_cards]
+                })
         for ws in self.websockets():
             ws.send(json.dumps(response))
 

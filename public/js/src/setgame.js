@@ -22,7 +22,9 @@ export default class SetGame extends React.Component {
           {this.state.cards.map((card) => {
             return (
               <li>
-                <SetCard card={card} key={card} parentHandleClick={this.onClickSetCard.bind(this)} />
+                <SetCard card={card}
+                         key={card}
+                         parentHandleClick={this.onClickSetCard.bind(this)} />
               </li>
             );
           })}

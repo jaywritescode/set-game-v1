@@ -11,6 +11,7 @@ export default class SetCard extends React.Component {
   }
 
   handleClick(e) {
+    console.log('handleClick e: %O', e);
     let newState = {
       selected: !this.state.selected
     };
