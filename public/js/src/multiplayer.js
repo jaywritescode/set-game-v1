@@ -41,6 +41,14 @@ export default class Multiplayer extends SetGame {
           break;
         case 'verify-set':
           console.log(data);
+          let kards = _.clone(this.state.cards);
+          data.cards_to_remove.forEach((c) => {
+            kards[_.findIndex(kards, _.matches(c))] = data.cards_to_add.pop();
+          });
+          this.setState({
+            cards: kards
+          });
+
           break;
         default:
           console.warn('Action %s not found.', data.action);
