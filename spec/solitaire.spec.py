@@ -1,4 +1,3 @@
-from app.setutils import *
 from app.solitaire import *
 import unittest
 

@@ -24,8 +24,14 @@ class MultiplayerSet:
                 self.cards.add(self.deck.pop())
         self.started = True
 
-    def add_player(self):
-        new_player = PlayerFactory.make_player(self)
+    def add_player(self, name=None):
+        """
+        Creates a new player and assigns it to this game.
+
+        :param name: the player's name, or None to generate a random name
+        :return: the player
+        """
+        new_player = PlayerFactory.make_player(self, name)
         self.players[new_player.id] = new_player
         return new_player
 
@@ -76,13 +82,10 @@ class PlayerFactory:
             self.found = list()
 
     @staticmethod
-    def make_player(game):
-        n = None
-        while True:
-            n = PlayerFactory.random_name()
-            if n not in game.players:
-                break
-        return PlayerFactory.Player(game, n)
+    def make_player(game, name):
+        while name is None or name in game.players:
+            name = PlayerFactory.random_name()
+        return PlayerFactory.Player(game, name)
 
     @staticmethod
     def random_name():

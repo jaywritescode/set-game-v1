@@ -36,6 +36,17 @@ class TestMultiplayerSet:
         assert test_player.id.isdigit()
         assert test_player in game.players.values()
 
+    def test_add_player_with_name_given(self):
+        game = MultiplayerSet()
+        game.start()
+
+        player_name = 'John Q. Testington'
+
+        test_player = game.add_player(player_name)
+        assert test_player.id == player_name
+        assert player_name in game.players
+        assert game.players[player_name] == test_player
+
     def test_receive_selection(self):
         pass
 
