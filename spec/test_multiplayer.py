@@ -28,8 +28,13 @@ class TestMultiplayerSet:
         game.start()
         assert game.started
 
-    def test_add_player(self):
-        pass
+    def test_add_player_no_name_given(self):
+        game = MultiplayerSet()
+        game.start()
+
+        test_player = game.add_player()
+        assert test_player.id.isdigit()
+        assert test_player in game.players.values()
 
     def test_receive_selection(self):
         pass

@@ -8,7 +8,7 @@ class MultiplayerSet:
     def __init__(self, initial_cards=12):
         self.initial_cards = initial_cards
         self.cards = set()
-        self.players = set()
+        self.players = dict()
         self.deck = all_cards()
         self.started = False
         random.shuffle(self.deck)
@@ -26,7 +26,7 @@ class MultiplayerSet:
 
     def add_player(self):
         new_player = PlayerFactory.make_player(self)
-        self.players.add(new_player)
+        self.players[new_player.id] = new_player
         return new_player
 
     def receive_selection(self, selected, player):
@@ -69,9 +69,6 @@ class MultiplayerSet:
 
 
 class PlayerFactory:
-
-    next_id = 0
-
     class Player:
         def __init__(self, game, id):
             self.game = game
@@ -80,6 +77,13 @@ class PlayerFactory:
 
     @staticmethod
     def make_player(game):
-        # TODO: make thread-safe
-        PlayerFactory.next_id += 1
-        return PlayerFactory.Player(game, "P%s" % PlayerFactory.next_id)
+        n = None
+        while True:
+            n = PlayerFactory.random_name()
+            if n not in game.players:
+                break
+        return PlayerFactory.Player(game, n)
+
+    @staticmethod
+    def random_name():
+        return ''.join(random.choice('0123456789') for _ in range(10))
