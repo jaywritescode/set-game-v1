@@ -2,7 +2,7 @@ import json
 import cherrypy
 
 from app.solitaire import SolitaireSet
-from .mixins import *
+from app.setutils import CardSerializer
 
 
 class SolitaireWebService:
@@ -31,7 +31,7 @@ class SolitaireWebService:
         game = cherrypy.session.get('game')
 
         jsoncards = json.loads(cards)
-        result = game.receive_selection(json_to_cards(jsoncards))
+        result = game.receive_selection([CardSerializer.from_dict(card) for card in jsoncards])
         response = {'result': result.name}
         if result.name == 'OK' and game.solved():
             response.update({'solved': True})
