@@ -3,6 +3,7 @@
 import $ from 'jquery';
 import _ from 'lodash';
 import React from 'react';
+import { Modal, Input, Button } from 'react-bootstrap';
 
 import SetGame from 'setgame';
 
@@ -11,14 +12,14 @@ export default class Multiplayer extends SetGame {
     super(props);
     _.extend(this.state, {
       players: {},
-      selected: new Set()
+      selected: new Set(),
     });
+    _.bindAll(this, 'onChangeName');
   }
 
   static get propTypes() {
     return {
-      game: React.PropTypes.string.isRequired,
-      player_id: React.PropTypes.string
+      game: React.PropTypes.string.isRequired
     };
   }
 
@@ -37,10 +38,9 @@ export default class Multiplayer extends SetGame {
       let data = JSON.parse(event.data);
       switch(data.action) {
         case 'add-player':
-          this.setState(_.pick(data, 'players', 'cards'))
+          this.setState(_.pick(data, 'my_player_id', 'players', 'cards'))
           break;
         case 'verify-set':
-          console.log(data);
           let kards = _.clone(this.state.cards);
           data.cards_to_remove.forEach((c) => {
             kards[_.findIndex(kards, _.matches(c))] = data.cards_to_add.pop();
@@ -54,6 +54,16 @@ export default class Multiplayer extends SetGame {
             }
           });
           break;
+        case 'change-name':
+          if (data.old_name && data.new_name) {
+            this.state.players[data.new_name] = this.state.players[data.old_name];
+            delete this.state.players[data.old_name];
+            this.setState({
+              my_player_id: data.new_name,
+              players: this.state.players
+            });
+          }
+          break;
         default:
           console.warn('Action %s not found.', data.action);
       }
@@ -61,6 +71,23 @@ export default class Multiplayer extends SetGame {
     this.ws.onerror = (event) => {
       console.error(event);
     };
+  }
+
+  onChangeName(evt) {
+    console.log(evt);
+
+    let name_input = $('input#your_name'), name = name_input.val();
+    if (name) {
+      this.ws.send(JSON.stringify({
+        request: 'change-name',
+        new_name: name
+      }));
+    }
+    else {
+      this.setState({
+        my_player_id: null
+      });
+    }
   }
 
   onClickSetCard(card, cardState) {
@@ -99,7 +126,7 @@ export default class Multiplayer extends SetGame {
             return (
               <li key={player_name}>
                 <span>Player&nbsp;</span>
-                <strong>{player_name}</strong>
+                <strong onClick={key == this.state.my_player_id ? this.onChangeName : _.noop}>{player_name}</strong>
                 <span>:&nbsp;</span>
                 <span>{`${player_found} set${player_found == 1 ? '' : 's'} found so far`}</span>
               </li>
@@ -113,6 +140,14 @@ export default class Multiplayer extends SetGame {
   render() {
     return (
       <div id="wrapper">
+        <Modal show={this.state.my_player_id === null}>
+          <Modal.Body>
+            <Input id="your_name" type="text" label="Your name..." placeholder="Enter text" />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button bsStyle="primary" onClick={this.onChangeName}>{"That's Me!"}</Button>
+          </Modal.Footer>
+        </Modal>
         <h3>{this.props.name}</h3>
         {this.renderPlayers()}
         {this.renderCards()}
