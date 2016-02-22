@@ -221,6 +221,19 @@ class CardSerializer:
         """
         return Card(Number[d['number']], Color[d['color']], Shading[d['shading']], Shape[d['shape']])
 
+    @staticmethod
+    def from_txt(s):
+        """
+        Converts a string representation of a card to a Card instance
+
+        :param s: the string, as `number color shading shape`
+        :return: a Card
+        """
+        number, color, shading, shape = s.split(' ')
+        if shape[-1] == 's':
+            shape = shape[:-1]
+        return Card(Number[number], Color[color], Shading[shading], Shape[shape])
+
 SetValidation = Enum('SetValidation', ('OK', 'NOT_A_SET', 'ALREADY_FOUND'))
 
 def all_cards():
