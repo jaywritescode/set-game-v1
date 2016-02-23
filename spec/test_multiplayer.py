@@ -75,6 +75,22 @@ class TestMultiplayerSet:
         assert actual.valid.name == 'OK'
         assert actual.old_cards == selected
         assert actual.new_cards == next_cards
+        assert len(test_player.found) == 1
+
+    def test_receive_selection_incorrect_set(self):
+        game = MultiplayerSet()
+        game.deck = self.load_deck()
+        game.start()
+
+        test_player = game.add_player()
+
+        selected = [self.find_card(game.cards, needle) for needle in ['one green solid diamond', 'two blue empty ovals', 'three blue empty squiggles']]
+
+        actual = game.receive_selection(selected, test_player)
+        assert set(selected) < game.cards
+        assert actual.valid.name == 'NOT_A_SET'
+        assert actual.old_cards == selected
+        assert actual.new_cards is None
 
     def deck_with_set(self, initial_cards=12):
         cards = all_cards()
