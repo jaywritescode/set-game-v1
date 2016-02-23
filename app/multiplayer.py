@@ -43,7 +43,7 @@ class MultiplayerSet:
         :param player: the player
         :return: ???
         """
-        Result = namedtuple('Result', ('valid', 'old_cards', 'new_cards'))
+        Result = namedtuple('Result', ('valid', 'old_cards', 'new_cards', 'game_over'))
 
         if any(card for card in selected if card not in self.cards):
             raise ValueError("Invalid cards")
@@ -64,12 +64,11 @@ class MultiplayerSet:
                     new_cards.append(self.deck[:3])
                     self.deck = self.deck[3:]
                 else:
-                    # TODO: figure out what to do here
-                    raise Exception
+                    return Result(SetValidation['OK'], selected, new_cards=None, game_over=True)
 
-            return Result(SetValidation['OK'], selected, new_cards)
+            return Result(SetValidation['OK'], selected, new_cards, game_over=False)
         else:
-            return Result(SetValidation['NOT_A_SET'], selected, new_cards=None)
+            return Result(SetValidation['NOT_A_SET'], selected, new_cards=None, game_over=False)
 
 
 class PlayerFactory:

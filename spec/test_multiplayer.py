@@ -75,6 +75,7 @@ class TestMultiplayerSet:
         assert actual.valid.name == 'OK'
         assert actual.old_cards == selected
         assert actual.new_cards == next_cards
+        assert not actual.game_over
         assert len(test_player.found) == 1
 
     def test_receive_selection_incorrect_set(self):
@@ -90,7 +91,37 @@ class TestMultiplayerSet:
         assert set(selected) < game.cards
         assert actual.valid.name == 'NOT_A_SET'
         assert actual.old_cards == selected
-        assert actual.new_cards is None
+        assert not actual.new_cards
+        assert not actual.game_over
+
+    def test_receive_selection_no_more_cards(self):
+        game = MultiplayerSet()
+        cards = [
+            'one green solid diamond',
+            'one blue solid diamond',
+            'one red solid diamond',
+            'two green striped diamonds',
+            'two green solid diamonds',
+            'two green empty diamonds',
+            'one blue solid squiggle',
+            'two blue solid squiggles',
+            'three blue solid squiggles',
+            'three red empty ovals',
+            'three red empty diamonds',
+            'three red empty squiggles'
+        ]
+        game.deck = [CardSerializer.from_txt(s) for s in cards]
+        game.start()
+
+        test_player = game.add_player()
+        for p in range(4):
+            selected = [self.find_card(game.cards, needle) for needle in cards[p * 3 : p * 3 + 3]]
+            actual = game.receive_selection(selected, test_player)
+        assert len(game.cards) == 0
+        assert actual.valid.name == 'OK'
+        assert actual.old_cards == selected
+        assert not actual.new_cards
+        assert actual.game_over
 
     def deck_with_set(self, initial_cards=12):
         cards = all_cards()
