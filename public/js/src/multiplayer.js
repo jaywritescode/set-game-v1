@@ -13,6 +13,7 @@ export default class Multiplayer extends SetGame {
     _.extend(this.state, {
       players: {},
       selected: new Set(),
+      game_over: false
     });
     _.bindAll(this, 'onChangeName');
   }
@@ -41,17 +42,26 @@ export default class Multiplayer extends SetGame {
           this.setState(_.pick(data, 'my_player_id', 'players', 'cards'))
           break;
         case 'verify-set':
-          let kards = _.clone(this.state.cards);
+          if (!data.valid) {
+            return;
+          }
+          const {
+            cards,
+            players
+          } = this.state;
+
           data.cards_to_remove.forEach((c) => {
-            kards[_.findIndex(kards, _.matches(c))] = data.cards_to_add.pop();
+            cards[_.findIndex(cards, _.matches(c))] = data.cards_to_add.pop();
           });
-          this.setState((previousState, currentProps) => {
-            let f = this.state.players;
-            f[data.player] = data.found;
-            return {
-              cards: kards,
-              players: f
-            }
+          while (data.cards_to_add.length) {
+            cards.push(data.cards_to_add.pop());
+          }
+
+          players[data.player] = data.found;
+          this.setState({
+            cards: cards,
+            players: players,
+            game_over: !!data.game_over
           });
           break;
         case 'change-name':

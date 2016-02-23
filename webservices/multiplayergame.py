@@ -122,7 +122,8 @@ class MultiplayerWebSocket(WebSocket):
             if result.valid == SetValidation['OK']:
                 response.update({
                     'cards_to_remove': [CardSerializer.to_dict(card) for card in result.old_cards],
-                    'cards_to_add': [CardSerializer.to_dict(card) for card in result.new_cards]
+                    'cards_to_add': [CardSerializer.to_dict(card) for card in result.new_cards],
+                    'game_over': result.game_over
                 })
         elif req == 'change-name':
             new_name = message['new_name']
@@ -134,7 +135,7 @@ class MultiplayerWebSocket(WebSocket):
                 self.game.players[new_name] = self.player
                 response.update({
                     'old_name': old_name,
-                    'new_name': new_name
+                    'new_name': new_name,
                 })
 
         for ws in self.websockets():
