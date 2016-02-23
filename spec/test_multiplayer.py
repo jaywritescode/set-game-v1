@@ -59,6 +59,23 @@ class TestMultiplayerSet:
         with pytest.raises(ValueError):
             assert game.receive_selection(selected, test_player)
 
+    def test_receive_selection_correct_set(self):
+        game = MultiplayerSet()
+        game.deck = self.load_deck()
+        game.start()
+
+        test_player = game.add_player()
+
+        selected = [self.find_card(game.cards, needle) for needle in ['one blue empty diamond', 'two blue empty ovals', 'three blue empty squiggles']]
+        next_cards = game.deck[:3]
+
+        actual = game.receive_selection(selected, test_player)
+        assert game.cards.intersection(selected) == set()
+        assert set(next_cards) < game.cards
+        assert actual.valid.name == 'OK'
+        assert actual.old_cards == selected
+        assert actual.new_cards == next_cards
+
     def deck_with_set(self, initial_cards=12):
         cards = all_cards()
         while True:
@@ -83,3 +100,21 @@ class TestMultiplayerSet:
         import os
         with open(os.path.join(pytest.config.rootdir.strpath, filename)) as file:
             return [CardSerializer.from_txt(line.strip()) for line in file]
+
+    def find_card(self, collection, needle):
+        """
+        Finds the card in `collection` that matches `needle`.
+
+        :param collection: the cards being searched
+        :param needle: the Card we're looking for
+        :return: the matching Card in the deck, or None
+        """
+        if isinstance(needle, str):
+            needle = CardSerializer.from_txt(needle)
+        elif isinstance(needle, dict):
+            needle = CardSerializer.from_dict(needle)
+
+        for card in collection:
+            if card == needle:
+                return card
+        return None

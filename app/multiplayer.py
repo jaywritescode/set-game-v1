@@ -53,20 +53,18 @@ class MultiplayerSet:
             player.found.append(the_set)
             self.cards -= the_set.cards
 
-            new_cards = set()
-            while len(self.cards) < self.initial_cards and len(self.deck):
-                next_card = self.deck.pop()
-                new_cards.add(next_card)
-                self.cards.add(next_card)
+            if len(self.cards) < self.initial_cards and len(self.deck):
+                new_cards, self.deck = self.deck[:3], self.deck[3:]
+                self.cards.update(new_cards)
+            else:
+                new_cards = list()
 
             while len(find_all_sets(self.cards)) == 0:
-                if len(self.deck) >= 3:
-                    for _ in range(3):
-                        next_card = self.deck.pop()
-                        new_cards.add(next_card)
-                        self.cards.add(next_card)
+                if len(self.deck):
+                    new_cards.append(self.deck[:3])
+                    self.deck = self.deck[3:]
                 else:
-                    # TODO: figure out which exception to raise here
+                    # TODO: figure out what to do here
                     raise Exception
 
             return Result(SetValidation['OK'], selected, new_cards)

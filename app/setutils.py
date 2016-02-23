@@ -80,7 +80,9 @@ class Card:
         return string
 
     def __eq__(self, other):
-        return self.__dict__ == other.__dict__
+        keys = ['color', 'number', 'shading', 'shape']
+
+        return {key: self.__dict__[key] for key in keys} == {key: other.__dict__[key] for key in keys}
 
     def __hash__(self):
         if not hasattr(self, 'hash'):
