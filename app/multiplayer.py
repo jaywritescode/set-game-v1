@@ -39,7 +39,7 @@ class MultiplayerSet:
         """
         Handler called when a player submits a potential set for verification.
 
-        :param selected: the Cards in the potential set
+        :param selected: a collection of Cards in the potential set
         :param player: the player
         :return: ???
         """
@@ -61,7 +61,8 @@ class MultiplayerSet:
 
             while len(find_all_sets(self.cards)) == 0:
                 if len(self.deck):
-                    new_cards.append(self.deck[:3])
+                    new_cards.extend(self.deck[:3])
+                    self.cards.update(new_cards)
                     self.deck = self.deck[3:]
                 else:
                     return Result(SetValidation['OK'], selected, new_cards=None, game_over=True)
