@@ -6,6 +6,12 @@ class MultiplayerSet:
     set_factory = SetFactory()
 
     def __init__(self, initial_cards=12):
+        """
+        Initialize a multiplayer Set game.
+
+        :param initial_cards: the number of cards on the table to start
+        :return: `self`
+        """
         self.initial_cards = initial_cards
         self.cards = set()
         self.players = dict()
@@ -14,14 +20,19 @@ class MultiplayerSet:
         random.shuffle(self.deck)
 
     def start(self):
+        """
+        Starts the game.
+
+        :return: None
+        """
         self.cards = set(self.deck[:self.initial_cards])
         self.deck = self.deck[self.initial_cards:]
 
         while True:
             if len(find_all_sets(self.cards)):
                 break
-            for _ in range(3):
-                self.cards.add(self.deck.pop())
+            self.cards |= set(self.deck[:3])
+            self.deck = self.deck[3:]
         self.started = True
 
     def add_player(self, name=None):
@@ -41,7 +52,7 @@ class MultiplayerSet:
 
         :param selected: a collection of Cards in the potential set
         :param player: the player
-        :return: ???
+        :return: a `Result`
         """
         Result = namedtuple('Result', ('valid', 'old_cards', 'new_cards', 'game_over'))
 

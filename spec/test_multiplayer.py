@@ -174,7 +174,7 @@ class TestMultiplayerSet:
         assert actual.game_over
 
     def test_receive_selection_needs_extra_cards(self, game):
-        # if you remove the first three cards in this collection, then there will be no Sets in the remaining cards
+        # if we remove the first three cards in this collection, then there will be no Sets in the remaining cards
         game.deck = self.strings_to_deck([
             "one blue striped diamond",
             "one blue solid diamond",
@@ -207,6 +207,41 @@ class TestMultiplayerSet:
         # * replacements cards are dealt until there is at least one Set on the table
         assert len(game.cards) == 15
 
+    def test_receive_selection_needs_fewer_cards(self, game):
+        # if we remove a Set from this collection, there will be another Set in the remaining twelve cards
+        game.deck = self.strings_to_deck([
+            "two red striped squiggles",            # no Set in...
+            "three red striped ovals",
+            "three blue solid ovals",
+            "three green solid ovals",
+            "two red striped diamonds",
+            "three green striped squiggles",
+            "one green empty oval",
+            "two red solid ovals",
+            "three red empty ovals",
+            "two blue empty squiggles",
+            "one red empty diamond",
+            "two green empty ovals",                # ...these cards
+            "three green empty ovals",              # makes a set with three red striped ovals + three blue solid ovals
+            "one blue empty squiggle",              # makes a set with one green empty oval + one red empty diamond
+            "one red solid squiggle",
+            "two red solid squiggles",
+            "three red solid squiggles",
+            "one blue striped diamond"
+        ])
+        game.start()
+
+        test_player = game.add_player()
+        selected = [self.find_card(game.cards, needle) for needle in ["three green empty ovals", "three red striped ovals", "three blue solid ovals"]]
+
+        game.receive_selection(selected, test_player)
+
+        # test:
+        #
+        # * there are now twelve cards on the table
+        assert len(game.cards) == 12
+
+
     @staticmethod
     def deck_with_set(initial_cards=12):
         cards = all_cards()
@@ -233,18 +268,8 @@ class TestMultiplayerSet:
         """
         return [CardSerializer.from_txt(card) for card in card_strings]
 
-    def load_deck(self, filename='seed.txt'):
-        """
-        Loads a deck of Set cards from a text file.
-
-        :param filename: the filename
-        :return: a list of Cards
-        """
-        import os
-        with open(os.path.join(pytest.config.rootdir.strpath, filename)) as file:
-            return [CardSerializer.from_txt(line.strip()) for line in file]
-
-    def find_card(self, collection, needle):
+    @staticmethod
+    def find_card(collection, needle):
         """
         Finds the card in `collection` that matches `needle`.
 
