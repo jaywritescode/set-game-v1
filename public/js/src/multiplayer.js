@@ -162,7 +162,7 @@ export default class Multiplayer extends SetGame {
             <Button bsStyle="primary" onClick={this.onChangeName}>{"That's Me!"}</Button>
           </Modal.Footer>
         </Modal>
-        <h3>{this.props.name}</h3>
+        <h3>{this.props.game}</h3>
         {this.renderPlayers()}
         {this.renderCards()}
       </div>
