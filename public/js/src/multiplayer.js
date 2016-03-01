@@ -15,6 +15,10 @@ export default class Multiplayer extends SetGame {
       selected: new Set(),
       game_over: false
     });
+
+    window.onbeforeunload = function(evt) { 
+      $.get('multiplayer/leave');
+    };
     _.bindAll(this, 'onChangeName');
   }
 

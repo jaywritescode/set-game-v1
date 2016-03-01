@@ -56,6 +56,14 @@ class MultiplayerWebService:
         """
         return {name: len(game.players) for name, game in self.games.items()}
 
+    @cherrypy.expose
+    def leave(self):
+        """
+        Endpoint to leave the current game.
+        """
+        if cherrypy.session.get('game'):
+            del cherrypy.session['game']
+
     def create_game(self):
         """
         Creates a game.
