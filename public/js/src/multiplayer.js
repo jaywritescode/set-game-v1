@@ -16,7 +16,7 @@ export default class Multiplayer extends SetGame {
       game_over: false
     });
 
-    window.onbeforeunload = function(evt) { 
+    window.onbeforeunload = function(evt) {
       $.get('multiplayer/leave');
     };
     _.bindAll(this, 'onChangeName');
@@ -30,7 +30,7 @@ export default class Multiplayer extends SetGame {
 
   componentWillMount() {
     // create the websocket
-    this.ws = new WebSocket(`ws://localhost:8080/${this.props.url}/ws?game=${this.props.game}`);
+    this.ws = new WebSocket(`ws://${window.location.host}/${this.props.url}/ws?game=${this.props.game}`);
     this.ws.onopen = (event) => {
       console.log('Websocket opened: %O', event);
 
