@@ -1,11 +1,12 @@
 const gulp = require('gulp');
 const babel = require('gulp-babel');
 const sourcemaps = require('gulp-sourcemaps');
+const del = require('del');
 
-gulp.task('default', ['babel', 'watch']);
+gulp.task('default', ['clean', 'babel', 'watch']);
 
 gulp.task('babel', () => {
-  return gulp.src('public/js/src/*.js')
+  return gulp.src('public/js/src/**/*.js')
     .pipe(sourcemaps.init())
     .pipe(babel({
       "presets": ["es2015", "react"],
@@ -16,5 +17,9 @@ gulp.task('babel', () => {
 });
 
 gulp.task('watch', () => {
-  gulp.watch('public/js/src/*.js', ['babel']);
+  gulp.watch('public/js/src/**/*.js', ['babel']);
+});
+
+gulp.task('clean', () => {
+  return del(['public/js/build/**/*']);
 });
