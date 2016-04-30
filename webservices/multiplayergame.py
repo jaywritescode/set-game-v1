@@ -145,6 +145,11 @@ class MultiplayerWebSocket(WebSocket):
                     'old_name': old_name,
                     'new_name': new_name,
                 })
+        elif req == 'countdown-start':
+            import time
+            response.update({
+                'start_time': time.time() + 10
+            })
 
         for ws in self.websockets():
             ws.send(json.dumps(response))

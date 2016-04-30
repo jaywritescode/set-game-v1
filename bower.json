@@ -23,6 +23,7 @@
     "react-bootstrap": "~0.28.1",
     "bootstrap": "~3.3.6",
     "moment": "~2.10.6",
-    "lodash": "~4.5.0"
+    "lodash": "~4.5.0",
+    "alt": "^0.18.4"
   }
 }

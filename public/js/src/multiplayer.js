@@ -4,22 +4,20 @@ import $ from 'jquery';
 import _ from 'lodash';
 import React from 'react';
 import { Modal, Input, Button } from 'react-bootstrap';
+import MultiplayerStore from 'store';
+import MultiplayerActions from 'actions';
 
 import SetGame from 'setgame';
 
 export default class Multiplayer extends SetGame {
   constructor(props) {
     super(props);
-    _.extend(this.state, {
-      players: {},
-      selected: new Set(),
-      game_over: false
-    });
+    _.extend(this.state, MultiplayerStore.getState());
 
     window.onbeforeunload = function(evt) {
       $.get('multiplayer/leave');
     };
-    _.bindAll(this, 'onChangeName');
+    _.bindAll(this, 'onChange', 'onChangeName', 'onCountdownStart');
   }
 
   static get propTypes() {
@@ -39,58 +37,27 @@ export default class Multiplayer extends SetGame {
     };
     this.ws.onmessage = (event) => {
       console.log('Message received: %O', event);
-
-      let data = JSON.parse(event.data);
-      switch(data.action) {
-        case 'add-player':
-          this.setState(_.pick(data, 'my_player_id', 'players', 'cards'))
-          break;
-        case 'verify-set':
-          if (!data.valid) {
-            return;
-          }
-          const {
-            cards,
-            players
-          } = this.state;
-
-          data.cards_to_remove.forEach((c) => {
-            cards[_.findIndex(cards, _.matches(c))] = data.cards_to_add.pop();
-          });
-          while (data.cards_to_add.length) {
-            cards.push(data.cards_to_add.pop());
-          }
-
-          players[data.player] = data.found;
-          this.setState({
-            cards: cards,
-            players: players,
-            game_over: !!data.game_over
-          });
-          break;
-        case 'change-name':
-          if (data.old_name && data.new_name) {
-            this.state.players[data.new_name] = this.state.players[data.old_name];
-            delete this.state.players[data.old_name];
-            this.setState({
-              my_player_id: data.new_name,
-              players: this.state.players
-            });
-          }
-          break;
-        default:
-          console.warn('Action %s not found.', data.action);
-      }
+      MultiplayerActions.receiveMessage(JSON.parse(event.data));
     };
     this.ws.onerror = (event) => {
       console.error(event);
     };
   }
 
-  onChangeName(evt) {
-    console.log(evt);
+  componentDidMount() {
+    MultiplayerStore.listen(this.onChange);
+  }
 
-    let name_input = $('input#your_name'), name = name_input.val();
+  componentWillUnmount() {
+    MultiplayerStore.unlisten(this.onChange);
+  }
+
+  onChange(state) {
+    this.setState(state);
+  }
+
+  onChangeName(evt) {
+    let name = $('input#your_name').val();
     if (name) {
       this.ws.send(JSON.stringify({
         request: 'change-name',
@@ -98,10 +65,14 @@ export default class Multiplayer extends SetGame {
       }));
     }
     else {
-      this.setState({
-        my_player_id: null
-      });
+      MultiplayerActions.clearName();
     }
+  }
+
+  onCountdownStart(evt) {
+    this.ws.send(JSON.stringify({
+      request: 'countdown-start'
+    }));
   }
 
   onClickSetCard(card, cardState) {
@@ -151,6 +122,23 @@ export default class Multiplayer extends SetGame {
     );
   }
 
+  renderStartButton() {
+    if (this.state.current_state == 'WAITING_FOR_PLAYERS') {
+      return;
+    }
+    else if (this.state.current_state == 'WAITING_FOR_CLICK_START') {
+      return (
+        <Button bsStyle="primary" onClick={this.onCountdownStart}>Click me to start...</Button>
+      );
+    }
+    else if (this.state.current_state.indexOf('START_AT_') >= 0) {
+      let start_time = /START_AT_(\d+)/.exec(this.state.current_state)[1];
+      return (
+        <div>{`Starting game in ${(start_time - Date.now() / 1000).toFixed()} seconds`}</div>
+      );
+    }
+  }
+
   render() {
     return (
       <div id="wrapper">
@@ -164,6 +152,7 @@ export default class Multiplayer extends SetGame {
         </Modal>
         <h3>{this.props.game}</h3>
         {this.renderPlayers()}
+        {this.renderStartButton()}
         {this.renderCards()}
       </div>
     );

@@ -16,6 +16,7 @@ export default class SetGame extends React.Component {
   }
 
   renderCards() {
+    console.log('SetGame.renderCards: %O', this.state.cards);
     return (
       <div id="cards">
         <ul>
