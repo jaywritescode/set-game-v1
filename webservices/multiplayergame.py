@@ -105,19 +105,16 @@ class MultiplayerWebSocket(WebSocket):
 
         response = {'action': req}
         if req == 'add-player':
-            player = self.game.add_player()
-            if player:
-                self.player = player
-                response.update({
-                    'my_player_id': player.id,
-                    'players': {p.id: len(p.found) for p in self.game.players.values()} if player else {}
-                })
+            self.onAddPlayer(message, response)
 
-            if not self.game.started and len(self.game.players) > 1:
-                self.game.start()
-                response.update({
-                    'cards': [card.to_hash() for card in self.game.cards]
-                })
+
+            # if not self.game.started and len(self.game.players) > 1:
+            #     self.game.start()
+            #     response.update({
+            #         'cards': [card.to_hash() for card in self.game.cards]
+            #     })
+
+
         elif req == 'verify-set':
             cards = [CardSerializer.from_dict(card_json_obj) for card_json_obj in message['cards']]
             result = self.game.receive_selection(cards, self.player)
