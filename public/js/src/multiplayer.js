@@ -59,6 +59,7 @@ export default class Multiplayer extends SetGame {
   onChangeName(evt) {
     let name = $('input#your_name').val();
     if (name) {
+      // TODO: make this an Action
       this.ws.send(JSON.stringify({
         request: 'change-name',
         new_name: name
@@ -123,19 +124,19 @@ export default class Multiplayer extends SetGame {
   }
 
   renderStartButton() {
-    if (this.state.current_state == 'WAITING_FOR_PLAYERS') {
-      return;
-    }
-    else if (this.state.current_state == 'WAITING_FOR_CLICK_START') {
+    let { current_state } = this.state;
+    if (current_state == 'WAITING_FOR_CLICK_START') {
       return (
         <Button bsStyle="primary" onClick={this.onCountdownStart}>Click me to start...</Button>
       );
     }
-    else if (this.state.current_state.indexOf('START_AT_') >= 0) {
-      let start_time = /START_AT_(\d+)/.exec(this.state.current_state)[1];
+    else if (current_state == 'WAITING_FOR_COUNTDOWN') {
       return (
-        <div>{`Starting game in ${(start_time - Date.now() / 1000).toFixed()} seconds`}</div>
+        <span>Counting down (silently)</span>
       );
+    }
+    else {
+      return null;
     }
   }
 

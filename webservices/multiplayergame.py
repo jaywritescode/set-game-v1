@@ -108,41 +108,31 @@ class MultiplayerWebSocket(WebSocket):
             self.onAddPlayer(message, response)
 
 
-            # if not self.game.started and len(self.game.players) > 1:
-            #     self.game.start()
-            #     response.update({
-            #         'cards': [card.to_hash() for card in self.game.cards]
-            #     })
 
 
-        elif req == 'verify-set':
-            cards = [CardSerializer.from_dict(card_json_obj) for card_json_obj in message['cards']]
-            result = self.game.receive_selection(cards, self.player)
 
-            response.update({
-                'valid': result.valid == SetValidation['OK'],
-                'player': self.player.id,
-                'found': len(self.player.found)
-            })
-            if result.valid == SetValidation['OK']:
-                response.update({
-                    'cards_to_remove': [CardSerializer.to_dict(card) for card in result.old_cards],
-                    'cards_to_add': [CardSerializer.to_dict(card) for card in result.new_cards],
-                    'game_over': result.game_over
-                })
-
-            self.broadcast_as_json(response)
+        # elif req == 'verify-set':
+        #     cards = [CardSerializer.from_dict(card_json_obj) for card_json_obj in message['cards']]
+        #     result = self.game.receive_selection(cards, self.player)
+        #
+        #     response.update({
+        #         'valid': result.valid == SetValidation['OK'],
+        #         'player': self.player.id,
+        #         'found': len(self.player.found)
+        #     })
+        #     if result.valid == SetValidation['OK']:
+        #         response.update({
+        #             'cards_to_remove': [CardSerializer.to_dict(card) for card in result.old_cards],
+        #             'cards_to_add': [CardSerializer.to_dict(card) for card in result.new_cards],
+        #             'game_over': result.game_over
+        #         })
+        #
+        #     self.broadcast_as_json(response)
         elif req == 'change-name':
             self.onChangeName(message, response)
         elif req == 'countdown-start':
-            import time
+            self.onCountdownStart(message, response)
 
-            self.broadcast_as_json(response)
-            time.sleep(10)
-            response.update({'action': 'start-game'})
-
-        for ws in self.websockets():
-            ws.send(json.dumps(response))
 
     # #########################################################################
     # Individual event handlers
@@ -182,7 +172,19 @@ class MultiplayerWebSocket(WebSocket):
                 'old_name': old_name,
                 'new_name': new_name,
             })
-        # self.broadcast_as_json(response)
+        self.broadcast_as_json(response)
+
+    def onCountdownStart(self, data, response):
+        import time
+        self.broadcast_as_json(response)
+        time.sleep(10)
+
+        if not self.game.started and len(self.game.players) > 1:
+            self.game.start()
+            self.broadcast_as_json({
+                'action': 'start-game',
+                'cards': [card.to_hash() for card in self.game.cards]
+            })
 
     # #########################################################################
     # Methods for broadcasting out across web sockets

@@ -31,9 +31,9 @@ class MultiplayerStore {
     console.log('MultiplayerStore.handleReceiveMessage: message = %O', message);
 
     const
-      handleAddPlayer = (data) => {
+      onAddPlayer = (data) => {
         let { my_player_id, players } = data;
-        // race condition here -- we would like a way to uniquely identify each requester
+        // TODO: race condition here -- we would like a way to uniquely identify each requester
         if (this.my_player_id === undefined) {
           this.my_player_id = my_player_id;
         }
@@ -43,7 +43,7 @@ class MultiplayerStore {
         }
         return true;
       },
-      handleChangeName = (data) => {
+      onChangeName = (data) => {
         let { old_name, new_name } = data;
         if (!(old_name && new_name)) {
           return false;
@@ -53,15 +53,20 @@ class MultiplayerStore {
         delete this.players[old_name];
         return true;
       },
-      handleCountdownStart = (data) => {
-        let { start_time } = data;
-        this.current_state = 'START_AT_' + start_time
+      onCountdownStart = () => {
+        this.current_state = 'WAITING_FOR_COUNTDOWN';
+      },
+      onStartGame = (data) => {
+        let { cards } = data;
+        this.cards = cards;
+        this.current_state = 'IN_PROGRESS';
       };
 
     let actions = {
-      'add-player': handleAddPlayer,
-      'change-name': handleChangeName,
-      'countdown-start': handleCountdownStart,
+      'add-player': onAddPlayer,
+      'change-name': onChangeName,
+      'countdown-start': onCountdownStart,
+      'start-game': onStartGame,
       'verify-set': (data) => {
         let { valid, cards_to_add, cards_to_remove, player, found, game_over } = data;
         if (!valid) {
