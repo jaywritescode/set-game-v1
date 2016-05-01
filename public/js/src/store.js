@@ -33,9 +33,11 @@ class MultiplayerStore {
     const
       handleAddPlayer = (data) => {
         let { my_player_id, players } = data;
-        this.my_player_id = my_player_id;
+        // race condition here -- we would like a way to uniquely identify each requester
+        if (this.my_player_id === undefined) {
+          this.my_player_id = my_player_id;
+        }
         this.players = players;
-        console.log(this.players);
         if (this.current_state == 'WAITING_FOR_PLAYERS' && _.size(this.players) > 1) {
           this.current_state = 'WAITING_FOR_CLICK_START';
         }

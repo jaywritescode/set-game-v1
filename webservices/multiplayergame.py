@@ -182,7 +182,7 @@ class MultiplayerWebSocket(WebSocket):
                 'old_name': old_name,
                 'new_name': new_name,
             })
-        self.broadcast_as_json(response)
+        # self.broadcast_as_json(response)
 
     # #########################################################################
     # Methods for broadcasting out across web sockets
