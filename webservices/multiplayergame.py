@@ -133,26 +133,79 @@ class MultiplayerWebSocket(WebSocket):
                     'cards_to_add': [CardSerializer.to_dict(card) for card in result.new_cards],
                     'game_over': result.game_over
                 })
-        elif req == 'change-name':
-            new_name = message['new_name']
-            if new_name not in self.game.players:
-                old_name = self.player.id
-                del self.game.players[old_name]
 
-                self.player.id = new_name
-                self.game.players[new_name] = self.player
-                response.update({
-                    'old_name': old_name,
-                    'new_name': new_name,
-                })
+            self.broadcast_as_json(response)
+        elif req == 'change-name':
+            self.onChangeName(message, response)
         elif req == 'countdown-start':
             import time
-            response.update({
-                'start_time': time.time() + 10
-            })
+
+            self.broadcast_as_json(response)
+            time.sleep(10)
+            response.update({'action': 'start-game'})
 
         for ws in self.websockets():
             ws.send(json.dumps(response))
+
+    # #########################################################################
+    # Individual event handlers
+    # #########################################################################
+    def onAddPlayer(self, data, response):
+        """
+        Handler for an add-player request.
+
+        :param data: the request data, json.load(s)-ed
+        :param response: the response data, to be json.dump(s)-ed
+        """
+        player = self.game.add_player()
+        if player:
+            self.player = player
+            response.update({
+                'my_player_id': player.id,
+                'players': {p.id: len(p.found) for p in self.game.players.values()} if player else {}
+            })
+        self.broadcast_as_json(response)
+
+    def onChangeName(self, data, response):
+        """
+        Handler for a change-name request.
+
+        :param data: the request data, json.load(s)-ed
+        :param response: the response data, to be json.dump(s)-ed
+        """
+        new_name = data['new_name']
+        if new_name and new_name not in self.game.players:
+            old_name = self.player.id
+            del self.game.players[old_name]
+
+            self.player.id = new_name
+            self.game.players[new_name] = self.player
+
+            response.update({
+                'old_name': old_name,
+                'new_name': new_name,
+            })
+        self.broadcast_as_json(response)
+
+    # #########################################################################
+    # Methods for broadcasting out across web sockets
+    # #########################################################################
+    def broadcast_as_json(self, message):
+        """
+        Dump a message thingy to JSON and broadcast it.
+
+        :param message: the message
+        """
+        self.broadcast(json.dumps(message))
+
+    def broadcast(self, message):
+        """
+        Broadcast a message to all connected web sockets.
+
+        :param message: the raw message
+        """
+        for ws in self.websockets():
+            ws.send(message)
 
     def closed(self, code, reason="A client left the room without a proper explanation."):
         cherrypy.engine.publish('websocket-broadcast', TextMessage(reason))
