@@ -166,6 +166,23 @@ class MultiplayerWebSocket(WebSocket):
                 'cards': [card.to_hash() for card in self.game.cards]
             })
 
+    def onVerifySet(self, data, response):
+        cards = [CardSerializer.from_dict(card) for card in data['cards']]
+        result = self.game.receive_selection(cards, self.player)
+
+        response.update({
+            'player': self.player.id,
+            'found': len(self.player.found)
+        })
+        if result.valid == SetValidation['OK']:
+            response.update({
+                'valid': True,
+                'cards_to_remove': [CardSerializer.to_dict(card) for card in result.old_cards],
+                'cards_to_add': [CardSerializer.to_dict(card) for card in result.new_cards],
+                'game_over': result.game_over
+            })
+        self.broadcast_as_json(response)
+
     # #########################################################################
     # Methods for broadcasting out across web sockets
     # #########################################################################
