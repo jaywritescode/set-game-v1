@@ -11,6 +11,11 @@ class MultiplayerActions {
     return true;
   }
 
+  changeName(new_name) {
+    console.log('MultiplayerActions.changeName');
+    return new_name;
+  }
+
   receiveMessage(message) {
     console.log('MultiplayerActions.receiveMessage: message = %O', message);
     return message;

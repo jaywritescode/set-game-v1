@@ -60,6 +60,7 @@ export default class Multiplayer extends SetGame {
     let name = $('input#your_name').val();
     if (name) {
       // TODO: make this an Action
+      MultiplayerActions.changeName(name);
       this.ws.send(JSON.stringify({
         request: 'change-name',
         new_name: name

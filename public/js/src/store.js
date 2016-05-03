@@ -13,6 +13,7 @@ class MultiplayerStore {
     this.bindListeners({
       handleUpdatePlayers: MultiplayerActions.UPDATE_PLAYERS,
       handleClearName: MultiplayerActions.CLEAR_NAME,
+      handleChangeName: MultiplayerActions.CHANGE_NAME,
       handleReceiveMessage: MultiplayerActions.RECEIVE_MESSAGE,
     });
   }
@@ -25,6 +26,11 @@ class MultiplayerStore {
   handleClearName() {
     console.log('MultiplayerStore.handleClearName');
     this.my_player_id = null;
+  }
+
+  handleChangeName(new_name) {
+    console.log('MultiplayerStore.handleChangeName');
+    this.my_player_id = new_name;
   }
 
   handleReceiveMessage(message) {
@@ -48,7 +54,6 @@ class MultiplayerStore {
         if (!(old_name && new_name)) {
           return false;
         }
-        this.my_player_id = new_name
         this.players[new_name] = this.players[old_name];
         delete this.players[old_name];
         return true;
