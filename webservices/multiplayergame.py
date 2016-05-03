@@ -104,35 +104,15 @@ class MultiplayerWebSocket(WebSocket):
         req = message['request']
 
         response = {'action': req}
-        if req == 'add-player':
-            self.onAddPlayer(message, response)
 
-
-
-
-
-        # elif req == 'verify-set':
-        #     cards = [CardSerializer.from_dict(card_json_obj) for card_json_obj in message['cards']]
-        #     result = self.game.receive_selection(cards, self.player)
-        #
-        #     response.update({
-        #         'valid': result.valid == SetValidation['OK'],
-        #         'player': self.player.id,
-        #         'found': len(self.player.found)
-        #     })
-        #     if result.valid == SetValidation['OK']:
-        #         response.update({
-        #             'cards_to_remove': [CardSerializer.to_dict(card) for card in result.old_cards],
-        #             'cards_to_add': [CardSerializer.to_dict(card) for card in result.new_cards],
-        #             'game_over': result.game_over
-        #         })
-        #
-        #     self.broadcast_as_json(response)
-        elif req == 'change-name':
-            self.onChangeName(message, response)
-        elif req == 'countdown-start':
-            self.onCountdownStart(message, response)
-
+        handlers = {
+            'add-player': self.onAddPlayer,
+            'change-name': self.onChangeName,
+            'countdown-start': self.onCountdownStart,
+            'verify-set': self.onVerifySet
+        }
+        if req in handlers:
+            handlers[req](message, response)
 
     # #########################################################################
     # Individual event handlers
