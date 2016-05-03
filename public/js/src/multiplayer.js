@@ -3,7 +3,7 @@
 import $ from 'jquery';
 import _ from 'lodash';
 import React from 'react';
-import { Modal, Input, Button } from 'react-bootstrap';
+import { Modal, Input, Button, ProgressBar } from 'react-bootstrap';
 import MultiplayerStore from 'store';
 import MultiplayerActions from 'actions';
 
@@ -132,7 +132,7 @@ export default class Multiplayer extends SetGame {
     }
     else if (current_state == 'WAITING_FOR_COUNTDOWN') {
       return (
-        <span>Counting down (silently)</span>
+        <Countdown />
       );
     }
     else {
@@ -157,5 +157,37 @@ export default class Multiplayer extends SetGame {
         {this.renderCards()}
       </div>
     );
+  }
+}
+
+class Countdown extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      max: 100,
+      value: 0
+    };
+  }
+
+  componentDidMount() {
+    setInterval(() => {
+      let value = this.state.value + 1,
+          max = Math.max(100, value + 5);
+      this.setState({
+        max: max,
+        value: value
+      });
+    }, 100);
+  }
+
+  render() {
+    return (
+      <ProgressBar active
+                   bsStyle="info"
+                   striped
+                   min={0}
+                   max={this.state.max}
+                   now={this.state.value} />
+    )
   }
 }
