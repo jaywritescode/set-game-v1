@@ -168,10 +168,11 @@ class Countdown extends React.Component {
       max: 100,
       value: 0
     };
+    this.intervalId = null;
   }
 
   componentDidMount() {
-    setInterval(() => {
+    this.intervalId = setInterval(() => {
       let value = this.state.value + 1,
           max = Math.max(100, value + 5);
       this.setState({
@@ -179,6 +180,10 @@ class Countdown extends React.Component {
         value: value
       });
     }, 100);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.intervalId);
   }
 
   render() {
