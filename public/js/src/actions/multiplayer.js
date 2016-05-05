@@ -1,4 +1,4 @@
-import alt from './calt';
+import alt from '../calt';
 
 class MultiplayerActions {
   updatePlayers(players) {
@@ -14,6 +14,11 @@ class MultiplayerActions {
   changeName(new_name) {
     console.log('MultiplayerActions.changeName');
     return new_name;
+  }
+
+  cardSelected(card) {
+    console.log('MultiplayerActions.clickCard');
+    return card;
   }
 
   receiveMessage(message) {

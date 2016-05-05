@@ -1,4 +1,5 @@
 import React from 'react';
+import MultiplayerActions from 'actions/multiplayer';
 
 const IMG_PATH = 'static/img/';
 

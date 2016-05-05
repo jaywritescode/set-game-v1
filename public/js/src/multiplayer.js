@@ -4,8 +4,8 @@ import $ from 'jquery';
 import _ from 'lodash';
 import React from 'react';
 import { Modal, Input, Button, ProgressBar } from 'react-bootstrap';
-import MultiplayerStore from 'store';
-import MultiplayerActions from 'actions';
+import MultiplayerStore from 'stores/multiplayer';
+import MultiplayerActions from 'actions/multiplayer';
 
 import SetGame from 'setgame';
 
