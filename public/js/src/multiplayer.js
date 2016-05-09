@@ -79,27 +79,19 @@ export default class Multiplayer extends SetGame {
 
   onClickSetCard(evt, card) {
     MultiplayerActions.selectCard(card);
-    // if (cardState.selected) {
-    //   this.state.selected.add(card);
-    // }
-    // else {
-    //   this.state.selected.delete(card);
-    // }
-    //
-    // if (this.state.selected.size == 3) {
-    //   this.ws.send(JSON.stringify({
-    //     request: 'verify-set',
-    //     cards: [...this.state.selected].map((component) => {
-    //       return component.props.card;
-    //     }),
-    //   }));
-    //   for (card of this.state.selected) {
-    //     card.setState({
-    //       selected: false
-    //     });
-    //   }
-    //   this.state.selected.clear();
-    // }
+    if (this.state.selected.size == 3) {
+      this.ws.send(JSON.stringify({
+        request: 'verify-set',
+        cards: [...this.state.selected].map((string) => {
+          let [number, color, shading, shape] =
+              string.match(/(\w+) (\w+) (\w+) (\w+)/).slice(1);
+          return {
+            number, color, shading, shape
+          };
+        }),
+      }));
+      MultiplayerActions.clearSelected();
+    }
   }
 
   renderPlayers() {

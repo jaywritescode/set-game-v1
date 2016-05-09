@@ -221,7 +221,14 @@ class CardSerializer:
         :param d: a dict with properties `number`, `color`, `shading`, and `shape`
         :return: a Card
         """
-        return Card(Number[d['number']], Color[d['color']], Shading[d['shading']], Shape[d['shape']])
+        number  = Number[d['number']]
+        color   = Color[d['color']]
+        shading = Shading[d['shading']]
+        try:
+            shape = Shape[d['shape']]
+        except KeyError:
+            shape = Shape[d['shape'][:-1]]
+        return Card(number, color, shading, shape)
 
     @staticmethod
     def from_txt(s):

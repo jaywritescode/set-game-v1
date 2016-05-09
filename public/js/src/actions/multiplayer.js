@@ -21,6 +21,11 @@ class MultiplayerActions {
     return card;
   }
 
+  clearSelected() {
+    console.log('MultiplayerActions.clearSelected');
+    return true;
+  }
+
   receiveMessage(message) {
     console.log('MultiplayerActions.receiveMessage: message = %O', message);
     return message;

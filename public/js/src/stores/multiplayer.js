@@ -17,6 +17,7 @@ class MultiplayerStore {
       handleChangeName: MultiplayerActions.CHANGE_NAME,
       handleReceiveMessage: MultiplayerActions.RECEIVE_MESSAGE,
       handleSelectCard: MultiplayerActions.SELECT_CARD,
+      handleClearSelected: MultiplayerActions.CLEAR_SELECTED,
     });
   }
 
@@ -45,6 +46,11 @@ class MultiplayerStore {
     else {
       this.selected.add(cardString);
     }
+  }
+
+  handleClearSelected() {
+    console.log('MultiplayerStore.handleClearSelected');
+    this.selected.clear();
   }
 
   handleReceiveMessage(message) {
