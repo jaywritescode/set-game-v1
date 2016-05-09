@@ -10,22 +10,29 @@ export default class SetGame extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      cards: [],
-      selected: new Set()
+      cards: []
     };
   }
 
+  isSelected(card) {
+    return this.state.selected.has(card.toString());
+  }
+
   renderCards() {
-    console.log('SetGame.renderCards: %O', this.state.cards);
     return (
       <div id="cards">
         <ul>
           {this.state.cards.map((card) => {
+            let { number, color, shading, shape } = card;
             return (
               <li>
-                <SetCard card={card}
+                <SetCard number={number}
+                         color={color}
+                         shading={shading}
+                         shape={shape}
                          key={card}
-                         parentHandleClick={this.onClickSetCard.bind(this)} />
+                         selected={this.state.selected.has(SetCard.stringify(card))}
+                         onClick={this.onClickSetCard.bind(this)} />
               </li>
             );
           })}

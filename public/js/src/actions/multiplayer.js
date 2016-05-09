@@ -16,8 +16,8 @@ class MultiplayerActions {
     return new_name;
   }
 
-  cardSelected(card) {
-    console.log('MultiplayerActions.clickCard');
+  selectCard(card) {
+    console.log('MultiplayerActions.selectCard');
     return card;
   }
 

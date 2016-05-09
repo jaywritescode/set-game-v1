@@ -12,12 +12,12 @@ import SetGame from 'setgame';
 export default class Multiplayer extends SetGame {
   constructor(props) {
     super(props);
-    _.extend(this.state, MultiplayerStore.getState());
+    this.state = MultiplayerStore.getState();
 
     window.onbeforeunload = function(evt) {
       $.get('multiplayer/leave');
     };
-    _.bindAll(this, 'onChange', 'onChangeName', 'onCountdownStart');
+    _.bindAll(this, 'onChange', 'onChangeName', 'onClickSetCard', 'onCountdownStart');
   }
 
   static get propTypes() {
@@ -77,30 +77,29 @@ export default class Multiplayer extends SetGame {
     }));
   }
 
-  onClickSetCard(card, cardState) {
-    console.log('onClickSetCard card: %O, cardState: %O', card, cardState);
-
-    if (cardState.selected) {
-      this.state.selected.add(card);
-    }
-    else {
-      this.state.selected.delete(card);
-    }
-
-    if (this.state.selected.size == 3) {
-      this.ws.send(JSON.stringify({
-        request: 'verify-set',
-        cards: [...this.state.selected].map((component) => {
-          return component.props.card;
-        }),
-      }));
-      for (card of this.state.selected) {
-        card.setState({
-          selected: false
-        });
-      }
-      this.state.selected.clear();
-    }
+  onClickSetCard(evt, card) {
+    MultiplayerActions.selectCard(card);
+    // if (cardState.selected) {
+    //   this.state.selected.add(card);
+    // }
+    // else {
+    //   this.state.selected.delete(card);
+    // }
+    //
+    // if (this.state.selected.size == 3) {
+    //   this.ws.send(JSON.stringify({
+    //     request: 'verify-set',
+    //     cards: [...this.state.selected].map((component) => {
+    //       return component.props.card;
+    //     }),
+    //   }));
+    //   for (card of this.state.selected) {
+    //     card.setState({
+    //       selected: false
+    //     });
+    //   }
+    //   this.state.selected.clear();
+    // }
   }
 
   renderPlayers() {

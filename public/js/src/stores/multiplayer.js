@@ -1,22 +1,22 @@
 import alt from '../calt';
 import _ from 'lodash';
-import Immutable from 'immutable';
 import MultiplayerActions from '../actions/multiplayer';
+import SetCard from '../setcard';
 
 class MultiplayerStore {
   constructor() {
     this.my_player_id = undefined;
     this.players = {};
     this.cards = [];
-    this.selected = new Immutable.Set();
+    this.selected = new Set();      // stringify-ed SetCards
     this.current_state = 'WAITING_FOR_PLAYERS';
 
     this.bindListeners({
       handleUpdatePlayers: MultiplayerActions.UPDATE_PLAYERS,
       handleClearName: MultiplayerActions.CLEAR_NAME,
       handleChangeName: MultiplayerActions.CHANGE_NAME,
-      handleCardSelected: MultiplayerActions.CARD_SELECTED,
       handleReceiveMessage: MultiplayerActions.RECEIVE_MESSAGE,
+      handleSelectCard: MultiplayerActions.SELECT_CARD,
     });
   }
 
@@ -35,15 +35,15 @@ class MultiplayerStore {
     this.my_player_id = new_name;
   }
 
-  handleCardSelected(card) {
-    console.log('MultiplayerStore.handleCardSelected');
-    debugger;
+  handleSelectCard(card) {
+    console.log('MultiplayerStore.handleSelectCard');
+    let cardString = SetCard.stringify(card);
 
-    if (card.state) {
-      this.selected.add(card);
+    if (this.selected.has(cardString)) {
+      this.selected.delete(cardString);
     }
     else {
-      this.selected.remove(card);
+      this.selected.add(cardString);
     }
   }
 
