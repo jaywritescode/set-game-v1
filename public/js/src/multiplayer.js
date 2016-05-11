@@ -45,6 +45,17 @@ export default class Multiplayer extends SetGame {
   }
 
   componentDidMount() {
+    this.stylenode = _.find(document.styleSheets, (value) => {
+      let { tagName, id } = value.ownerNode;
+      return tagName == 'STYLE' && id == "set-dummy-style";
+    });
+    let cardsDiv = document.getElementById('cards');
+
+    let cardWidthRule = `.card { width: ${cardsDiv.offsetWidth * 2 / 9}px}`,
+        cardMarginRule = `.card { margin: ${cardsDiv.offsetWidth / 72}px ${cardsDiv.offsetWidth / 90}px}`;
+    this.stylenode.insertRule(cardWidthRule, 0);
+    this.stylenode.insertRule(cardMarginRule, 0);
+
     MultiplayerStore.listen(this.onChange);
   }
 
@@ -143,9 +154,11 @@ export default class Multiplayer extends SetGame {
             <Button bsStyle="primary" onClick={this.onChangeName}>{"That's Me!"}</Button>
           </Modal.Footer>
         </Modal>
-        <h3>{this.props.game}</h3>
-        {this.renderPlayers()}
-        {this.renderStartButton()}
+        <div id="left-sidebar">
+          <h3>{this.props.game}</h3>
+          {this.renderPlayers()}
+          {this.renderStartButton()}
+        </div>
         {this.renderCards()}
       </div>
     );

@@ -9,6 +9,16 @@ body {
   font-family: calibri;
 }
 
+#content {
+  width: 90%;
+  margin: auto;
+}
+
+#left-sidebar {
+  float: left;
+  width: 25%;
+}
+
 #index-wrapper {
   position: fixed;
   top: 50%;
@@ -21,9 +31,14 @@ body {
 }
 
 #cards {
-  max-width: 1056px;
   display: inline-block;
   float: left;
+  width: 75%;
+  margin-top: 20px;
+
+  img {
+    width: 100%;
+  }
 }
 
 #cards li:nth-child(4n + 1) {
@@ -39,10 +54,8 @@ body {
   list-style-type: none;
 }
 
-div.card {
-  margin: 15px 12px;
-  height: 150px;
-  width: 240px;
+div.card img {
+  width: 100%;
 }
 
 #found-so-far {
