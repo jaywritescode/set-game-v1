@@ -23,7 +23,6 @@
     "del": "^2.2.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.0",
-    "gulp-sourcemaps": "^1.6.0",
-    "immutable": "^3.8.1"
+    "gulp-sourcemaps": "^1.6.0"
   }
 }
