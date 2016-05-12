@@ -85,20 +85,14 @@ class MultiplayerStore {
         let { cards } = data;
         this.cards = cards;
         this.current_state = 'IN_PROGRESS';
-      };
-
-    let actions = {
-      'add-player': onAddPlayer,
-      'change-name': onChangeName,
-      'countdown-start': onCountdownStart,
-      'start-game': onStartGame,
-      'verify-set': (data) => {
-        let { valid, cards_to_add, cards_to_remove, player, found, game_over } = data;
+      },
+      onVerifySet = (data) => {
+        let { valid, cards_to_add, cards_to_remove, player, found, game_over} = data;
         if (!valid) {
           return false;
         }
-
         cards_to_remove.forEach((c) => {
+          this.selected.delete(SetCard.stringify(c));
           this.cards[_.findIndex(this.cards, _.matches(c))] = cards_to_add.pop();
         });
         while (cards_to_add.length) {
@@ -106,7 +100,14 @@ class MultiplayerStore {
         }
 
         this.players[player] = found;
-      }
+      };
+
+    let actions = {
+      'add-player': onAddPlayer,
+      'change-name': onChangeName,
+      'countdown-start': onCountdownStart,
+      'start-game': onStartGame,
+      'verify-set': onVerifySet,
     };
 
     actions[message.action].call(this, message);
