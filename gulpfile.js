@@ -8,10 +8,7 @@ gulp.task('default', ['clean', 'babel', 'watch']);
 gulp.task('babel', () => {
   return gulp.src('public/js/src/**/*.js')
     .pipe(sourcemaps.init())
-    .pipe(babel({
-      "presets": ["es2015", "react"],
-      "plugins": ["transform-es2015-modules-amd"]
-    }))
+    .pipe(babel())
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('public/js/build'));
 });
