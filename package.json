@@ -6,7 +6,8 @@
     "node": "5.1.1"
   },
   "scripts": {
-    "postinstall": "bower install && gulp babel"
+    "postinstall": "bower install && gulp babel",
+    "test": "mocha --compilers js:babel-register"
   },
   "repository": {
     "type": "git",
@@ -24,5 +25,9 @@
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.0",
     "gulp-sourcemaps": "^1.6.0"
+  },
+  "devDependencies": {
+    "babel-register": "^6.9.0",
+    "chai": "^3.5.0"
   }
 }
