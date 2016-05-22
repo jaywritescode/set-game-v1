@@ -1,8 +1,7 @@
 'use strict';
 
 import React from 'react';
-
-import SetCard from 'setcard';
+import SetCard from './setcard';
 
 const IMG_PATH = 'static/img';
 

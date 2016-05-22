@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import SetGame from 'setgame';
+import SetGame from './setgame';
 
 const IMG_PATH = 'static/img/';
 
@@ -16,7 +16,7 @@ export default class SetCard extends React.Component {
       color: React.PropTypes.string.isRequired,
       shading: React.PropTypes.string.isRequired,
       shape: React.PropTypes.string.isRequired,
-
+      selected: React.PropTypes.bool,
       onClick: React.PropTypes.func.isRequired,
     };
   }

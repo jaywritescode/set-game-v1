@@ -7,7 +7,7 @@
   },
   "scripts": {
     "postinstall": "bower install && gulp babel",
-    "test": "mocha --compilers js:babel-register"
+    "test": "BABEL_ENV=test mocha public/js/test/.setup.js public/js/test"
   },
   "repository": {
     "type": "git",
@@ -27,7 +27,15 @@
     "gulp-sourcemaps": "^1.6.0"
   },
   "devDependencies": {
+    "babel-preset-airbnb": "^2.0.0",
     "babel-register": "^6.9.0",
-    "chai": "^3.5.0"
+    "chai": "^3.5.0",
+    "env-test": "^1.0.0",
+    "enzyme": "^2.3.0",
+    "jsdom": "^9.1.0",
+    "react": "^15.0.2",
+    "react-addons-test-utils": "^15.0.2",
+    "react-dom": "^15.0.2",
+    "sinon": "^1.17.4"
   }
 }
