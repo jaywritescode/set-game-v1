@@ -22,7 +22,8 @@ export default class Multiplayer extends SetGame {
 
   static get propTypes() {
     return {
-      game: React.PropTypes.string.isRequired
+      game: React.PropTypes.string.isRequired,
+      url: React.PropTypes.string.isRequired,
     };
   }
 
