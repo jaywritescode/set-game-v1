@@ -7,7 +7,6 @@ class MultiplayerActions {
   }
 
   clearName() {
-    console.log('MultiplayerActions.clearName');
     return true;
   }
 

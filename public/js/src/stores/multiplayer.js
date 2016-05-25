@@ -27,7 +27,6 @@ class MultiplayerStore {
   }
 
   handleClearName() {
-    console.log('MultiplayerStore.handleClearName');
     this.my_player_id = null;
   }
 
