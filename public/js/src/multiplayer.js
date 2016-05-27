@@ -3,11 +3,11 @@
 import $ from 'jquery';
 import _ from 'lodash';
 import React from 'react';
-import { Modal, Input, Button, ProgressBar } from 'react-bootstrap';
-import MultiplayerStore from 'stores/multiplayer';
-import MultiplayerActions from 'actions/multiplayer';
+import { Modal, FormGroup, ControlLabel, FormControl, Button, ProgressBar } from 'react-bootstrap';
+import MultiplayerStore from './stores/multiplayer';
+import MultiplayerActions from './actions/multiplayer';
 
-import SetGame from 'setgame';
+import SetGame from './setgame';
 
 export default class Multiplayer extends SetGame {
   constructor(props) {
@@ -68,7 +68,7 @@ export default class Multiplayer extends SetGame {
   }
 
   onChangeName(evt) {
-    let name = $('input#your_name').val();
+    let name = this.refs.name_input.value;
     if (name) {
       // TODO: make this an Action
       MultiplayerActions.changeName(name);
@@ -147,12 +147,15 @@ export default class Multiplayer extends SetGame {
     return (
       <div id="wrapper">
         <Modal show={this.state.my_player_id === null}>
-          <Modal.Body>
-            <Input id="your_name" type="text" label="Your name..." placeholder="Enter text" />
-          </Modal.Body>
-          <Modal.Footer>
-            <Button bsStyle="primary" onClick={this.onChangeName}>{"That's Me!"}</Button>
-          </Modal.Footer>
+          <FormGroup controlId="change_name">
+            <Modal.Body>
+              <ControlLabel>Your name...</ControlLabel>
+              <FormControl ref="name_input" type="text" placeholder="Enter text" />
+            </Modal.Body>
+            <Modal.Footer>
+              <Button bsStyle="primary" onClick={this.onChangeName}>{"That's Me!"}</Button>
+            </Modal.Footer>
+          </FormGroup>
         </Modal>
         <div id="left-sidebar">
           <h3>{this.props.game}</h3>
