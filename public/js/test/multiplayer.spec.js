@@ -7,6 +7,10 @@ import MultiplayerStore from '../src/stores/multiplayer';
 import sinon from 'sinon';
 import { Modal, FormControl } from 'react-bootstrap';
 
+class MockWebSocket {
+  send() {}
+}
+
 describe('Multiplayer', function() {
   let props = {
     game: 'jumpy-whale-1556',
@@ -14,7 +18,7 @@ describe('Multiplayer', function() {
   };
 
   beforeEach(function() {
-    global.WebSocket = sinon.mock();
+    global.WebSocket = sinon.spy(MockWebSocket);
   });
 
   afterEach(function() {
@@ -42,7 +46,7 @@ describe('Multiplayer', function() {
 
       const wrapper = mount(component);
       wrapper.setState({
-        my_player_id: null,
+        name_input_value: '',
         players: {
           '123456789': 0
         },
@@ -58,18 +62,15 @@ describe('Multiplayer', function() {
 
       const wrapper = mount(component);
       wrapper.setState({
-        my_player_id: 'null',
+        name_input_value: 'new name',
         players: {
           '123456789': 0
         },
       });
       MultiplayerStore.listen(wrapper.instance().onChange);
 
-
       wrapper.instance().onChangeName();
-      console.log(wrapper.debug());
-      
-      expect(true).to.be.true;
+      expect(wrapper.find(Modal).prop('show')).to.be.false;
     });
   });
 
