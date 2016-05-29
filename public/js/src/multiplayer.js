@@ -12,12 +12,14 @@ import SetGame from './setgame';
 export default class Multiplayer extends SetGame {
   constructor(props) {
     super(props);
-    this.state = MultiplayerStore.getState();
+    this.state = Object.assign({
+      name_input_value: '',
+    }, MultiplayerStore.getState());
 
     window.onbeforeunload = function(evt) {
       $.get('multiplayer/leave');
     };
-    _.bindAll(this, 'onChange', 'onChangeName', 'onClickSetCard', 'onCountdownStart');
+    _.bindAll(this, 'onChange', 'onChangeName', 'onClickSetCard', 'onCountdownStart', 'onNameInputChange');
   }
 
   static get propTypes() {
@@ -69,7 +71,7 @@ export default class Multiplayer extends SetGame {
   }
 
   onChangeName(evt) {
-    let name = this.refs.name_input.value;
+    let name = this.state.name_input_value;
     if (name) {
       // TODO: make this an Action
       MultiplayerActions.changeName(name);
@@ -77,10 +79,19 @@ export default class Multiplayer extends SetGame {
         request: 'change-name',
         new_name: name
       }));
+      this.setState({
+        name_input_value: '',
+      });
     }
     else {
       MultiplayerActions.clearName();
     }
+  }
+
+  onNameInputChange(evt) {
+    this.setState({
+      name_input_value: evt.target.value
+    });
   }
 
   onCountdownStart(evt) {
@@ -151,7 +162,7 @@ export default class Multiplayer extends SetGame {
           <FormGroup controlId="change_name">
             <Modal.Body>
               <ControlLabel>Your name...</ControlLabel>
-              <FormControl ref="name_input" type="text" placeholder="Enter text" />
+              <FormControl ref="name_input" type="text" placeholder="Enter text" onChange={this.onNameInputChange} />
             </Modal.Body>
             <Modal.Footer>
               <Button bsStyle="primary" onClick={this.onChangeName}>{"That's Me!"}</Button>
