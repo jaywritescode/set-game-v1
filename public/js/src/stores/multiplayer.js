@@ -46,7 +46,6 @@ class MultiplayerStore {
   }
 
   handleClearSelected() {
-    console.log('MultiplayerStore.handleClearSelected');
     this.selected.clear();
   }
 

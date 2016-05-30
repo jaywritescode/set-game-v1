@@ -11,22 +11,38 @@ class MockWebSocket {
   send() {}
 }
 
+const DUMMY_EVENT = global.document.createEvent('Event');
+
 describe('Multiplayer', function() {
   let props = {
     game: 'jumpy-whale-1556',
     url: 'multiplayer-test',
   };
 
-  beforeEach(function() {
+  let spyWebSocket = function() {
     global.WebSocket = sinon.spy(MockWebSocket);
-  });
-
-  afterEach(function() {
+  };
+  let unspyWebSocket = function() {
     global.WebSocket = null;
-  });
+  };
+  let stubComponentDidMount = function() {
+    sinon.stub(Multiplayer.prototype, 'componentDidMount');
+  };
+  let unstubComponentDidMount = function() {
+    Multiplayer.prototype.componentDidMount.restore();
+  };
+
+  // beforeEach(function() {
+  //   global.WebSocket = sinon.spy(MockWebSocket);
+  // });
+  //
+  // afterEach(function() {
+  //   global.WebSocket = null;
+  // });
 
   describe('#componentWillMount', function() {
     it('creates a websocket', function() {
+      sinon.spy(global, 'WebSocket');
       const wrapper = shallow(<Multiplayer {...props} />);
       expect(global.WebSocket.calledOnce).to.be.true;
     });
@@ -34,11 +50,11 @@ describe('Multiplayer', function() {
 
   describe('#onChangeName', function() {
     beforeEach(function() {
-      sinon.stub(Multiplayer.prototype, 'componentDidMount');
+      stubComponentDidMount();
     });
 
     afterEach(function() {
-      Multiplayer.prototype.componentDidMount.restore();
+      unstubComponentDidMount();
     });
 
     it('brings up a modal to enter a new name', function() {
@@ -76,11 +92,11 @@ describe('Multiplayer', function() {
 
   describe('#onClickSetCard', function() {
     beforeEach(function() {
-      sinon.stub(Multiplayer.prototype, 'componentDidMount');
+      stubComponentDidMount();
     });
 
     afterEach(function() {
-      Multiplayer.prototype.componentDidMount.restore();
+      unstubComponentDidMount();
     });
 
     it('selects a card', function() {
@@ -98,7 +114,7 @@ describe('Multiplayer', function() {
       });
       MultiplayerStore.listen(wrapper.instance().onChange);
 
-      wrapper.instance().onClickSetCard(global.document.createEvent('Event'), card);
+      wrapper.instance().onClickSetCard(DUMMY_EVENT, card);
       expect(wrapper.state('selected').has('two blue solid diamonds')).to.be.true;
     });
 
@@ -119,17 +135,67 @@ describe('Multiplayer', function() {
       });
       MultiplayerStore.listen(wrapper.instance().onChange);
 
-      wrapper.instance().onClickSetCard(global.document.createEvent('Event'), card);
+      wrapper.instance().onClickSetCard(DUMMY_EVENT, card);
       expect(wrapper.state('selected').has('two blue solid diamonds')).to.be.false;
     });
 
-    it('submits a set to the backend when we have three cards selected');
+    it('submits a set to the backend when we have three cards selected', function() {
+      let component = <Multiplayer {...props} />;
 
-    it('clears the selected cards after we submit a set');
+      const wrapper = mount(component);
+      MultiplayerStore.listen(wrapper.instance().onChange);
+
+      let cards = [
+        { number: 'one', color: 'green', shading: 'solid', shape: 'squiggle' },
+        { number: 'two', color: 'blue', shading: 'solid', shape: 'diamond'},
+        { number: 'three', color: 'red', 'shading': 'solid', shape: 'oval'}
+      ];
+
+      let spy = sinon.spy(wrapper.instance().ws, 'send');
+      cards.forEach(function(card) {
+        wrapper.instance().onClickSetCard(DUMMY_EVENT, card);
+      });
+      expect(spy.calledOnce).to.be.true;
+      expect(spy.args[0][0]).to.equal(JSON.stringify({
+        request: 'verify-set',
+        cards: [
+          { number: 'one', color: 'green', shading: 'solid', shape: 'squiggle' },
+          { number: 'two', color: 'blue', shading: 'solid', shape: 'diamonds'},
+          { number: 'three', color: 'red', 'shading': 'solid', shape: 'ovals'}
+        ]
+      }));
+    });
+
+    it('clears the selected cards after we submit a set', function() {
+      let component = <Multiplayer {...props} />;
+
+      const wrapper = mount(component);
+      MultiplayerStore.listen(wrapper.instance().onChange);
+
+      let cards = [
+        { number: 'one', color: 'green', shading: 'solid', shape: 'squiggle' },
+        { number: 'two', color: 'blue', shading: 'solid', shape: 'diamonds'},
+        { number: 'three', color: 'red', 'shading': 'solid', shape: 'ovals'}
+      ];
+      cards.forEach(function(card) {
+        wrapper.instance().onClickSetCard(DUMMY_EVENT, card);
+      });
+      expect(wrapper.state('selected').size).to.eq(0);
+    });
   });
 
-  it('renders', function() {
-    const wrapper = shallow(<Multiplayer {...props} />);
-    expect(wrapper.find('div.wrapper')).to.be.ok;
+  describe('#render', function() {
+    beforeEach(function() {
+      stubComponentDidMount();
+    });
+
+    afterEach(function() {
+      unstubComponentDidMount();
+    });
+
+    it('renders', function() {
+      const wrapper = shallow(<Multiplayer {...props} />);
+      expect(wrapper.find('div.wrapper')).to.be.ok;
+    });
   });
 });

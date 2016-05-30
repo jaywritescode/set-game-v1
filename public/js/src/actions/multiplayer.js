@@ -19,7 +19,6 @@ class MultiplayerActions {
   }
 
   clearSelected() {
-    console.log('MultiplayerActions.clearSelected');
     return true;
   }
 
