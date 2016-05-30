@@ -24,12 +24,11 @@ export default class SetGame extends React.Component {
           {this.state.cards.map((card) => {
             let { number, color, shading, shape } = card;
             return (
-              <li>
+              <li key={card}>
                 <SetCard number={number}
                          color={color}
                          shading={shading}
                          shape={shape}
-                         key={card}
                          selected={this.state.selected.has(SetCard.stringify(card))}
                          onClick={this.onClickSetCard.bind(this)} />
               </li>

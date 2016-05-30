@@ -11,12 +11,10 @@ class MultiplayerActions {
   }
 
   changeName(new_name) {
-    console.log('MultiplayerActions.changeName');
     return new_name;
   }
 
   selectCard(card) {
-    console.log('MultiplayerActions.selectCard');
     return card;
   }
 

@@ -31,12 +31,10 @@ class MultiplayerStore {
   }
 
   handleChangeName(new_name) {
-    console.log('MultiplayerStore.handleChangeName');
     this.my_player_id = new_name;
   }
 
   handleSelectCard(card) {
-    console.log('MultiplayerStore.handleSelectCard');
     let cardString = SetCard.stringify(card);
 
     if (this.selected.has(cardString)) {

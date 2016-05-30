@@ -74,6 +74,60 @@ describe('Multiplayer', function() {
     });
   });
 
+  describe('#onClickSetCard', function() {
+    beforeEach(function() {
+      sinon.stub(Multiplayer.prototype, 'componentDidMount');
+    });
+
+    afterEach(function() {
+      Multiplayer.prototype.componentDidMount.restore();
+    });
+
+    it('selects a card', function() {
+      let card = {
+        number: 'two',
+        color: 'blue',
+        shading: 'solid',
+        shape: 'diamond'
+      };
+      let component = <Multiplayer {...props} />;
+
+      const wrapper = mount(component);
+      wrapper.setState({
+        cards: [card]
+      });
+      MultiplayerStore.listen(wrapper.instance().onChange);
+
+      wrapper.instance().onClickSetCard(global.document.createEvent('Event'), card);
+      expect(wrapper.state('selected').has('two blue solid diamonds')).to.be.true;
+    });
+
+    it('deselects a card', function() {
+      let card = {
+        number: 'two',
+        color: 'blue',
+        shading: 'solid',
+        shape: 'diamond'
+      };
+      let component = <Multiplayer {...props} />;
+
+      const wrapper = mount(component);
+      let selected = new Set(['two blue solid diamonds']);
+      wrapper.setState({
+        cards: [card],
+        selected: selected
+      });
+      MultiplayerStore.listen(wrapper.instance().onChange);
+
+      wrapper.instance().onClickSetCard(global.document.createEvent('Event'), card);
+      expect(wrapper.state('selected').has('two blue solid diamonds')).to.be.false;
+    });
+
+    it('submits a set to the backend when we have three cards selected');
+
+    it('clears the selected cards after we submit a set');
+  });
+
   it('renders', function() {
     const wrapper = shallow(<Multiplayer {...props} />);
     expect(wrapper.find('div.wrapper')).to.be.ok;
