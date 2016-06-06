@@ -2,7 +2,6 @@ import alt from '../calt';
 
 class MultiplayerActions {
   updatePlayers(players) {
-    console.log('MultiplayerActions.updatePlayers: players = %O', players);
     return players;
   }
 
@@ -23,7 +22,6 @@ class MultiplayerActions {
   }
 
   receiveMessage(message) {
-    console.log('MultiplayerActions.receiveMessage: message = %O', message);
     return message;
   }
 }
