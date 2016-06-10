@@ -26,12 +26,13 @@ class SolitaireWebService:
             'cards': [card.to_hash() for card in game.cards]
         }
 
+    @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
-    def PUT(self, cards):
+    def PUT(self):
         game = cherrypy.session.get('game')
 
-        jsoncards = json.loads(cards)
-        result = game.receive_selection([CardSerializer.from_dict(card) for card in jsoncards])
+        cards = cherrypy.request.json['cards']
+        result = game.receive_selection([CardSerializer.from_dict(card) for card in cards])
         response = {'result': result.name}
         if result.name == 'OK' and game.solved():
             response.update({'solved': True})
