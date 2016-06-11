@@ -5,16 +5,21 @@ import React from 'react';
 import moment from 'moment';
 import { Modal, Button } from 'react-bootstrap';
 
-import SetGame from 'setgame';
+import SetGame from './setgame';
+import SetCard from './setcard';
 
 const IMG_PATH = 'static/img/';
 
 export default class Solitaire extends SetGame {
   constructor(props) {
     super(props);
-    $.extend(this.state, {
-      found: new Set()
-    });
+    this.state = {
+      cards: [],
+      selected: new Set(),      // Set<String>
+      found: new Set(),         // Set<Set<String>>
+      solved: false,
+    };
+    this.starttime = null;
   }
 
   componentWillMount() {
@@ -31,53 +36,55 @@ export default class Solitaire extends SetGame {
     $.get(this.props.url).then(onSuccess, onError);
   }
 
-  onClickSetCard(card, cardState) {
-    if (!this.state.starttime) {
-      this.state.starttime = moment();
+  onClickSetCard(evt, card) {
+    if (!this.starttime) {
+      this.starttime = moment();
     }
 
-    if (cardState.selected) {
-      this.state.selected.add(card);
+    let cardString = SetCard.stringify(card);
+    if (this.state.selected.has(cardString)) {
+      let selectedCopy = new Set(this.state.selected);
+      selectedCopy.delete(cardString);
+      this.setState({
+        selected: selectedCopy,
+      });
     }
     else {
-      this.state.selected.delete(card);
+      this.setState({
+        selected: this.state.selected.add(cardString),
+      });
     }
 
     if (this.state.selected.size == 3) {
-      $.ajax(this.props.url, {
-        data: {
-          cards: JSON.stringify([...this.state.selected].map(function(component) {
-            return component.props.card;
-          }))
-        },
-        method: 'PUT',
-        contextType: 'application/json'
-      }).then((response) => {
-        switch(response['result']) {
-          case 'OK':
-            console.log('OK');
-            this.setState({
-              found: this.state.found.add(new Set(this.state.selected)),
-              solved: response['solved']
-            });
-            break;
-          case 'NOT_A_SET':
-            console.log('NOT_A_SET'); break;
-          case 'ALREADY_FOUND':
-            console.log('ALREADY_FOUND'); break;
-          default:
-            throw("This shouldn't happen.");
+      let data = {
+        cards: [...this.state.selected].map(SetCard.objectify)
+      };
+      let xhr = new XMLHttpRequest();
+
+      xhr.open('PUT', this.props.url);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.onload = () => {
+        if (xhr.status == 200) {
+          let response = JSON.parse(xhr.responseText);
+          switch(response['result']) {
+            case 'OK':
+              let r = this.state.selected;
+              this.setState({
+                found: this.state.found.add(new Set(r)),
+                solved: response['solved'],
+                selected: new Set(),
+              });
+              break;
+            case 'NOT_A_SET':
+              break;
+            case 'ALREADY_FOUND':
+              break;
+            default:
+              throw('This should never happen.');
+          }
         }
-      }, (response) => {
-        console.error(response);
-      }).then(() => {
-        for (card of this.state.selected) {
-          card.setState({
-            selected: false
-          });
-        }
-        this.state.selected.clear();
-      });
+      };
+      xhr.send(JSON.stringify(data));
     }
   }
 
@@ -98,12 +105,18 @@ export default class Solitaire extends SetGame {
     });
   }
 
-  renderSet(the_set) {
+  /**
+   * @param {the_set} Set<String> - the cards in this set
+   * @param {index} Number - the index of this set in the list of sets
+   */
+  renderSet(the_set, index) {
     return (
-      <ul className="this-set">
-        {[...the_set].map((card_component) => {
+      <ul className="this-set" key={`found${index}`}>
+        {[...the_set].map((card_string) => {
           return (
-            <li>{card_component.content()}</li>
+            <li key={card_string}>
+              <SetCard {...SetCard.objectify(card_string)} />
+            </li>
           );
         })}
       </ul>
@@ -115,9 +128,7 @@ export default class Solitaire extends SetGame {
       <div id="found-so-far">
         <h4>Found so far:</h4>
         {
-          [...this.state.found].map((the_set) => {
-            return this.renderSet(the_set);
-          })
+          [...this.state.found].map(this.renderSet)
         }
       </div>
     );

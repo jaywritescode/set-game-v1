@@ -7,7 +7,6 @@ const IMG_PATH = 'static/img/';
 export default class SetCard extends React.Component {
   constructor(props) {
     super(props);
-    this.onClick = _.partial(this.props.onClick, _, this);
   }
 
   static get propTypes() {
@@ -17,7 +16,7 @@ export default class SetCard extends React.Component {
       shading: React.PropTypes.string.isRequired,
       shape: React.PropTypes.string.isRequired,
       selected: React.PropTypes.bool,
-      onClick: React.PropTypes.func.isRequired,
+      onClick: React.PropTypes.func,
     };
   }
 
@@ -25,7 +24,15 @@ export default class SetCard extends React.Component {
     return `${obj.number} ${obj.color} ${obj.shading} ${obj.shape}${obj.number == 'one' ? '' : 's'}`;
   }
 
-  content() {
+  static objectify(str) {
+    let result = /^(\w+) (\w+) (\w+) (\w+?)s?$/.exec(str);
+    if (!result) {
+      return;
+    }
+    return _.zipObject(['number', 'color', 'shading', 'shape'], result.slice(1));
+  }
+
+  renderImage() {
     let {number, color, shading, shape} = this.props;
     let filename = `${IMG_PATH}cards/${number}-${color}-${shading}-${shape}s.png`;
 
@@ -41,9 +48,8 @@ export default class SetCard extends React.Component {
     }
     return (
       <div className={classes.join(" ")}
-           onClick={_.partial(this.props.onClick, _,
-             _.pick(this.props, 'number', 'color', 'shading', 'shape'))}>
-        {this.content()}
+           onClick={this.props.onClick ? _.partial(this.props.onClick, _, _.pick(this.props, 'number', 'color', 'shading', 'shape')) : _.noop}>
+        {this.renderImage()}
       </div>
     );
   }

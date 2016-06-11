@@ -8,13 +8,14 @@ const IMG_PATH = 'static/img';
 export default class SetGame extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      cards: []
-    };
   }
 
   isSelected(card) {
     return this.state.selected.has(card.toString());
+  }
+
+  onClickSetCard(evt, card) {
+    throw('should be implemented in subclass');
   }
 
   renderCards() {
@@ -24,7 +25,7 @@ export default class SetGame extends React.Component {
           {this.state.cards.map((card) => {
             let { number, color, shading, shape } = card;
             return (
-              <li key={card}>
+              <li key={SetCard.stringify(card)}>
                 <SetCard number={number}
                          color={color}
                          shading={shading}

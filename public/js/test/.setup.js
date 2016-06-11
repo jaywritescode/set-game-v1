@@ -11,6 +11,12 @@ global.window.WebSocket = function() {
     send: function() {}
   }
 };
+global.XMLHttpRequest = global.window.XMLHttpRequest;
+
+global.sinon = require('sinon');
+global.sinon.useFakeXMLHttpRequest();
+global.window.XMLHttpRequest = global.XMLHttpRequest;
+
 Object.keys(document.defaultView).forEach((property) => {
   if (typeof global[property] === 'undefined') {
     exposedProperties.push(property);

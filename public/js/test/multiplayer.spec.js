@@ -32,14 +32,6 @@ describe('Multiplayer', function() {
     Multiplayer.prototype.componentDidMount.restore();
   };
 
-  // beforeEach(function() {
-  //   global.WebSocket = sinon.spy(MockWebSocket);
-  // });
-  //
-  // afterEach(function() {
-  //   global.WebSocket = null;
-  // });
-
   describe('#componentWillMount', function() {
     it('creates a websocket', function() {
       sinon.spy(global, 'WebSocket');
