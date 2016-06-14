@@ -80,6 +80,9 @@ export default class Solitaire extends SetGame {
             case 'NOT_A_SET':
               break;
             case 'ALREADY_FOUND':
+              this.setState({
+                selected: new Set(),
+              });
               break;
             default:
               throw('This should never happen.');
