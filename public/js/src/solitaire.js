@@ -18,8 +18,8 @@ export default class Solitaire extends SetGame {
       selected: new Set(),      // Set<String>
       found: new Set(),         // Set<Set<String>>
       solved: false,
+      starttime: null,
     };
-    this.starttime = null;
   }
 
   componentWillMount() {
@@ -37,8 +37,10 @@ export default class Solitaire extends SetGame {
   }
 
   onClickSetCard(evt, card) {
-    if (!this.starttime) {
-      this.starttime = moment();
+    if (!this.state.starttime) {
+      this.setState({
+        starttime: moment(),
+      });
     }
 
     let cardString = SetCard.stringify(card);
