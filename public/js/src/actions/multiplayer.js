@@ -1,10 +1,6 @@
 import alt from '../calt';
 
 class MultiplayerActions {
-  updatePlayers(players) {
-    return players;
-  }
-
   clearName() {
     return true;
   }

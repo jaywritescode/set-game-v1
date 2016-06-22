@@ -12,18 +12,12 @@ class MultiplayerStore {
     this.current_state = 'WAITING_FOR_PLAYERS';
 
     this.bindListeners({
-      handleUpdatePlayers: MultiplayerActions.UPDATE_PLAYERS,
       handleClearName: MultiplayerActions.CLEAR_NAME,
       handleChangeName: MultiplayerActions.CHANGE_NAME,
       handleReceiveMessage: MultiplayerActions.RECEIVE_MESSAGE,
       handleSelectCard: MultiplayerActions.SELECT_CARD,
       handleClearSelected: MultiplayerActions.CLEAR_SELECTED,
     });
-  }
-
-  handleUpdatePlayers(players) {
-    console.log('MultiplayerStore.handleUpdatePlayers: players = %O', players);
-    this.players = players;
   }
 
   handleClearName() {
