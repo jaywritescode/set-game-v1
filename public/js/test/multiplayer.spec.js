@@ -43,8 +43,8 @@ describe('Multiplayer', function() {
 
   describe('#onChange (via MultiplayerStore)', function() {
     describe('MultiplayerStore.onAddPlayer', function() {
-      it.only('adds me to the game', function() {
-        let component = <Multiplayer {...props} />
+      it('adds me to the game', function() {
+        let component = <Multiplayer {...props} />;
 
         const wrapper = shallow(component);
         // expect(wrapper.state('players')).to.be.empty;
@@ -57,6 +57,29 @@ describe('Multiplayer', function() {
           },
         });
         expect(wrapper.state('players')).to.have.all.keys(['A']);
+        expect(wrapper.state('my_player_id')).to.eq('A');
+      });
+
+      it('adds a different player to the game', function() {
+        let component = <Multiplayer {...props} />;
+
+        const wrapper = shallow(component);
+        MultiplayerStore.listen(wrapper.instance().onChange);
+        MultiplayerActions.receiveMessage({
+          'action': 'add-player',
+          'my_player_id': 'A',
+          'players': {
+            'A': 0
+          }
+        });
+        MultiplayerActions.receiveMessage({
+          'action': 'add-player',
+          'players': {
+            'A': 0,
+            'B': 0
+          }
+        });
+        expect(wrapper.state('players')).to.have.all.keys(['A', 'B']);
         expect(wrapper.state('my_player_id')).to.eq('A');
       });
     });
