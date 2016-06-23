@@ -44,9 +44,7 @@ describe('Multiplayer', function() {
   describe('#onChange (via MultiplayerStore)', function() {
     describe('MultiplayerStore.onAddPlayer', function() {
       it('adds me to the game', function() {
-        let component = <Multiplayer {...props} />;
-
-        const wrapper = shallow(component);
+        const wrapper = shallow(<Multiplayer {...props} />);
         // expect(wrapper.state('players')).to.be.empty;
         MultiplayerStore.listen(wrapper.instance().onChange);
         MultiplayerActions.receiveMessage({
@@ -61,9 +59,7 @@ describe('Multiplayer', function() {
       });
 
       it('adds a different player to the game', function() {
-        let component = <Multiplayer {...props} />;
-
-        const wrapper = shallow(component);
+        const wrapper = shallow(<Multiplayer {...props} />);
         MultiplayerStore.listen(wrapper.instance().onChange);
         MultiplayerActions.receiveMessage({
           'action': 'add-player',
@@ -195,6 +191,7 @@ describe('Multiplayer', function() {
       expect(spy.calledOnce).to.be.true;
       expect(spy.args[0][0]).to.equal(JSON.stringify({
         request: 'verify-set',
+        player_id: wrapper.state('my_player_id'),
         cards: [
           { number: 'one', color: 'green', shading: 'solid', shape: 'squiggle' },
           { number: 'two', color: 'blue', shading: 'solid', shape: 'diamonds'},

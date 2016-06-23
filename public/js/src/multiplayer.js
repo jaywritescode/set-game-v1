@@ -105,6 +105,7 @@ export default class Multiplayer extends SetGame {
     if (this.state.selected.size == 3) {
       this.ws.send(JSON.stringify({
         request: 'verify-set',
+        player_id: this.state.my_player_id,
         cards: [...this.state.selected].map((string) => {
           let [number, color, shading, shape] =
               string.match(/(\w+) (\w+) (\w+) (\w+)/).slice(1);
