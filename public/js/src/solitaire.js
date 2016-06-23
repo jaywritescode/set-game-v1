@@ -37,24 +37,21 @@ export default class Solitaire extends SetGame {
   }
 
   onClickSetCard(evt, card) {
+    let newState = {};
     if (!this.state.starttime) {
-      this.setState({
-        starttime: moment(),
-      });
+      Object.assign(newState, {starttime: moment()});
     }
 
     let cardString = SetCard.stringify(card);
     if (this.state.selected.has(cardString)) {
       let selectedCopy = new Set(this.state.selected);
       selectedCopy.delete(cardString);
-      this.setState({
-        selected: selectedCopy,
-      });
+      Object.assign(newState, {selected: selectedCopy});
     }
     else {
-      this.setState({
-        selected: this.state.selected.add(cardString),
-      });
+      Object.assign(newState, this.setState({
+        selected: this.state.selected.add(cardString)
+      }));
     }
 
     if (this.state.selected.size == 3) {
@@ -91,6 +88,8 @@ export default class Solitaire extends SetGame {
       };
       xhr.send(JSON.stringify(data));
     }
+
+    this.setState(newState);
   }
 
   onClickNewGame() {

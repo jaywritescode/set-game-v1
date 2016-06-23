@@ -49,7 +49,7 @@ describe('Solitaire', function() {
     it('stores the start time', function() {
       const wrapper = shallow(<Solitaire {...props} />);
       wrapper.instance().onClickSetCard(DUMMY_EVENT, response.cards[0]);
-      expect(wrapper.instance().starttime).to.be.ok;
+      expect(wrapper.state('starttime')).to.be.ok;
     });
 
     it('selects a card', function() {
