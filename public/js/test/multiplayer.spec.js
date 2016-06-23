@@ -3,6 +3,7 @@ import { expect } from 'chai';
 import _ from 'lodash';
 import { shallow, mount } from 'enzyme';
 import Multiplayer from '../src/multiplayer';
+import MultiplayerActions from '../src/actions/multiplayer';
 import MultiplayerStore from '../src/stores/multiplayer';
 import sinon from 'sinon';
 import { Modal, FormControl } from 'react-bootstrap';
@@ -37,6 +38,27 @@ describe('Multiplayer', function() {
       sinon.spy(global, 'WebSocket');
       const wrapper = shallow(<Multiplayer {...props} />);
       expect(global.WebSocket.calledOnce).to.be.true;
+    });
+  });
+
+  describe('#onChange (via MultiplayerStore)', function() {
+    describe('MultiplayerStore.onAddPlayer', function() {
+      it.only('adds me to the game', function() {
+        let component = <Multiplayer {...props} />
+
+        const wrapper = shallow(component);
+        // expect(wrapper.state('players')).to.be.empty;
+        MultiplayerStore.listen(wrapper.instance().onChange);
+        MultiplayerActions.receiveMessage({
+          'action': 'add-player',
+          'my_player_id': 'A',
+          'players': {
+            'A': 0
+          },
+        });
+        expect(wrapper.state('players')).to.have.all.keys(['A']);
+        expect(wrapper.state('my_player_id')).to.eq('A');
+      });
     });
   });
 
