@@ -126,7 +126,7 @@ export default class Multiplayer extends SetGame {
           _.map(this.state.players, (value, key) => {
             let player_name = key, player_found = value;
             return (
-              <li key={player_name}>
+              <li className={player_name == this.state.my_player_id ? 'me' : ''} key={player_name}>
                 <span>Player&nbsp;</span>
                 <strong onClick={key == this.state.my_player_id ? this.onChangeName : _.noop}>{player_name}</strong>
                 <span>:&nbsp;</span>

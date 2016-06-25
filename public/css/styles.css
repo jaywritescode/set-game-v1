@@ -28,14 +28,19 @@ body {
   margin: 10px;
 }
 
+#players {
+  list-style-type: none;
+}
+
+#players .me::before {
+  content: '\27A4  ';
+  margin-left: -16px;
+}
+
 #cards {
   display: inline-block;
   float: left;
   width: 976px;
-
-  img {
-    width: 100%;
-  }
 }
 
 #cards li:nth-child(4n + 1) {
