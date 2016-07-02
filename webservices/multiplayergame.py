@@ -97,6 +97,7 @@ class MultiplayerWebService:
 
 class MultiplayerWebSocket(WebSocket):
     def opened(self):
+        self.heartbeat_freq = 2.0
         cherrypy.engine.publish('add-client', self.game_name, self)
 
     def received_message(self, message):
