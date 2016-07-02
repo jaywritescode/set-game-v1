@@ -45,6 +45,9 @@ export default class Multiplayer extends SetGame {
     this.ws.onerror = (event) => {
       console.error(event);
     };
+    this.ws_keepaliveId = window.setInterval(() => {
+      this.ws.send(JSON.stringify({request: 'noop'}));
+    }, 1000);
   }
 
   componentDidMount() {
