@@ -109,8 +109,7 @@ class MultiplayerWebSocket(WebSocket):
             'add-player': self.onAddPlayer,
             'change-name': self.onChangeName,
             'countdown-start': self.onCountdownStart,
-            'verify-set': self.onVerifySet,
-            'noop': self.onNoop,
+            'verify-set': self.onVerifySet
         }
         if req in handlers:
             handlers[req](message, response)
@@ -183,10 +182,6 @@ class MultiplayerWebSocket(WebSocket):
                 'game_over': result.game_over
             })
         self.broadcast_as_json(response)
-
-    def onNoop(self, data, response):
-        pass
-
 
     # #########################################################################
     # Methods for broadcasting out across web sockets
