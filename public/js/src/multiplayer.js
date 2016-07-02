@@ -67,7 +67,6 @@ export default class Multiplayer extends SetGame {
 
   componentWillUnmount() {
     MultiplayerStore.unlisten(this.onChange);
-    window.clearInterval(this.ws_keepaliveId);
   }
 
   onChange(state) {
