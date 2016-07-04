@@ -45,6 +45,9 @@ export default class Multiplayer extends SetGame {
     this.ws.onerror = (event) => {
       console.error(event);
     };
+    this.ws.onclose = (event) => {
+      console.log('Websocket closed: %O', event);
+    };
   }
 
   componentDidMount() {
