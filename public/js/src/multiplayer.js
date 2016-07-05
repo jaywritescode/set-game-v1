@@ -2,6 +2,7 @@
 
 import $ from 'jquery';
 import _ from 'lodash';
+import chance from 'chance';    // use the window.chance global
 import React from 'react';
 import { Modal, FormGroup, ControlLabel, FormControl, Button, ProgressBar } from 'react-bootstrap';
 import MultiplayerStore from './stores/multiplayer';
@@ -16,6 +17,7 @@ export default class Multiplayer extends SetGame {
       name_input_value: '',
     }, MultiplayerStore.getState());
 
+    this.id = window.chance.string({pool: 'abcdefghijklmnopqrstuvwxyz'});
     window.onbeforeunload = function(evt) {
       $.get('multiplayer/leave');
     };
@@ -31,7 +33,7 @@ export default class Multiplayer extends SetGame {
 
   componentWillMount() {
     // create the websocket
-    this.ws = new WebSocket(`${window.location.protocol == 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/${this.props.url}/ws?game=${this.props.game}`);
+    this.ws = new WebSocket(`${window.location.protocol == 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/${this.props.url}/ws?game=${this.props.game}&id=${this.id}`);
     this.ws.onopen = (event) => {
       console.log('Websocket opened: %O', event);
 

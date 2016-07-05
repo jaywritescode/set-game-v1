@@ -87,15 +87,27 @@ class MultiplayerWebService:
     # Websocket methods
     # #########################################################################
     @cherrypy.expose
-    def ws(self, game=None):
-        # these properties are now available on the MultiplayerWebSocket instance
+    def ws(self, game=None, id=None):
         cherrypy.request.ws_handler.game_name = game
+        cherrypy.request.ws_handler.permanent_id = id
         cherrypy.request.ws_handler.game = self.games[game]
         cherrypy.request.ws_handler.player = None
         cherrypy.log("Handler created: %s" % repr(cherrypy.request.ws_handler))
 
 
 class MultiplayerWebSocket(WebSocket):
+    """
+    A web socket.
+
+    This guy is the same as `cherrypy.request.ws_handler` via the
+    `tools.websocket.handler_cls` directive on the `/ws` route.
+
+    Attributes:
+        game_name       the name of the game this socket is connected to
+        permanent_id    the id of the player this socket is connected to
+        game            the game itself that this socket is connected to
+        player          the player abstraction that this socket is connected to
+    """
     def opened(self):
         self.heartbeat_freq = 2.0
         cherrypy.engine.publish('add-client', self.game_name, self)
@@ -239,5 +251,5 @@ class MultiplayerWebSocketPlugin(WebSocketPlugin):
     def get_client(self):
         return self.clients
 
-    def del_client(self, name):
-        del self.clients[name]
+    def del_client(self, game):
+        del self.clients[game]
