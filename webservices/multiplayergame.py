@@ -110,7 +110,7 @@ class MultiplayerWebSocket(WebSocket):
     """
     def opened(self):
         self.heartbeat_freq = 2.0
-        cherrypy.engine.publish('add-client', self.game_name, self)
+        cherrypy.engine.publish('add-client', self)
 
     def received_message(self, message):
         message = json.loads(str(message))
@@ -213,7 +213,7 @@ class MultiplayerWebSocket(WebSocket):
 
         :param message: the raw message
         """
-        for ws in self.websockets():
+        for ws in self.websockets().values():
             ws.send(message)
 
     def closed(self, code, reason="A client left the room without a proper explanation."):
@@ -231,7 +231,7 @@ class MultiplayerWebSocket(WebSocket):
 class MultiplayerWebSocketPlugin(WebSocketPlugin):
     def __init__(self, bus):
         WebSocketPlugin.__init__(self, bus)
-        self.clients = defaultdict(set)
+        self.clients = defaultdict(dict)
 
     def start(self):
         WebSocketPlugin.start(self)
@@ -245,8 +245,10 @@ class MultiplayerWebSocketPlugin(WebSocketPlugin):
         self.bus.unsubscribe('get-client', self.get_client)
         self.bus.unsubscribe('del-client', self.del_client)
 
-    def add_client(self, game, websocket):
-        self.clients[game].add(websocket)
+    def add_client(self, websocket):
+        name = websocket.game_name
+        permanent_id = websocket.permanent_id
+        self.clients[name][permanent_id] = websocket
 
     def get_client(self):
         return self.clients
