@@ -18,6 +18,7 @@ export default class Multiplayer extends SetGame {
 
     this.id = document.cookie.match(/session_id=([0-9a-f]{40});?/)[1];
     window.onbeforeunload = function(evt) {
+      this.ws.close();
       $.get('multiplayer/leave');
     };
     _.bindAll(this, 'onChange', 'onChangeName', 'onClickSetCard', 'onCountdownStart', 'onNameInputChange');

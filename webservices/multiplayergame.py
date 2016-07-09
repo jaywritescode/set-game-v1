@@ -217,6 +217,10 @@ class MultiplayerWebSocket(WebSocket):
             ws.send(message)
 
     def closed(self, code, reason="A client left the room without a proper explanation."):
+        ws = self.websockets()
+        del ws[self.permanent_id]
+        if len(ws) == 0:
+            cherrypy.engine.publish('del-client', self.game_name)
         cherrypy.engine.publish('websocket-broadcast', TextMessage(reason))
 
     def websockets(self):
