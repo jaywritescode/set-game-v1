@@ -2,7 +2,6 @@
 
 import $ from 'jquery';
 import _ from 'lodash';
-import chance from 'chance';    // use the window.chance global
 import React from 'react';
 import { Modal, FormGroup, ControlLabel, FormControl, Button, ProgressBar } from 'react-bootstrap';
 import MultiplayerStore from './stores/multiplayer';
@@ -17,7 +16,7 @@ export default class Multiplayer extends SetGame {
       name_input_value: '',
     }, MultiplayerStore.getState());
 
-    this.id = window.chance.string({pool: 'abcdefghijklmnopqrstuvwxyz'});
+    this.id = document.cookie.match(/session_id=([0-9a-f]{40});?/)[1];
     window.onbeforeunload = function(evt) {
       $.get('multiplayer/leave');
     };
