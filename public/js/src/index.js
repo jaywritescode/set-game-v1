@@ -17,17 +17,7 @@ class SetApp extends React.Component {
   }
 
   componentWillMount() {
-    let onSuccess = function(response) {
-      this.setState({
-        'games': response
-      });
-    }.bind(this);
-    let onError = function(response) {
-      this.setState({
-        'error': response
-      });
-    }.bind(this);
-    $.get('/multiplayer/status').then(onSuccess, onError);
+    this.requestGamesStatus();
   }
 
   startSolitaire() {
@@ -50,6 +40,20 @@ class SetApp extends React.Component {
     };
   }
 
+  requestGamesStatus() {
+    let onSuccess = function(response) {
+      this.setState({
+        'games': response
+      });
+    }.bind(this);
+    let onError = function(response) {
+      this.setState({
+        'error': response
+      });
+    }.bind(this);
+    $.get('/multiplayer/status').then(onSuccess, onError);
+  }
+
   render() {
     return (
       <div id="index-wrapper">
@@ -58,13 +62,13 @@ class SetApp extends React.Component {
                 key="solitaire"
                 onClick={this.startSolitaire}
                 id="solitaire_button">Solitaire Set</Button>
-        <Dropdown id="multiplayer_button">
+        <Dropdown id="multiplayer_button"
+                  onToggle={(isOpen) => { isOpen && this.requestGamesStatus(); }}>
           <Button bsSize="large"
                   bsStyle="default"
                   key="multiplayer"
                   onClick={this.startMultiplayer()}>Multiplayer Set</Button>
-          <Dropdown.Toggle bsSize="large"
-                           disabled={!Object.keys(this.state.games).length} />
+          <Dropdown.Toggle bsSize="large" />
           <Dropdown.Menu>
             {$.map(this.state.games, (value, key) => {
               return (
