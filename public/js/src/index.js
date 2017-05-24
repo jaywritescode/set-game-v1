@@ -3,7 +3,7 @@
 import $ from 'jquery';
 import React from 'react';
 import { render } from 'react-dom';
-import { Button, SplitButton, MenuItem } from 'react-bootstrap';
+import { Button, MenuItem, Dropdown } from 'react-bootstrap';
 
 import Solitaire from 'solitaire';
 import Multiplayer from 'multiplayer';
@@ -58,22 +58,25 @@ class SetApp extends React.Component {
                 key="solitaire"
                 onClick={this.startSolitaire}
                 id="solitaire_button">Solitaire Set</Button>
-        <SplitButton bsSize="large"
-                     bsStyle="default"
-                     key="multiplayer"
-                     title="Multiplayer Set"
-                     id="multiplayer_split_button"
-                     onClick={this.startMultiplayer()}>
-          {$.map(this.state.games, (value, key) => {
-            return (
-              <MenuItem eventKey={key}
-                        key={key}
-                        onSelect={this.startMultiplayer(key)}>
-                {`${key} => ${value} player${value == 1 ? '' : 's'}`}
-              </MenuItem>
-            );
-          })}
-        </SplitButton>
+        <Dropdown id="multiplayer_button">
+          <Button bsSize="large"
+                  bsStyle="default"
+                  key="multiplayer"
+                  onClick={this.startMultiplayer()}>Multiplayer Set</Button>
+          <Dropdown.Toggle bsSize="large"
+                           disabled={!Object.keys(this.state.games).length} />
+          <Dropdown.Menu>
+            {$.map(this.state.games, (value, key) => {
+              return (
+                <MenuItem eventKey={key}
+                          key={key}
+                          onSelect={this.startMultiplayer(key)}>
+                  {`${key} => ${value} player${value == 1 ? '' : 's'}`}
+                </MenuItem>
+              );
+            })}
+          </Dropdown.Menu>
+        </Dropdown>
       </div>
     );
   }
