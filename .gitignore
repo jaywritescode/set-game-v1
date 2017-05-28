@@ -153,3 +153,6 @@ ENV/
 ### Yeoman template
 node_modules/
 bower_components/
+
+# development-only files
+Procfile.dev
