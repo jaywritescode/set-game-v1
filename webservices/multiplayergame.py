@@ -30,8 +30,8 @@ class MultiplayerWebService:
         :return: a dict with property `game` mapping to the name of the game
         """
         if cherrypy.session.get('game'):
-            # todo: move this user from the old game to the new game
-            raise cherrypy.HTTPError(422, 'Already in a game.')
+            cherrypy.log('User leaving game')
+            self.leave()
 
         if name:
             try:
