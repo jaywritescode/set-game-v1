@@ -222,6 +222,7 @@ describe('Multiplayer', function() {
 
   describe('#render', function() {
     beforeEach(function() {
+      document.cookie = 'session_id=a57b0c3e1567f78d447727bca0c932feb4ad2203';
       stubComponentDidMount();
     });
 
