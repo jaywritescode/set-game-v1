@@ -8,6 +8,8 @@ import MultiplayerStore from '../src/stores/multiplayer';
 import sinon from 'sinon';
 import { Modal, FormControl } from 'react-bootstrap';
 
+require('locus');
+
 class MockWebSocket {
   send() {}
 }
