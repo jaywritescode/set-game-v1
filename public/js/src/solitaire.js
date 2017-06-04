@@ -8,9 +8,7 @@ import { Modal, Button } from 'react-bootstrap';
 import SetGame from './setgame';
 import SetCard from './setcard';
 
-const IMG_PATH = 'static/img/';
-
-export default class Solitaire extends SetGame {
+export default class Solitaire extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -36,6 +34,10 @@ export default class Solitaire extends SetGame {
     $.get(this.props.url).then(onSuccess, onError);
   }
 
+  /**
+   * @param {Event} evt - the event
+   * @param {Object} card - the card we clicked
+   */
   onClickSetCard(evt, card) {
     let newState = {};
     if (!this.state.starttime) {
@@ -149,7 +151,10 @@ export default class Solitaire extends SetGame {
             <Button bsSize="large" bsStyle="success" onClick={this.onClickNewGame.bind(this)}>New Game...</Button>
           </Modal.Footer>
         </Modal>
-        {this.renderCards()}
+        <SetGame
+          onClickSetCard={this.onClickSetCard.bind(this)}
+          {... _.pick(this.state, 'cards', 'selected')}
+        />
         {this.renderSetsFound()}
       </div>
     );

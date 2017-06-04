@@ -5,7 +5,6 @@ import _ from 'lodash';
 import SetCard from '../src/setcard';
 
 describe('SetCard', function() {
-  debugger;
   let props = {
     number: _.sample(['one', 'two', 'three']),
     color: _.sample(['red', 'green', 'blue']),
