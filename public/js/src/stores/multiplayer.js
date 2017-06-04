@@ -1,4 +1,4 @@
-import alt from '../calt';
+import alt from '../alt';
 import _ from 'lodash';
 import MultiplayerActions from '../actions/multiplayer';
 import SetCard from '../setcard';

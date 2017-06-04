@@ -1,4 +1,4 @@
-import alt from '../calt';
+import alt from '../alt';
 
 class MultiplayerActions {
   clearName() {
