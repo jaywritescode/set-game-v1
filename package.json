@@ -1,12 +1,12 @@
 {
   "name": "set-game",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "That Set game that's a thing.",
   "engines": {
     "node": "5.1.1"
   },
   "scripts": {
-    "postinstall": "bower install && gulp babel",
+    "build": "./node_modules/.bin/webpack",
     "test": "BABEL_ENV=test mocha public/js/test/.setup.js public/js/test"
   },
   "repository": {
@@ -16,18 +16,22 @@
   "author": "Jay Harris <jayharris@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "alt": "^0.18.4",
     "babel-cli": "^6.3.17",
     "babel-plugin-transform-es2015-modules-amd": "^6.3.13",
     "babel-preset-es2015": "^6.3.13",
     "babel-preset-react": "^6.1.18",
-    "bower": "^1.6.5",
     "del": "^2.2.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.0",
-    "gulp-sourcemaps": "^1.6.0"
+    "gulp-sourcemaps": "^1.6.0",
+    "jquery": "^2.2.4",
+    "moment": "^2.13.0",
+    "react": "^15.0.2",
+    "react-bootstrap": "^0.29.4",
+    "react-dom": "^15.0.2"
   },
   "devDependencies": {
-    "alt": "^0.18.4",
     "babel-core": "^6.24.1",
     "babel-loader": "^7.0.0",
     "babel-preset-airbnb": "^2.0.0",
@@ -35,14 +39,9 @@
     "babel-register": "^6.9.0",
     "chai": "^3.5.0",
     "enzyme": "^2.3.0",
-    "jquery": "^2.2.4",
     "jsdom": "^9.1.0",
     "locus": "^2.0.1",
-    "moment": "^2.13.0",
-    "react": "^15.0.2",
     "react-addons-test-utils": "^15.0.2",
-    "react-bootstrap": "^0.29.4",
-    "react-dom": "^15.0.2",
     "sinon": "^1.17.4",
     "webpack": "^2.6.1"
   }
