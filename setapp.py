@@ -28,10 +28,6 @@ if __name__ == '__main__':
             'tools.staticdir.on': True,
             'tools.staticdir.dir': 'public'
         },
-        '/bower_components': {
-            'tools.staticdir.on': True,
-            'tools.staticdir.dir': 'bower_components'
-        }
     }
     cherrypy.config.update({
         'server.socket_host': '0.0.0.0',
