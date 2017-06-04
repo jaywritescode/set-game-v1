@@ -1,6 +1,5 @@
 import React from 'react';
 import _ from 'lodash';
-import SetGame from './setgame';
 
 const IMG_PATH = 'static/img/';
 
