@@ -5,8 +5,8 @@ import React from 'react';
 import { render } from 'react-dom';
 import { Button, MenuItem, Dropdown } from 'react-bootstrap';
 
-import Solitaire from 'solitaire';
-import Multiplayer from 'multiplayer';
+import Solitaire from './solitaire';
+import Multiplayer from './multiplayer';
 
 class SetApp extends React.Component {
   constructor(props) {
