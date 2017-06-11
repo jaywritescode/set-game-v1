@@ -1,6 +1,5 @@
 'use strict';
 
-import $ from 'jquery';
 import React from 'react';
 import moment from 'moment';
 import { Modal, Button } from 'react-bootstrap';
@@ -12,26 +11,11 @@ export default class Solitaire extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      cards: [],
       selected: new Set(),      // Set<String>
       found: new Set(),         // Set<Set<String>>
       solved: false,
       starttime: null,
     };
-  }
-
-  componentWillMount() {
-    let onSuccess = function(response) {
-      this.setState({
-        cards: response.cards,
-      });
-    }.bind(this);
-    let onError = function(response) {
-      this.setState({
-        error: response
-      });
-    }.bind(this);
-    $.get(this.props.url).then(onSuccess, onError);
   }
 
   /**
@@ -95,20 +79,17 @@ export default class Solitaire extends React.Component {
   }
 
   onClickNewGame() {
-    $.ajax(this.props.url, {
-      data: { reset: true },
-      method: 'GET'
-    }).then((response) => {
-      this.setState({
-        cards: response.cards,
-        selected: new Set(),
-        found: new Set(),
-        solved: false,
-        starttime: null
+    fetch(`${this.props.url}?reset=true`)
+      .then(response => response.json())
+      .then(data => {
+        this.setState({
+          cards: data.cards,
+          selected: new Set(),
+          found: new Set(),
+          solved: false,
+          starttime: null
+        });
       });
-    }, (response) => {
-      console.error(response);
-    });
   }
 
   /**
@@ -153,7 +134,8 @@ export default class Solitaire extends React.Component {
         </Modal>
         <SetGame
           onClickSetCard={this.onClickSetCard.bind(this)}
-          {... _.pick(this.state, 'cards', 'selected')}
+          cards={this.props.cards}
+          selected={this.state.selected}
         />
         {this.renderSetsFound()}
       </div>

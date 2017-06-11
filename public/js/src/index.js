@@ -23,7 +23,7 @@ class SetApp extends React.Component {
   startSolitaire() {
     $.get('/solitaire').then((response) => {
       render(
-        <Solitaire url="/solitaire" />, document.getElementById('content')
+        <Solitaire url="/solitaire" {...response} />, document.getElementById('content')
       );
     });
   }
