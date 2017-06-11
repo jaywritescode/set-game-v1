@@ -112,8 +112,8 @@ export default class Solitaire extends React.Component {
   }
 
   /**
-   * @param {the_set} Set<String> - the cards in this set
-   * @param {index} Number - the index of this set in the list of sets
+   * @param {Set<String>} the_set - the cards in this set
+   * @param {Number} index - the index of this set in the list of sets
    */
   renderSet(the_set, index) {
     return (
