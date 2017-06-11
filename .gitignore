@@ -156,3 +156,5 @@ bower_components/
 
 # development-only files
 Procfile.dev
+bin/
+reports/
