@@ -9,7 +9,7 @@ import webservices
 
 class SetApp:
     @cherrypy.expose
-    def index(self):
+    def index(self, **kwargs):
         return open('index.html')
 
 
