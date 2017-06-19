@@ -15,8 +15,13 @@ class SetApp:
 
 if __name__ == '__main__':
     import logging
+    import argparse
     from ws4py import configure_logger
     configure_logger(level=logging.DEBUG)
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--env', help='set runtime environment')
+    args = parser.parse_args()
 
     base_conf = {
         '/': {
@@ -32,6 +37,7 @@ if __name__ == '__main__':
     cherrypy.config.update({
         'server.socket_host': '0.0.0.0',
         'server.socket_port': int(os.environ.get('PORT', 8080)),
+        'environment': args.env or 'staging'
     })
     webservices.MultiplayerWebSocketPlugin(cherrypy.engine).subscribe()
     cherrypy.tools.websocket = WebSocketTool()
