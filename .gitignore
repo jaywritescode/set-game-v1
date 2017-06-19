@@ -155,6 +155,5 @@ node_modules/
 bower_components/
 
 # development-only files
-Procfile.dev
 bin/
-reports/
+tests_output/
