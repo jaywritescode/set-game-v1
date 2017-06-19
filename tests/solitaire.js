@@ -30,26 +30,34 @@ module.exports = {
   },
 
   'Choose three cards that make a set': function(client) {
+    const one = 'one-blue-striped-squiggles',
+          two = 'two-blue-striped-ovals',
+          three = 'three-blue-striped-diamonds';
+    let xpath;
+    xpath = (card) => {
+      return `//*[@id="cards"]/ul/li/div/img[contains(@src, "${card}")]`;
+    };
+
     client.useXpath();
 
-    client.click('//*[@id="cards"]/ul/li/div/img[contains(@src, "one-blue-striped-squiggles")]');
-    client.expect.element('//*[@id="cards"]/ul/li/div/img[contains(@src, "one-blue-striped-squiggles")]/..')
-      .to.have.attribute('class').which.contains('selected');
+    client.click(xpath(one));
+    client.expect.element(`${xpath(one)}/..`).to.have.attribute('class')
+      .which.contains('selected');
 
-    client.click('//*[@id="cards"]/ul/li/div/img[contains(@src, "two-blue-striped-ovals")]');
-    client.expect.element('//*[@id="cards"]/ul/li/div/img[contains(@src, "two-blue-striped-ovals")]/..')
-      .to.have.attribute('class').which.contains('selected');
+    client.click(xpath(two));
+    client.expect.element(`${xpath(two)}/..`).to.have.attribute('class')
+      .which.contains('selected');
 
     client
-      .click('//*[@id="cards"]/ul/li/div/img[contains(@src, "three-blue-striped-diamonds")]')
+      .click(xpath(three))
       .waitForElementVisible('//*[@id="found-so-far"]/ul[1]', 1000);
 
-    client.expect.element('//*[@id="found-so-far"]/ul[1]/li/div/img[contains(@src, "one-blue-striped-squiggles")]')
-      .to.be.visible;
-    client.expect.element('//*[@id="found-so-far"]/ul[1]/li/div/img[contains(@src, "two-blue-striped-ovals")]')
-      .to.be.visible;
-    client.expect.element('//*[@id="found-so-far"]/ul[1]/li/div/img[contains(@src, "three-blue-striped-diamonds")]')
-      .to.be.visible;
+    xpath = (card) => {
+      return `//*[@id="found-so-far"]/ul[1]/li/div/img[contains(@src, "${card}")]`;
+    };
+    client.expect.element(xpath(one)).to.be.visible;
+    client.expect.element(xpath(two)).to.be.visible;
+    client.expect.element(xpath(three)).to.be.visible;
 
     client.end();
   }
