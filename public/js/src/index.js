@@ -21,7 +21,7 @@ class SetApp extends React.Component {
   }
 
   startSolitaire() {
-    $.get('/solitaire').then((response) => {
+    $.get(`/solitaire${location.search}`).then((response) => {
       render(
         <Solitaire url="/solitaire" {...response} />, document.getElementById('content')
       );

@@ -13,9 +13,13 @@ class SolitaireWebService:
         self.num_sets = num_sets
 
     @cherrypy.tools.json_out()
-    def GET(self, reset=False):
+    def GET(self, reset=False, **kwargs):
         game = cherrypy.session.get('game')
+
         if reset or not game:
+            if cherrypy.config.get('environment') == 'test_suite' and kwargs.get('seed'):
+                import random
+                random.seed(kwargs['seed'])
             game = cherrypy.session['game'] = SolitaireSet(self.num_cards, self.num_sets)
             game.start()
 
