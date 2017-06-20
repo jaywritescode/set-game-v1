@@ -33,32 +33,88 @@ module.exports = {
     const one = 'one-blue-striped-squiggles',
           two = 'two-blue-striped-ovals',
           three = 'three-blue-striped-diamonds';
-    let xpath;
-    xpath = (card) => {
+    let cards_xpath = (card) => {
       return `//*[@id="cards"]/ul/li/div/img[contains(@src, "${card}")]`;
+    };
+    let found_xpath = (card) => {
+      return `//*[@id="found-so-far"]/ul[1]/li/div/img[contains(@src, "${card}")]`;
     };
 
     client.useXpath();
 
-    client.click(xpath(one));
-    client.expect.element(`${xpath(one)}/..`).to.have.attribute('class')
-      .which.contains('selected');
+    client.click(cards_xpath(one));
+    client.expect.element(`${cards_xpath(one)}/..`).to.have.attribute('class').that.contains('selected');
 
-    client.click(xpath(two));
-    client.expect.element(`${xpath(two)}/..`).to.have.attribute('class')
-      .which.contains('selected');
+    client.click(cards_xpath(two));
+    client.expect.element(`${cards_xpath(two)}/..`).to.have.attribute('class').that.contains('selected');
 
     client
-      .click(xpath(three))
+      .click(cards_xpath(three))
       .waitForElementVisible('//*[@id="found-so-far"]/ul[1]', 1000);
 
-    xpath = (card) => {
-      return `//*[@id="found-so-far"]/ul[1]/li/div/img[contains(@src, "${card}")]`;
-    };
-    client.expect.element(xpath(one)).to.be.visible;
-    client.expect.element(xpath(two)).to.be.visible;
-    client.expect.element(xpath(three)).to.be.visible;
+    client.expect.element(found_xpath(one)).to.be.visible;
+    client.expect.element(found_xpath(two)).to.be.visible;
+    client.expect.element(found_xpath(three)).to.be.visible;
 
+    client.expect.element(`${cards_xpath(one)}/..`).to.have.attribute('class')
+      .that.does.not.contain('selected');
+    client.expect.element(`${cards_xpath(two)}/..`).to.have.attribute('class')
+      .that.does.not.contain('selected');
+    client.expect.element(`${cards_xpath(three)}/..`).to.have.attribute('class')
+      .that.does.not.contain('selected');
+  },
+
+  "Select and then de-select a card": function(client) {
+    const element_xpath = '//*[@id="cards"]/ul/li[1]/div';
+
+    client.click(element_xpath);
+    client.expect.element(element_xpath).to.have.attribute('class').that.contains('selected');
+
+    client.click(element_xpath);
+    client.expect.element(element_xpath).to.have.attribute('class').that.does.not.contain('selected');
+  },
+
+  "Choose three cards that don't make a set": function(client) {
+    const one = 'two-red-solid-squiggles',
+          two = 'two-blue-striped-ovals',
+          three = 'three-blue-striped-diamonds';
+    let cards_xpath = (card) => {
+      return `//*[@id="cards"]/ul/li/div/img[contains(@src, "${card}")]`;
+    };
+
+    client.click(cards_xpath(one));
+    client.click(cards_xpath(two));
+    client.click(cards_xpath(three));
+    client.pause(1000);
+
+    client.expect.element('//*[@id=found-so-far]/ul[2]').to.not.be.present;
+
+    client.click(cards_xpath(one));
+    client.click(cards_xpath(two));
+    client.click(cards_xpath(three));
+  },
+
+  "Choose a set that's already been found": function(client) {
+    const one = 'one-blue-striped-squiggles',
+          two = 'two-blue-striped-ovals',
+          three = 'three-blue-striped-diamonds';
+    let cards_xpath = (card) => {
+      return `//*[@id="cards"]/ul/li/div/img[contains(@src, "${card}")]`;
+    };
+
+    client.click(cards_xpath(one));
+    client.click(cards_xpath(two));
+    client.click(cards_xpath(three));
+    client.pause(1000);
+
+    client.expect.element('//*[@id=found-so-far]/ul[2]').to.not.be.present;
+
+    client.click(cards_xpath(one));
+    client.click(cards_xpath(two));
+    client.click(cards_xpath(three));
+  },
+
+  "Finish the game": function(client) {
     client.end();
-  }
+  },
 }
