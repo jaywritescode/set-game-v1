@@ -7,7 +7,8 @@
   },
   "scripts": {
     "build": "./node_modules/.bin/webpack",
-    "test": "BABEL_ENV=test mocha public/js/test/.setup.js public/js/test"
+    "test": "BABEL_ENV=test mocha public/js/test/.setup.js public/js/test",
+    "integration": "./node_modules/.bin/nightwatch"
   },
   "repository": {
     "type": "git",
