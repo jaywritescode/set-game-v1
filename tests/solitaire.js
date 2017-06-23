@@ -129,8 +129,7 @@ module.exports = {
     client.useCss();
     client.expect.element('[role="dialog"]').to.be.present;
     client.click('.modal-dialog button');
-    client.pause(100);
-    client.expect.element('[role="dialog"]').to.not.be.present;
+    client.expect.element('[role="dialog"]').to.not.be.present.after(1000);
     client.expect.element('#found-so-far ul').to.not.be.present;
 
     client.end();
