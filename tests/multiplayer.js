@@ -1,12 +1,11 @@
 module.exports = {
-  'Load home page': function(client) {
-    client.url('http://localhost:8080?seed=150').pause(1000);
-    client.expect.element('#content').to.be.present;
+  'Clear all games': function(client) {
+    client.url('http://localhost:8080/multiplayer/destroy');
   },
 
-  'No games present': function(client) {
-    client
-      .waitForElementPresent('#multiplayer_button', 1000)
+  'Load home page, no games present': function(client) {
+    client.url('http://localhost:8080?seed=150')
+      .waitForElementPresent('#multiplayer_button')
       .expect.element('#multiplayer_button + ul > *').to.not.be.present;
   },
 

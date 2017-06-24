@@ -64,6 +64,14 @@ class MultiplayerWebService:
         if cherrypy.session.get('game'):
             del cherrypy.session['game']
 
+    @cherrypy.expose
+    def destroy(self):
+        """
+        Endpoint to destroy all games, only available on the test suite.
+        """
+        if cherrypy.config.get('environment') == 'test_suite':
+            self.games.clear()
+
     def create_game(self):
         """
         Creates a game.
