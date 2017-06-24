@@ -62,11 +62,12 @@ class SetApp extends React.Component {
                 key="solitaire"
                 onClick={this.startSolitaire}
                 id="solitaire_button">Solitaire Set</Button>
-        <Dropdown id="multiplayer_button"
+        <Dropdown id="multiplayer_dropdown"
                   onToggle={(isOpen) => { isOpen && this.requestGamesStatus(); }}>
           <Button bsSize="large"
                   bsStyle="default"
                   key="multiplayer"
+                  id="multiplayer_button"
                   onClick={this.startMultiplayer()}>Multiplayer Set</Button>
           <Dropdown.Toggle bsSize="large" />
           <Dropdown.Menu>
