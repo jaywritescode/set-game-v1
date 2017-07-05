@@ -5,7 +5,7 @@ import SetCard from '../setcard';
 
 class MultiplayerStore {
   constructor() {
-    this.my_player_id = undefined;
+    this.name = '';
     this.players = {};
     this.cards = [];
     this.selected = new Set();      // stringify-ed SetCards
@@ -24,8 +24,11 @@ class MultiplayerStore {
     this.my_player_id = null;
   }
 
-  handleChangeName(new_name) {
-    this.my_player_id = new_name;
+  /**
+   * @param {string} data - this player's new name
+   */
+  handleChangeName(data) {
+    this.name = data;
   }
 
   handleSelectCard(card) {

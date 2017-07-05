@@ -1,12 +1,12 @@
 import alt from '../alt';
 
 class MultiplayerActions {
-  clearName() {
-    return true;
+  constructor() {
+    this.generateActions('changeName')
   }
 
-  changeName(new_name) {
-    return new_name;
+  clearName() {
+    return true;
   }
 
   selectCard(card) {

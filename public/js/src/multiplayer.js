@@ -3,6 +3,7 @@
 import $ from 'jquery';
 import _ from 'lodash';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { Modal, FormGroup, ControlLabel, FormControl, Button, ProgressBar } from 'react-bootstrap';
 import MultiplayerStore from './stores/multiplayer';
 import MultiplayerActions from './actions/multiplayer';
@@ -12,22 +13,19 @@ import SetGame from './setgame';
 export default class Multiplayer extends SetGame {
   constructor(props) {
     super(props);
-    this.state = Object.assign({
-      name_input_value: '',
-    }, MultiplayerStore.getState());
-
-    this.id = document.cookie.match(/session_id=([0-9a-f]{40});?/)[1];
     window.onbeforeunload = function(evt) {
       this.ws.close();
       $.get('multiplayer/leave');
     };
-    _.bindAll(this, 'onChange', 'onChangeName', 'onClickSetCard', 'onCountdownStart', 'onNameInputChange');
+    this.state = {};
+    _.bindAll(this, 'onChange', 'onChangeName', 'onClickSetCard', 'onCountdownStart'/*, 'onNameInputChange'*/);
   }
 
   static get propTypes() {
     return {
       game: React.PropTypes.string.isRequired,
       url: React.PropTypes.string.isRequired,
+      id: React.PropTypes.string.isRequired,
     };
   }
 
@@ -59,10 +57,12 @@ export default class Multiplayer extends SetGame {
     });
     let cardsDiv = document.getElementById('cards');
 
-    let cardWidthRule = `.card { width: ${cardsDiv.offsetWidth * 2 / 9}px}`,
-        cardMarginRule = `.card { margin: ${cardsDiv.offsetWidth / 72}px ${cardsDiv.offsetWidth / 90}px}`;
-    this.stylenode.insertRule(cardWidthRule, 0);
-    this.stylenode.insertRule(cardMarginRule, 0);
+    if (cardsDiv) {
+      let cardWidthRule = `.card { width: ${cardsDiv.offsetWidth * 2 / 9}px}`,
+          cardMarginRule = `.card { margin: ${cardsDiv.offsetWidth / 72}px ${cardsDiv.offsetWidth / 90}px}`;
+      this.stylenode.insertRule(cardWidthRule, 0);
+      this.stylenode.insertRule(cardMarginRule, 0);
+    }
 
     MultiplayerStore.listen(this.onChange);
   }
@@ -76,7 +76,7 @@ export default class Multiplayer extends SetGame {
   }
 
   onChangeName(evt) {
-    let name = this.state.name_input_value;
+    let name = ReactDOM.findDOMNode(this.input).value;
     if (name) {
       // TODO: make this an Action
       MultiplayerActions.changeName(name);
@@ -84,19 +84,10 @@ export default class Multiplayer extends SetGame {
         request: 'change-name',
         new_name: name
       }));
-      this.setState({
-        name_input_value: '',
-      });
     }
     else {
       MultiplayerActions.clearName();
     }
-  }
-
-  onNameInputChange(evt) {
-    this.setState({
-      name_input_value: evt.target.value
-    });
   }
 
   onCountdownStart(evt) {
@@ -164,11 +155,11 @@ export default class Multiplayer extends SetGame {
   render() {
     return (
       <div id="wrapper">
-        <Modal show={this.state.my_player_id === null}>
+        <Modal show={!this.state.name}>
           <FormGroup controlId="change_name">
             <Modal.Body>
               <ControlLabel>Your name...</ControlLabel>
-              <FormControl ref="name_input" type="text" placeholder="Enter text" onChange={this.onNameInputChange} />
+              <FormControl ref={(component) => this.input = component} />
             </Modal.Body>
             <Modal.Footer>
               <Button bsStyle="primary" onClick={this.onChangeName}>{"That's Me!"}</Button>
