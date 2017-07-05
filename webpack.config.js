@@ -6,6 +6,7 @@ module.exports = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'public', 'js', 'dist'),
   },
+  watch: true,
   module: {
     rules: [
       {
@@ -31,5 +32,5 @@ module.exports = {
       }
     ],
   },
-  devtool: 'eval',
+  devtool: 'eval-source-map',
 }
