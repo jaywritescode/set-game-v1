@@ -44,7 +44,10 @@ class MultiplayerWebService:
 
         cherrypy.session['game'] = game
 
-        return {'game': name}
+        return {
+            'game': name,
+            'id': cherrypy.session.id
+        }
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
