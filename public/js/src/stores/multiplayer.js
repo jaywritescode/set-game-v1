@@ -5,30 +5,55 @@ import SetCard from '../setcard';
 
 class MultiplayerStore {
   constructor() {
-    this.name = '';
+    this.name = null;
     this.players = {};
     this.cards = [];
     this.selected = new Set();      // stringify-ed SetCards
     this.current_state = 'WAITING_FOR_PLAYERS';
+    this.id = null;
+    this.websocket = null;
 
     this.bindListeners({
-      handleClearName: MultiplayerActions.CLEAR_NAME,
+      handleInit: MultiplayerActions.INIT,
       handleChangeName: MultiplayerActions.CHANGE_NAME,
+      handleClearName: MultiplayerActions.CLEAR_NAME,
       handleReceiveMessage: MultiplayerActions.RECEIVE_MESSAGE,
       handleSelectCard: MultiplayerActions.SELECT_CARD,
       handleClearSelected: MultiplayerActions.CLEAR_SELECTED,
     });
   }
 
+  handleInit(data) {
+    const { protocol, host, url, game, id } = data;
+
+    this.id = id;
+    this.websocket = new WebSocket(`${protocol == 'https:' ? 'wss:' : 'ws:'}//${host}/${url}/ws?game=${game}&id=${id}`);
+
+    this.websocket.onopen = _.noop;
+    this.websocket.onmessage = (event) => {
+      MultiplayerActions.receiveMessage(JSON.parse(event.data));
+    };
+    this.websocket.onerror = (event) => {
+      console.error('An error occurred: %O', event);
+    };
+    this.websocket.onclose = _.noop;
+  }
+
   handleClearName() {
-    this.my_player_id = null;
+    this.name = '';     // falsy, non-null value so we pass a "change-name" method over the websocket
   }
 
   /**
    * @param {string} data - this player's new name
    */
   handleChangeName(data) {
-    this.name = data;
+    console.group('handleChangeName: %O', data);
+    this.websocket.send(JSON.stringify({
+      request: this.name === null ? 'add-player' : 'change-name',
+      id: this.id,
+      new_name: data
+    }));
+    console.groupEnd();
   }
 
   handleSelectCard(card) {
@@ -48,20 +73,9 @@ class MultiplayerStore {
 
   handleReceiveMessage(message) {
     console.log('MultiplayerStore.handleReceiveMessage: message = %O', message);
+    const { request } = message;
 
     const
-      onAddPlayer = (data) => {
-        let { my_player_id, players } = data;
-        // TODO: race condition here -- we would like a way to uniquely identify each requester
-        if (this.my_player_id === undefined) {
-          this.my_player_id = my_player_id;
-        }
-        this.players = players;
-        if (this.current_state == 'WAITING_FOR_PLAYERS' && _.size(this.players) > 1) {
-          this.current_state = 'WAITING_FOR_CLICK_START';
-        }
-        return true;
-      },
       onChangeName = (data) => {
         let { old_name, new_name } = data;
         if (!(old_name && new_name)) {
@@ -96,14 +110,37 @@ class MultiplayerStore {
       };
 
     let actions = {
-      'add-player': onAddPlayer,
-      'change-name': onChangeName,
+      'add-player': this.onAddPlayer,
+      'change-name': this.onChangeName,
       'countdown-start': onCountdownStart,
       'start-game': onStartGame,
       'verify-set': onVerifySet,
     };
 
-    actions[message.action].call(this, message);
+    if (actions[request]) {
+      actions[request].call(this, message);
+    }
+  }
+
+  // websocket response handlers
+  onAddPlayer(data) {
+    console.group('onAddPlayer: %O', data);
+    const { name, players } = data;
+    this.name = name;
+    this.players = players;
+
+    if (this.current_state == 'WAITING_FOR_PLAYERS' && _(this.players).size() > 1) {
+      this.current_state = 'WAITING_FOR_CLICK_START';
+    }
+    console.groupEnd();
+  }
+
+  onChangeName(data) {
+    console.group('onChangeName: %O', data);
+    const { name, players } = data;
+    this.name = name;
+    this.players = players;
+    console.groupEnd();
   }
 }
 

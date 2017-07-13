@@ -125,57 +125,58 @@ class MultiplayerWebSocket(WebSocket):
 
     def received_message(self, message):
         message = json.loads(str(message))
-        req = message['request']
 
-        response = {'action': req}
-
+        action = message.get('request')
         handlers = {
             'add-player': self.onAddPlayer,
             'change-name': self.onChangeName,
             'countdown-start': self.onCountdownStart,
             'verify-set': self.onVerifySet
         }
-        if req in handlers:
-            handlers[req](message, response)
+        if action in handlers:
+            handlers[action](message)
 
     # #########################################################################
     # Individual event handlers
     # #########################################################################
-    def onAddPlayer(self, data, response):
+    def onAddPlayer(self, data):
         """
         Handler for an add-player request.
 
         :param data: the request data, json.load(s)-ed
-        :param response: the response data, to be json.dump(s)-ed
         """
-        player = self.game.add_player()
+        response = dict(request=data['request'], id=data['id'])
+
+        player = self.game.add_player(data.get('new_name'))
         if player:
             self.player = player
             response.update({
-                'my_player_id': player.id,
+                'name': player.id,
                 'players': {p.id: len(p.found) for p in self.game.players.values()} if player else {}
             })
         self.broadcast_as_json(response)
 
-    def onChangeName(self, data, response):
+    def onChangeName(self, data):
         """
         Handler for a change-name request.
 
         :param data: the request data, json.load(s)-ed
         :param response: the response data, to be json.dump(s)-ed
         """
-        new_name = data['new_name']
-        if new_name and new_name not in self.game.players:
-            old_name = self.player.id
-            del self.game.players[old_name]
+        response = dict(request=data['request'], id=data['id'])
 
-            self.player.id = new_name
-            self.game.players[new_name] = self.player
+        name = data.get('new_name')
+        if name and name not in self.game.players:
+            del self.game.players[self.player.id]
+
+            self.player.id = name
+            self.game.players[name] = self.player
 
             response.update({
-                'old_name': old_name,
-                'new_name': new_name,
+                'name': self.player.id,
+                'players': {p.id: len(p.found) for p in self.game.players.values()}
             })
+
         self.broadcast_as_json(response)
 
     def onCountdownStart(self, data, response):

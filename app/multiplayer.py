@@ -35,14 +35,14 @@ class MultiplayerSet:
             self.deck = self.deck[3:]
         self.started = True
 
-    def add_player(self, name=None):
+    def add_player(self, id):
         """
         Creates a new player and assigns it to this game.
 
-        :param name: the player's name, or None to generate a random name
+        :param id: the player's name
         :return: the player
         """
-        new_player = PlayerFactory.make_player(self, name)
+        new_player = PlayerFactory.make_player(self, id)
         self.players[new_player.id] = new_player
         return new_player
 
@@ -92,10 +92,4 @@ class PlayerFactory:
 
     @staticmethod
     def make_player(game, name):
-        while name is None or name in game.players:
-            name = PlayerFactory.random_name()
         return PlayerFactory.Player(game, name)
-
-    @staticmethod
-    def random_name():
-        return ''.join(random.choice('0123456789') for _ in range(10))

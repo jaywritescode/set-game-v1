@@ -13,11 +13,18 @@ import SetGame from './setgame';
 export default class Multiplayer extends SetGame {
   constructor(props) {
     super(props);
-    window.onbeforeunload = function(evt) {
-      this.ws.close();
+
+    const { protocol, host } = window.location;
+    const { url, game, id } = this.props;
+
+    MultiplayerActions.init({protocol, host, url, game, id});
+    this.state = MultiplayerStore.getState();
+
+    window.onbeforeunload = (event) => {
+      MultiplayerActions.closeWebsocket();
       $.get('multiplayer/leave');
     };
-    this.state = {};
+
     _.bindAll(this, 'onChange', 'onChangeName', 'onClickSetCard', 'onCountdownStart'/*, 'onNameInputChange'*/);
   }
 
@@ -26,27 +33,7 @@ export default class Multiplayer extends SetGame {
       game: React.PropTypes.string.isRequired,
       url: React.PropTypes.string.isRequired,
       id: React.PropTypes.string.isRequired,
-    };
-  }
-
-  componentWillMount() {
-    // create the websocket
-    this.ws = new WebSocket(`${window.location.protocol == 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/${this.props.url}/ws?game=${this.props.game}&id=${this.id}`);
-    this.ws.onopen = (event) => {
-      console.log('Websocket opened: %O', event);
-
-      // add this (unnamed) player to the game
-      this.ws.send(JSON.stringify({request: 'add-player'}));
-    };
-    this.ws.onmessage = (event) => {
-      console.log('Message received: %O', event);
-      MultiplayerActions.receiveMessage(JSON.parse(event.data));
-    };
-    this.ws.onerror = (event) => {
-      console.error(event);
-    };
-    this.ws.onclose = (event) => {
-      console.log('Websocket closed: %O', event);
+      name: React.PropTypes.string,
     };
   }
 
@@ -76,18 +63,7 @@ export default class Multiplayer extends SetGame {
   }
 
   onChangeName(evt) {
-    let name = ReactDOM.findDOMNode(this.input).value;
-    if (name) {
-      // TODO: make this an Action
-      MultiplayerActions.changeName(name);
-      this.ws.send(JSON.stringify({
-        request: 'change-name',
-        new_name: name
-      }));
-    }
-    else {
-      MultiplayerActions.clearName();
-    }
+    MultiplayerActions.changeName(ReactDOM.findDOMNode(this.input).value);
   }
 
   onCountdownStart(evt) {
@@ -122,9 +98,8 @@ export default class Multiplayer extends SetGame {
           _.map(this.state.players, (value, key) => {
             let player_name = key, player_found = value;
             return (
-              <li className={player_name == this.state.my_player_id ? 'me' : ''} key={player_name}>
-                <span>Player&nbsp;</span>
-                <strong onClick={key == this.state.my_player_id ? this.onChangeName : _.noop}>{player_name}</strong>
+              <li className={player_name == this.state.name ? 'me' : ''} key={player_name}>
+                <strong onClick={key == this.state.name ? MultiplayerActions.clearName : _.noop}>{player_name}</strong>
                 <span>:&nbsp;</span>
                 <span>{`${player_found} set${player_found == 1 ? '' : 's'} found so far`}</span>
               </li>
@@ -152,26 +127,36 @@ export default class Multiplayer extends SetGame {
     }
   }
 
+  renderPlayerModal() {
+    if (this.state.name) {
+      return null;
+    }
+
+    return (
+      <Modal show={true}>
+        <FormGroup controlId="change_name">
+          <Modal.Body>
+            <ControlLabel>Your name...</ControlLabel>
+            <FormControl ref={(component) => this.input = component} />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button bsStyle="primary" onClick={this.onChangeName}>{"That's Me!"}</Button>
+          </Modal.Footer>
+        </FormGroup>
+      </Modal>
+    )
+  }
+
   render() {
     return (
       <div id="wrapper">
-        <Modal show={!this.state.name}>
-          <FormGroup controlId="change_name">
-            <Modal.Body>
-              <ControlLabel>Your name...</ControlLabel>
-              <FormControl ref={(component) => this.input = component} />
-            </Modal.Body>
-            <Modal.Footer>
-              <Button bsStyle="primary" onClick={this.onChangeName}>{"That's Me!"}</Button>
-            </Modal.Footer>
-          </FormGroup>
-        </Modal>
+        {this.renderPlayerModal()}
         <div id="left-sidebar">
           <h3>{this.props.game}</h3>
-          {this.renderPlayers()}
-          {this.renderStartButton()}
+            {this.renderPlayers()}
+            {this.renderStartButton()}
         </div>
-        {this.renderCards()}
+        {/* {this.renderCards()} */}
       </div>
     );
   }
