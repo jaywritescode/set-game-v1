@@ -149,7 +149,7 @@ export default class Multiplayer extends SetGame {
 
   render() {
     return (
-      <div id="wrapper">
+      <div id="multiplayer" className="wrapper">
         {this.renderPlayerModal()}
         <div id="left-sidebar">
           <h3>{this.props.game}</h3>

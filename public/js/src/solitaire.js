@@ -123,7 +123,7 @@ export default class Solitaire extends React.Component {
 
   render() {
     return (
-      <div id="wrapper">
+      <div id="solitaire" className="wrapper">
         <Modal show={this.state.solved}>
           <Modal.Body>
             <h3 className="center">Solved! In { moment().diff(this.state.starttime, 'seconds') } seconds</h3>

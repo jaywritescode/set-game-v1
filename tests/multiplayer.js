@@ -11,8 +11,8 @@ module.exports = {
 
   'Start a new game': function(client) {
     client.click('#multiplayer_button')
-      .waitForElementPresent('#cards')
-      .expect.element('#cards > ul > *').to.not.be.present;
+      .waitForElementPresent('#multiplayer')
+      .expect.element('#multiplayer > ul > *').to.not.be.present;
   },
 
   'Destroy multiplayer games': function(client) {
