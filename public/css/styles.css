@@ -37,6 +37,10 @@ body {
   margin-left: -16px;
 }
 
+#players .me > strong {
+  cursor: pointer;
+}
+
 #cards {
   display: inline-block;
   float: left;
