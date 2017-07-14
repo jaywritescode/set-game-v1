@@ -15,6 +15,14 @@ module.exports = {
       .expect.element('#multiplayer > ul > *').to.not.be.present;
   },
 
+  "Set the user's name": function(client) {
+    client.waitForElementPresent('div[role="dialog"]')
+      .setValue('input', 'Brad')
+      .click('button')
+      .expect.element('div[role="dialog"]').to.not.be.present;
+    client.expect.element('ul li.me').text.to.contain('Brad');
+  },
+
   'Destroy multiplayer games': function(client) {
     client.end()
   },
