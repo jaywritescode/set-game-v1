@@ -16,11 +16,21 @@ module.exports = {
   },
 
   "Set the user's name": function(client) {
-    client.waitForElementPresent('div[role="dialog"]')
+    client.waitForElementPresent('div.modal[role="dialog"]')
       .setValue('input', 'Brad')
       .click('button')
       .expect.element('div[role="dialog"]').to.not.be.present;
     client.expect.element('ul li.me').text.to.contain('Brad');
+  },
+
+  "Change the user's name": function(client) {
+    client.waitForElementNotPresent('div.modal[role="dialog"]')
+      .click('ul li.me > strong')
+      .waitForElementPresent('div.modal[role="dialog"]')
+      .setValue('input', 'Chad')
+      .click('button')
+      .waitForElementNotPresent('div.modal[role="dialog"]')
+      .expect.element('ul li.me').text.to.contain('Chad');
   },
 
   'Destroy multiplayer games': function(client) {
