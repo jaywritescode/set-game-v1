@@ -18,9 +18,9 @@ module.exports = {
   "Set the user's name": function(client) {
     client.waitForElementPresent('div.modal[role="dialog"]')
       .setValue('input', 'Brad')
-      .click('button')
-      .expect.element('div[role="dialog"]').to.not.be.present;
-    client.expect.element('ul li.me').text.to.contain('Brad');
+      .click('button');
+    client.waitForElementNotPresent('div[role="dialog"]')
+      .expect.element('ul li.me').text.to.contain('Brad');
   },
 
   "Change the user's name": function(client) {
