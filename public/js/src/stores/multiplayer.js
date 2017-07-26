@@ -47,13 +47,11 @@ class MultiplayerStore {
    * @param {string} data - this player's new name
    */
   handleChangeName(data) {
-    console.group('handleChangeName: %O', data);
     this.websocket.send(JSON.stringify({
       request: this.name === null ? 'add-player' : 'change-name',
       id: this.id,
       new_name: data
     }));
-    console.groupEnd();
   }
 
   handleSelectCard(card) {
@@ -125,8 +123,10 @@ class MultiplayerStore {
   // websocket response handlers
   onAddPlayer(data) {
     console.group('onAddPlayer: %O', data);
-    const { name, players } = data;
-    this.name = name;
+    const { name, players, id } = data;
+    if (id == this.id) {
+      this.name = name;
+    }
     this.players = players;
 
     if (this.current_state == 'WAITING_FOR_PLAYERS' && _(this.players).size() > 1) {
