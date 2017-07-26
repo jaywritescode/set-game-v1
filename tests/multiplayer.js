@@ -76,6 +76,14 @@ module.exports = {
     // message. Test receiving the websocket response here.
   },
 
+  'Someone else clicks the "Start" button': function(client) {
+    socket.send(JSON.stringify({
+      request: 'countdown-start'
+    }));
+    client.expect.element('button').to.not.be.present.after(100);
+    client.expect.element('div.progress').to.be.present.after(100);
+  },
+
   'Destroy multiplayer games': function(client) {
     client.end()
   },

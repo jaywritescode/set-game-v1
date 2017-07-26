@@ -179,8 +179,10 @@ class MultiplayerWebSocket(WebSocket):
 
         self.broadcast_as_json(response)
 
-    def onCountdownStart(self, data, response):
+    def onCountdownStart(self, data):
         import time
+
+        response = dict(request=data['request'], now=time.time())
         self.broadcast_as_json(response)
         time.sleep(10)
 
