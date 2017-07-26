@@ -71,6 +71,11 @@ module.exports = {
     client.expect.element('ul li.me:nth-of-type(1)').to.be.present.after(500);
   },
 
+  'Click "Start" button': function(client) {
+    // Don't test here. Clicking the start button just sends a websocket
+    // message. Test receiving the websocket response here.
+  },
+
   'Destroy multiplayer games': function(client) {
     client.end()
   },

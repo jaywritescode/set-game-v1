@@ -25,7 +25,7 @@ export default class Multiplayer extends SetGame {
       $.get('multiplayer/leave');
     };
 
-    _.bindAll(this, 'onChange', 'onChangeName', 'onClickSetCard', 'onCountdownStart'/*, 'onNameInputChange'*/);
+    _.bindAll(this, 'onChange', 'onChangeName', 'onClickSetCard');
   }
 
   static get propTypes() {
@@ -66,10 +66,8 @@ export default class Multiplayer extends SetGame {
     MultiplayerActions.changeName(ReactDOM.findDOMNode(this.input).value);
   }
 
-  onCountdownStart(evt) {
-    this.ws.send(JSON.stringify({
-      request: 'countdown-start'
-    }));
+  onClickCountdownStart(evt) {
+    MultiplayerActions.startCountdown();
   }
 
   onClickSetCard(evt, card) {

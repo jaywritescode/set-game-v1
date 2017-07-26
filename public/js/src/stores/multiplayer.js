@@ -20,6 +20,7 @@ class MultiplayerStore {
       handleReceiveMessage: MultiplayerActions.RECEIVE_MESSAGE,
       handleSelectCard: MultiplayerActions.SELECT_CARD,
       handleClearSelected: MultiplayerActions.CLEAR_SELECTED,
+      handleStartCountdown: MultiplayerActions.START_COUNTDOWN,
     });
   }
 
@@ -54,6 +55,12 @@ class MultiplayerStore {
     }));
   }
 
+  handleStartCountdown() {
+    this.websocket.send(JSON.stringify({
+      request: 'countdown-start'
+    }));
+  }
+
   handleSelectCard(card) {
     let cardString = SetCard.stringify(card);
 
@@ -74,9 +81,6 @@ class MultiplayerStore {
     const { request } = message;
 
     const
-      onCountdownStart = () => {
-        this.current_state = 'WAITING_FOR_COUNTDOWN';
-      },
       onStartGame = (data) => {
         let { cards } = data;
         this.cards = cards;
@@ -122,6 +126,12 @@ class MultiplayerStore {
 
   onChangeName(data) {
     this._updatePlayers(data);
+  }
+
+  onCountdownStart() {
+    if (this.current_state == 'WAITING_FOR_CLICK_START') {
+      this.current_state = 'WAITING_FOR_COUNTDOWN';
+    }
   }
 
   _updatePlayers(data) {
