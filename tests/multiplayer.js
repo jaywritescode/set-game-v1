@@ -61,6 +61,16 @@ module.exports = {
     client.expect.element('button').to.be.present;
   },
 
+  "Change the other player's name": function(client) {
+    socket.send(JSON.stringify({
+      request: 'change-name',
+      id: '9294c0e2c1232a8503ec1b5dbb49eab111176eaa',
+      new_name: 'Tad'
+    }));
+    client.expect.element('ul li:nth-of-type(2)').text.to.contain('Tad').before(500);
+    client.expect.element('ul li.me:nth-of-type(1)').to.be.present.after(500);
+  },
+
   'Destroy multiplayer games': function(client) {
     client.end()
   },

@@ -74,15 +74,6 @@ class MultiplayerStore {
     const { request } = message;
 
     const
-      onChangeName = (data) => {
-        let { old_name, new_name } = data;
-        if (!(old_name && new_name)) {
-          return false;
-        }
-        this.players[new_name] = this.players[old_name];
-        delete this.players[old_name];
-        return true;
-      },
       onCountdownStart = () => {
         this.current_state = 'WAITING_FOR_COUNTDOWN';
       },
@@ -122,25 +113,23 @@ class MultiplayerStore {
 
   // websocket response handlers
   onAddPlayer(data) {
-    console.group('onAddPlayer: %O', data);
+    this._updatePlayers(data);
+
+    if (this.current_state == 'WAITING_FOR_PLAYERS' && _(this.players).size() > 1) {
+      this.current_state = 'WAITING_FOR_CLICK_START';
+    }
+  }
+
+  onChangeName(data) {
+    this._updatePlayers(data);
+  }
+
+  _updatePlayers(data) {
     const { name, players, id } = data;
     if (id == this.id) {
       this.name = name;
     }
     this.players = players;
-
-    if (this.current_state == 'WAITING_FOR_PLAYERS' && _(this.players).size() > 1) {
-      this.current_state = 'WAITING_FOR_CLICK_START';
-    }
-    console.groupEnd();
-  }
-
-  onChangeName(data) {
-    console.group('onChangeName: %O', data);
-    const { name, players } = data;
-    this.name = name;
-    this.players = players;
-    console.groupEnd();
   }
 }
 
