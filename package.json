@@ -35,7 +35,7 @@
     "babel-preset-env": "^1.5.1",
     "babel-register": "^6.9.0",
     "chai": "^3.5.0",
-    "enzyme": "^2.3.0",
+    "enzyme": "^2.9.1",
     "jsdom": "^9.1.0",
     "locus": "^2.0.1",
     "nightwatch": "^0.9.16",
