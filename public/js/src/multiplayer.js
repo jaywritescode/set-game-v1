@@ -112,7 +112,7 @@ export default class Multiplayer extends SetGame {
     let { current_state } = this.state;
     if (current_state == 'WAITING_FOR_CLICK_START') {
       return (
-        <Button bsStyle="primary" onClick={this.onCountdownStart}>Click me to start...</Button>
+        <Button bsStyle="primary" onClick={this.onClickCountdownStart}>Click me to start...</Button>
       );
     }
     else if (current_state == 'WAITING_FOR_COUNTDOWN') {
