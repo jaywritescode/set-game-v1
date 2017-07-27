@@ -188,10 +188,11 @@ class MultiplayerWebSocket(WebSocket):
 
         if not self.game.started and len(self.game.players) > 1:
             self.game.start()
-            self.broadcast_as_json({
-                'action': 'start-game',
+            response = dict(request='start-game')
+            response.update({
                 'cards': [card.to_hash() for card in self.game.cards]
             })
+            self.broadcast_as_json(response)
 
     def onVerifySet(self, data, response):
         cards = [CardSerializer.from_dict(card) for card in data['cards']]

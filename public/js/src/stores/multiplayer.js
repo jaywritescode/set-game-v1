@@ -81,11 +81,6 @@ class MultiplayerStore {
     const { request } = message;
 
     const
-      onStartGame = (data) => {
-        let { cards } = data;
-        this.cards = cards;
-        this.current_state = 'IN_PROGRESS';
-      },
       onVerifySet = (data) => {
         let { valid, cards_to_add, cards_to_remove, player, found, game_over} = data;
         if (!valid) {
@@ -105,8 +100,8 @@ class MultiplayerStore {
     let actions = {
       'add-player': this.onAddPlayer,
       'change-name': this.onChangeName,
-      'countdown-start': onCountdownStart,
-      'start-game': onStartGame,
+      'countdown-start': this.onCountdownStart,
+      'start-game': this.onStartGame,
       'verify-set': onVerifySet,
     };
 
@@ -128,9 +123,17 @@ class MultiplayerStore {
     this._updatePlayers(data);
   }
 
-  onCountdownStart() {
+  onCountdownStart(data) {
     if (this.current_state == 'WAITING_FOR_CLICK_START') {
       this.current_state = 'WAITING_FOR_COUNTDOWN';
+    }
+  }
+
+  onStartGame(data) {
+    if (this.current_state == 'WAITING_FOR_COUNTDOWN') {
+      const { cards } = data;
+      this.cards = cards;
+      this.current_state = 'IN_PROGRESS';
     }
   }
 
