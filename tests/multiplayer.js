@@ -82,6 +82,10 @@ module.exports = {
     }));
     client.expect.element('button').to.not.be.present.after(100);
     client.expect.element('div.progress').to.be.present.after(100);
+
+    // wait for the game to start
+    client.expect.element("div.progress").to.not.be.present.after(10000);
+    client.expect.element("div#cards").to.be.present.after(10000);
   },
 
   'Destroy multiplayer games': function(client) {
