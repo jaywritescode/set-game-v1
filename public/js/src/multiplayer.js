@@ -10,7 +10,7 @@ import MultiplayerActions from './actions/multiplayer';
 
 import SetGame from './setgame';
 
-export default class Multiplayer extends SetGame {
+export default class Multiplayer extends React.Component {
   constructor(props) {
     super(props);
 
@@ -125,6 +125,14 @@ export default class Multiplayer extends SetGame {
     }
   }
 
+  renderSetGame() {
+    return (
+      <SetGame onClickSetCard={this.onClickSetCard.bind(this)}
+               cards={this.state.cards}
+               selected={this.state.selected} />
+    );
+  }
+
   renderPlayerModal() {
     if (this.state.name) {
       return null;
@@ -154,7 +162,7 @@ export default class Multiplayer extends SetGame {
             {this.renderPlayers()}
             {this.renderStartButton()}
         </div>
-        {/* {this.renderCards()} */}
+        {this.state.current_state == 'IN_PROGRESS' && this.renderSetGame()}
       </div>
     );
   }
