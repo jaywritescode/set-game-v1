@@ -199,6 +199,18 @@ class SetFactory:
         return i
 
 
+class SetSerializer:
+    @staticmethod
+    def to_dict(the_set):
+        """
+        Converts a set to an array representation.
+
+        :param the_set: the Set
+        :return: a list of Cards in the set
+        """
+        return [CardSerializer.to_dict(card) for card in the_set.cards]
+
+
 class CardSerializer:
     @staticmethod
     def to_dict(card):

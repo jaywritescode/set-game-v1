@@ -75,6 +75,18 @@ class MultiplayerWebService:
         if cherrypy.config.get('environment') == 'test_suite':
             self.games.clear()
 
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def find(self, **kwargs):
+        """
+        Endpoint to find all the sets on the board, only available on the test suite.
+        """
+        if cherrypy.config.get('environment') == 'test_suite':
+            found = find_all_sets(self.games[kwargs.get('name')].cards)
+            print([SetSerializer.to_dict(a_set) for a_set in found], file=sys.stderr)
+
+            return json.dumps([SetSerializer.to_dict(a_set) for a_set in found])
+
     def create_game(self):
         """
         Creates a game.

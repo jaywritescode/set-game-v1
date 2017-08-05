@@ -79,6 +79,9 @@ if __name__ == '__main__':
         '/destroy': {
             'request.dispatch': cherrypy.dispatch.Dispatcher(),
         },
+        '/find': {
+            'request.dispatch': cherrypy.dispatch.Dispatcher(),
+        },
         '/ws': {
             'request.dispatch': cherrypy.dispatch.Dispatcher(),
             'tools.websocket.on': True,

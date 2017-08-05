@@ -1,5 +1,6 @@
 const websockets = require('websockets');
 const locus = require('locus');
+const http = require('http');
 
 function ws_url(game) {
   return `ws://localhost:8080/multiplayer/ws?game=${game}&id=9294c0e2c1232a8503ec1b5dbb49eab111176eaa`
@@ -86,6 +87,12 @@ module.exports = {
     // wait for the game to start
     client.expect.element("div.progress").to.not.be.present.after(10000);
     client.expect.element("div#cards").to.be.present.after(10000);
+  },
+
+  'Submit a valid set': function(client) {
+    http.get(`http://localhost:8080/multiplayer/find?name=${game_name}`, (result) => {
+      console.log(result);
+    });
   },
 
   'Destroy multiplayer games': function(client) {
