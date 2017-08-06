@@ -40,6 +40,7 @@
     "locus": "^2.0.1",
     "nightwatch": "^0.9.16",
     "react-addons-test-utils": "^15.0.2",
+    "request": "^2.81.0",
     "sinon": "^1.17.4",
     "webpack": "^2.6.1",
     "websockets": "^0.2.0"

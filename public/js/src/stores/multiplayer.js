@@ -133,6 +133,7 @@ class MultiplayerStore {
     if (this.current_state == 'WAITING_FOR_COUNTDOWN') {
       const { cards } = data;
       this.cards = cards;
+      this.selected = new Set();
       this.current_state = 'IN_PROGRESS';
     }
   }

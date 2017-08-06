@@ -1,6 +1,6 @@
 const websockets = require('websockets');
 const locus = require('locus');
-const http = require('http');
+const request = require('request');
 
 function ws_url(game) {
   return `ws://localhost:8080/multiplayer/ws?game=${game}&id=9294c0e2c1232a8503ec1b5dbb49eab111176eaa`
@@ -90,8 +90,30 @@ module.exports = {
   },
 
   'Submit a valid set': function(client) {
-    http.get(`http://localhost:8080/multiplayer/find?name=${game_name}`, (result) => {
-      console.log(result);
+    client.perform(function(done) {
+      request({
+        url: `http://localhost:8080/multiplayer/find?name=${game_name}`,
+        json: true,
+      }, (error, response, body) => {
+        let cards = JSON.parse(body)[0];
+        cards.forEach(card => {
+          const { number, color, shading, shape } = card;
+          const cardSrc = [number, color, shading, shape].join('-');
+
+          client.useXpath()
+            .click(`//*[@id="cards"]//div[@class="card"]/img[contains(@src, "${cardSrc}")]`)
+            .useCss();
+        });
+        cards.forEach(card => {
+          const { number, color, shading, shape } = card;
+          const cardSrc = [number, color, shading, shape].join('-');
+
+          client.useXpath();
+          client.expect.element(`//*[@id="cards"]//div[@class="card"]/img[contains(@src, "${cardSrc}")]`)
+            .to.not.be.present.after(100);
+        });
+        done();
+      });
     });
   },
 
