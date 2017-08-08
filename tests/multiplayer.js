@@ -20,10 +20,18 @@ module.exports = {
       .expect.element('#multiplayer_button + ul > *').to.not.be.present;
   },
 
+  'Load home page, one or more games present': function(client) {
+    // TODO: implement this somehow
+  },
+
   'Start a new game': function(client) {
     client.click('#multiplayer_button')
       .waitForElementPresent('#multiplayer')
       .expect.element('#multiplayer > ul > *').to.not.be.present;
+  },
+
+  'Join an existing game': function(client) {
+    // TODO: implement this somehow
   },
 
   "Set the user's name": function(client) {

@@ -8,11 +8,9 @@ class MultiplayerActions {
       'clearName',
       'receiveMessage',
       'startCountdown',
+      'selectCard',
+      'submit',
     );
-  }
-
-  selectCard(card) {
-    return card;
   }
 
   clearSelected() {

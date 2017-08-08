@@ -21,6 +21,7 @@ class MultiplayerStore {
       handleSelectCard: MultiplayerActions.SELECT_CARD,
       handleClearSelected: MultiplayerActions.CLEAR_SELECTED,
       handleStartCountdown: MultiplayerActions.START_COUNTDOWN,
+      handleSubmit: MultiplayerActions.SUBMIT,
     });
   }
 
@@ -37,7 +38,9 @@ class MultiplayerStore {
     this.websocket.onerror = (event) => {
       console.error('An error occurred: %O', event);
     };
-    this.websocket.onclose = _.noop;
+    this.websocket.onclose = (event) => {
+      console.log('websocket closed');
+    };
   }
 
   handleClearName() {
@@ -70,6 +73,17 @@ class MultiplayerStore {
     else {
       this.selected.add(cardString);
     }
+  }
+
+  handleSubmit() {
+    this.websocket.send(JSON.stringify({
+      request: 'verify-set',
+      id: this.id,
+      cards: [...this.selected].map((string) => {
+        let [number, color, shading, shape] = string.split(' ');
+        return { number, color, shading, shape};
+      })
+    }));
   }
 
   handleClearSelected() {

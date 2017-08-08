@@ -71,20 +71,11 @@ export default class Multiplayer extends React.Component {
   }
 
   onClickSetCard(evt, card) {
-    MultiplayerActions.selectCard(card);
-    if (this.state.selected.size == 3) {
-      this.ws.send(JSON.stringify({
-        request: 'verify-set',
-        player_id: this.state.my_player_id,
-        cards: [...this.state.selected].map((string) => {
-          let [number, color, shading, shape] =
-              string.match(/(\w+) (\w+) (\w+) (\w+)/).slice(1);
-          return {
-            number, color, shading, shape
-          };
-        }),
-      }));
-      MultiplayerActions.clearSelected();
+    if (this.state.selected.size < 2) {
+      MultiplayerActions.selectCard(card);
+    }
+    else {
+      MultiplayerActions.submit();
     }
   }
 
