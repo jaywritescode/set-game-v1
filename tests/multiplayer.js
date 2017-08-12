@@ -15,7 +15,7 @@ module.exports = {
   },
 
   'Load home page, no games present': function(client) {
-    client.url('http://localhost:8080?seed=150')
+    client.url('http://localhost:8080')
       .waitForElementPresent('#multiplayer_button')
       .expect.element('#multiplayer_button + ul > *').to.not.be.present;
   },
