@@ -2,13 +2,16 @@ import cherrypy
 from haikunator import haikunate
 from collections import defaultdict
 import json
+import sys
 
 from ws4py.websocket import WebSocket
 from ws4py.messaging import TextMessage
 from ws4py.server.cherrypyserver import WebSocketPlugin
 
 from app.multiplayer import MultiplayerSet
-from app.setutils import CardSerializer, SetValidation
+from app.setutils import *
+
+cherrypy._cpconfig.environments['test_suite']['log.screen'] = True
 
 
 class MultiplayerWebService:
@@ -20,7 +23,7 @@ class MultiplayerWebService:
     # #########################################################################
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def go(self, name=None):
+    def go(self, **kwargs):
         """
         Endpoint to create and/or join a MultiplayerSet game.
 
@@ -33,6 +36,7 @@ class MultiplayerWebService:
             cherrypy.log('User leaving game')
             self.leave()
 
+        name = kwargs.get('name')
         if name:
             try:
                 game = self.games[name]
@@ -136,6 +140,7 @@ class MultiplayerWebSocket(WebSocket):
         cherrypy.engine.publish('add-client', self)
 
     def received_message(self, message):
+        print(message, file=sys.stderr)
         message = json.loads(str(message))
 
         action = message.get('request')
