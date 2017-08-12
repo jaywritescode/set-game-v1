@@ -208,7 +208,6 @@ class MultiplayerWebSocket(WebSocket):
 
     def onVerifySet(self, data):
         cards = [CardSerializer.from_dict(card) for card in data['cards']]
-        import pdb; pdb.set_trace()
         result = self.game.receive_selection(cards, self.player)
 
         response = dict(request=data['request'], id=data['id'])

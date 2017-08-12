@@ -21,7 +21,6 @@ class MultiplayerStore {
       handleSelectCard: MultiplayerActions.SELECT_CARD,
       handleClearSelected: MultiplayerActions.CLEAR_SELECTED,
       handleStartCountdown: MultiplayerActions.START_COUNTDOWN,
-      handleSubmit: MultiplayerActions.SUBMIT,
     });
   }
 
@@ -72,19 +71,13 @@ class MultiplayerStore {
     }
     else {
       this.selected.add(cardString);
+      if (this.selected.size == 3) {
+        this._submit();
+      }
     }
   }
 
-  handleSubmit() {
-    this.websocket.send(JSON.stringify({
-      request: 'verify-set',
-      id: this.id,
-      cards: [...this.selected].map((string) => {
-        let [number, color, shading, shape] = string.split(' ');
-        return { number, color, shading, shape};
-      })
-    }));
-  }
+
 
   handleClearSelected() {
     this.selected.clear();
@@ -150,6 +143,17 @@ class MultiplayerStore {
       this.selected = new Set();
       this.current_state = 'IN_PROGRESS';
     }
+  }
+
+  _submit() {
+    this.websocket.send(JSON.stringify({
+      request: 'verify-set',
+      id: this.id,
+      cards: [...this.selected].map((string) => {
+        let [number, color, shading, shape] = string.split(' ');
+        return { number, color, shading, shape};
+      })
+    }));
   }
 
   _updatePlayers(data) {

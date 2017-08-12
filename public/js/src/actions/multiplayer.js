@@ -9,7 +9,6 @@ class MultiplayerActions {
       'receiveMessage',
       'startCountdown',
       'selectCard',
-      'submit',
     );
   }
 

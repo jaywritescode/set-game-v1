@@ -71,12 +71,10 @@ export default class Multiplayer extends React.Component {
   }
 
   onClickSetCard(evt, card) {
-    if (this.state.selected.size < 2) {
-      MultiplayerActions.selectCard(card);
+    if (this.state.selected.size >= 3) {
+      return;
     }
-    else {
-      MultiplayerActions.submit();
-    }
+    MultiplayerActions.selectCard(card);
   }
 
   renderPlayers() {
