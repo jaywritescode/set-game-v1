@@ -86,30 +86,12 @@ class MultiplayerStore {
   handleReceiveMessage(message) {
     console.log('MultiplayerStore.handleReceiveMessage: message = %O', message);
     const { request } = message;
-
-    const
-      onVerifySet = (data) => {
-        let { valid, cards_to_add, cards_to_remove, player, found, game_over} = data;
-        if (!valid) {
-          return false;
-        }
-        cards_to_remove.forEach((c) => {
-          this.selected.delete(SetCard.stringify(c));
-          this.cards[_.findIndex(this.cards, _.matches(c))] = cards_to_add.pop();
-        });
-        while (cards_to_add.length) {
-          this.cards.push(cards_to_add.pop());
-        }
-
-        this.players[player] = found;
-      };
-
-    let actions = {
+    const actions = {
       'add-player': this.onAddPlayer,
       'change-name': this.onChangeName,
       'countdown-start': this.onCountdownStart,
       'start-game': this.onStartGame,
-      'verify-set': onVerifySet,
+      'verify-set': this.onVerifySet,
     };
 
     if (actions[request]) {
@@ -143,6 +125,22 @@ class MultiplayerStore {
       this.selected = new Set();
       this.current_state = 'IN_PROGRESS';
     }
+  }
+
+  onVerifySet(data) {
+    let { valid, cards_to_add, cards_to_remove, player, found, game_over} = data;
+    if (!valid) {
+      return false;
+    }
+    cards_to_remove.forEach((c) => {
+      this.selected.delete(SetCard.stringify(c));
+      this.cards[_.findIndex(this.cards, _.matches(c))] = cards_to_add.pop();
+    });
+    while (cards_to_add.length) {
+      this.cards.push(cards_to_add.pop());
+    }
+
+    this.players[player] = found;
   }
 
   _submit() {
