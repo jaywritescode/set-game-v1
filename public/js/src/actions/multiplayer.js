@@ -11,10 +11,6 @@ class MultiplayerActions {
       'selectCard',
     );
   }
-
-  clearSelected() {
-    return true;
-  }
 }
 
 module.exports = alt.createActions(MultiplayerActions);

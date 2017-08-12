@@ -19,7 +19,6 @@ class MultiplayerStore {
       handleClearName: MultiplayerActions.CLEAR_NAME,
       handleReceiveMessage: MultiplayerActions.RECEIVE_MESSAGE,
       handleSelectCard: MultiplayerActions.SELECT_CARD,
-      handleClearSelected: MultiplayerActions.CLEAR_SELECTED,
       handleStartCountdown: MultiplayerActions.START_COUNTDOWN,
     });
   }
@@ -75,12 +74,6 @@ class MultiplayerStore {
         this._submit();
       }
     }
-  }
-
-
-
-  handleClearSelected() {
-    this.selected.clear();
   }
 
   handleReceiveMessage(message) {
