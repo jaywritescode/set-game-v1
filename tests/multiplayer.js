@@ -120,6 +120,8 @@ module.exports = {
           client.expect.element(`//*[@id="cards"]//div[@class="card"]/img[contains(@src, "${cardSrc}")]`)
             .to.not.be.present.after(100);
         });
+        client.useCss();
+        client.expect.element('li.me').text.to.contain("1 set found so far");
         done();
       });
     });
