@@ -28,14 +28,20 @@ class TestMultiplayerSet:
         assert game.started
 
     def test_add_player_with_name_given(self, game):
-        game.start()
-
         player_name = 'John Q. Testington'
 
         test_player = game.add_player(player_name)
         assert test_player.id == player_name
         assert player_name in game.players
         assert game.players[player_name] == test_player
+
+    def test_cannot_add_player_to_started_game(self, game):
+        game.start()
+
+        player_name = 'John Q. Testington'
+
+        test_player = game.add_player(player_name)
+        assert test_player is None
 
     def test_receive_selection_card_not_on_table(self, game):
         game.start()
@@ -70,9 +76,9 @@ class TestMultiplayerSet:
             "three green solid diamonds",
             "two red empty diamonds"
         ])
-        game.start()
 
         test_player = game.add_player('John Q. Testington')
+        game.start()
 
         selected = [self.find_card(game.cards, needle) for needle in ['one blue empty diamond', 'two blue empty ovals', 'three blue empty squiggles']]
         next_cards = game.deck[:3]
@@ -114,9 +120,10 @@ class TestMultiplayerSet:
             "three green solid diamonds",
             "two red empty diamonds"
         ])
-        game.start()
 
         test_player = game.add_player('John Q. Testington')
+        game.start()
+
         selected = [self.find_card(game.cards, needle) for needle in ['one green solid diamond', 'two blue empty ovals', 'two blue striped diamonds']]
 
         # test:
@@ -154,9 +161,10 @@ class TestMultiplayerSet:
             "three green striped squiggles",
             "one green striped oval"
         ])
-        game.start()
 
         test_player = game.add_player('John Q. Testington')
+        game.start()
+
         selected = [self.find_card(game.cards, needle) for needle in ['three blue solid squiggles', 'one red striped oval', 'two green empty diamonds']]
 
         actual = game.receive_selection(selected, test_player)
@@ -188,9 +196,10 @@ class TestMultiplayerSet:
             "one green striped squiggle",
             "one green solid squiggle"
         ])
-        game.start()
 
         test_player = game.add_player('John Q. Testington')
+        game.start()
+
         selected = [self.find_card(game.cards, needle) for needle in ["one blue striped diamond", "one blue solid diamond", "one blue empty diamond"]]
 
         game.receive_selection(selected, test_player)
@@ -222,9 +231,10 @@ class TestMultiplayerSet:
             "three red solid squiggles",
             "one blue striped diamond"
         ])
-        game.start()
 
         test_player = game.add_player('John Q. Testington')
+        game.start()
+
         selected = [self.find_card(game.cards, needle) for needle in ["three green empty ovals", "three red striped ovals", "three blue solid ovals"]]
 
         game.receive_selection(selected, test_player)

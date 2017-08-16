@@ -1,5 +1,4 @@
 from collections import namedtuple
-
 from app.setutils import *
 
 class MultiplayerSet:
@@ -40,8 +39,11 @@ class MultiplayerSet:
         Creates a new player and assigns it to this game.
 
         :param id: the player's name
-        :return: the player
+        :return: the player or None
         """
+        if self.started:
+            return None
+
         new_player = PlayerFactory.make_player(self, id)
         self.players[new_player.id] = new_player
         return new_player
