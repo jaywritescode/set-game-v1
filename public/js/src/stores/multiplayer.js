@@ -142,7 +142,7 @@ class MultiplayerStore {
       id: this.id,
       cards: [...this.selected].map((string) => {
         let [number, color, shading, shape] = string.split(' ');
-        return { number, color, shading, shape};
+        return { number, color, shading, shape };
       })
     }));
   }

@@ -82,7 +82,7 @@ module.exports = {
 
   'Click "Start" button': function(client) {
     // Don't test here. Clicking the start button just sends a websocket
-    // message. Test receiving the websocket response here.
+    // message. Test *receiving* the websocket response here.
   },
 
   'Someone else clicks the "Start" button': function(client) {
@@ -125,6 +125,23 @@ module.exports = {
         done();
       });
     });
+  },
+
+  'Someone else submits a valid set': function(client) {
+    client.perform(function(done) {
+      request({
+        url: `http://localhost:8080/multiplayer/find?name=${game_name}`,
+        json: true,
+      }, (error, response, body) => {
+        socket.send(JSON.stringify({
+          request: 'verify-set',
+          id: '9294c0e2c1232a8503ec1b5dbb49eab111176eaa',
+          cards: JSON.parse(body)[0],
+        }));
+      });
+    });
+    client.useCss();
+    client.expect.element('#players li:not(.me)').text.to.contain("1 set found so far");
   },
 
   'Destroy multiplayer games': function(client) {
