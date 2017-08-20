@@ -138,10 +138,12 @@ module.exports = {
           id: '9294c0e2c1232a8503ec1b5dbb49eab111176eaa',
           cards: JSON.parse(body)[0],
         }));
+
+        client.useCss();
+        client.expect.element('#players li:not(.me)').text.to.contain("1 set found so far").after(100);
+        done();
       });
     });
-    client.useCss();
-    client.expect.element('#players li:not(.me)').text.to.contain("1 set found so far");
   },
 
   'Destroy multiplayer games': function(client) {
