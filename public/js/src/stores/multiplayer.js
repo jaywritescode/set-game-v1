@@ -29,7 +29,13 @@ class MultiplayerStore {
     this.id = id;
     this.websocket = new WebSocket(`${protocol == 'https:' ? 'wss:' : 'ws:'}//${host}/${url}/ws?game=${game}&id=${id}`);
 
-    this.websocket.onopen = _.noop;
+    this.websocket.onopen = (event) => {
+      this.intervalId = setInterval(() => {
+        this.websocket.send(JSON.stringify({
+          request: 'ping'
+        }));
+      }, 10000);
+    };
     this.websocket.onmessage = (event) => {
       MultiplayerActions.receiveMessage(JSON.parse(event.data));
     };
@@ -37,6 +43,7 @@ class MultiplayerStore {
       console.error('An error occurred: %O', event);
     };
     this.websocket.onclose = (event) => {
+      clearInterval(this.intervalId);
       console.log('websocket closed');
     };
   }
