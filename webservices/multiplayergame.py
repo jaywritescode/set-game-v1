@@ -148,7 +148,8 @@ class MultiplayerWebSocket(WebSocket):
             'add-player': self.onAddPlayer,
             'change-name': self.onChangeName,
             'countdown-start': self.onCountdownStart,
-            'verify-set': self.onVerifySet
+            'verify-set': self.onVerifySet,
+            'ping': (lambda x: None)
         }
         if action in handlers:
             handlers[action](message)
